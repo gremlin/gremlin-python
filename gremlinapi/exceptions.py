@@ -8,15 +8,12 @@ class GremlinAPIException(Exception):
     """
 
 class ProxyError(GremlinAPIException):
-    """
-    Proxy related errors
-    """
-    def __init__(self, **kwargs):
-        message = f'Error for {kwargs["method"]}, please verify proxy configuration'
+    def __init__(self, uri, method, **kwargs):
+        message = f'Error for {method} to {uri}, please verify proxy configuration'
         super(ProxyError, self).__init__(message)
 
 class ClientError(GremlinAPIException):
-    def __init__(self, **kwargs):
-        message = f'Error for {kwargs["method"]}, please check your network configuration'
+    def __init__(self, uri, method, **kwargs):
+        message = f'Error for {method} to {uri}, please check your network configuration'
         super(ClientError, self).__init__(message)
 
