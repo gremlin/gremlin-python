@@ -2,10 +2,17 @@
 #
 # Copyright (C) 2020 Kyle Hultman <kyle@gremlin.com>, Gremlin Inc <sales@gremlin.com>
 
+import logging
+
+
+
+log = logging.getLogger('GremlinAPI.client')
+
+
 class GremlinAPI(object):
 
     def __init__(self):
-        return
+        super.__init__()
 
     @property
     def user(self):
@@ -27,4 +34,3 @@ class GremlinAPI(object):
         self._password = password
         return self.password()
 
-    
