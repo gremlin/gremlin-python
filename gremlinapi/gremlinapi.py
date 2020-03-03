@@ -107,5 +107,15 @@ class GremlinAPI(object):
                 cls.bearer_timestamp = time.monotonic()
                 cls.bearer_token = r.json()[0]['header']
                 return r.json()[0]['header']
+            except HTTPTimeout:
+                time.sleep(1)
+                cls.login()
+            except ClientError:
+                raise
+            except ProxyError:
+                raise
+            except HTTPError:
+                raise
+
         else:
             return cls.bearer_token
