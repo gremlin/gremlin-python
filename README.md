@@ -13,9 +13,8 @@
 #### User login
 
 ```python
-from gremlinapi import GremlinAPI
+import gremlinapi as gapi
 
-gapi = new GremlinAPI
 gapi.login(user=user, password=password)
 
 ```

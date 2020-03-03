@@ -64,4 +64,6 @@ class GremlinAPIUsersAuth(object):
         pass
 
 class GremlinAPIUsersAuthMFA(object):
-    pass
+    @classmethod
+    def auth_user(cls, https_client=get_gremlin_httpclient(), **kwargs):
+        pass
