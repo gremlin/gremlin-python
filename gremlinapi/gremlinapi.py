@@ -90,6 +90,7 @@ class GremlinAPI(object):
         self._user = user
         return self.user
 
+    """Will be moving the bulk of this logic to the GremlinAPIUsersAuth module"""
     @classmethod
     def login(cls, https_client = get_gremlin_httpclient()):
         if not cls.user and cls.password and cls.company_name:
@@ -97,12 +98,13 @@ class GremlinAPI(object):
             log.fatal(error_msg)
             raise APIError(error_msg)
 
-        uri = f'{cls.base_uri}/users/auth?companyName={cls.company_name}'
-        payload = {"email": cls.user, "password": cls.password}
+        uri = f'{cls.base_uri}/users/auth'
+        payload = {"email": cls.user, "password": cls.password, "companyName"=cls.company_name}
         if(not cls.bearer_timestamp
-               or not cls.bearer_token
-               or (time.monotonic() - cls.bearer_timestamp >= cls.max_bearer_interval)):
+           or not cls.bearer_token
+           or (time.monotonic() - cls.bearer_timestamp >= cls.max_bearer_interval)):
             try:
+                log.debug(f'Login API call to {uri} with payload {payload}')
                 r = https_client.api_call('post', uri, data=payload)
                 cls.bearer_timestamp = time.monotonic()
                 cls.bearer_token = r.json()[0]['header']
