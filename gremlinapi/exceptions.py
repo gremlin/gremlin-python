@@ -15,6 +15,10 @@ class GremlinAPIException(Exception):
     Base exception class
     """
 
+class APIError(GremlinAPIException):
+    def __init__(self, message):
+        super(APIError, self).__init__(message)
+
 class ProxyError(GremlinAPIException):
     def __init__(self, uri, method, **kwargs):
         message = f'Error for {method} to {uri}, please verify proxy configuration'
@@ -25,3 +29,12 @@ class ClientError(GremlinAPIException):
         message = f'Error for {method} to {uri}, please check your network configuration'
         super(ClientError, self).__init__(message)
 
+class HTTPTimeout(GremlinAPIException):
+    def __init__(self, uri, method, timeout, **kwargs):
+        message = f'{method} to {uri} timed out after {timeout}'
+        super(HTTPTimeout, self).__init__(message)
+
+class HTTPError(GremlinAPIException):
+    def __init__(self, status_code=None, reason=None):
+        message = f'Request returned status code {status_code} {reason}'
+        super(HTTPError, self).__init__(message)
