@@ -13,6 +13,7 @@ from gremlinapi.exceptions import (
 )
 
 from gremlinapi.http_clients import get_gremlin_httpclient
+from gremlinapi.config import GremlinAPIConfig
 
 log = logging.getLogger('GremlinAPI.client')
 
@@ -66,4 +67,4 @@ class GremlinAPIUsersAuth(object):
 class GremlinAPIUsersAuthMFA(object):
     @classmethod
     def auth_user(cls, https_client=get_gremlin_httpclient(), **kwargs):
-        pass
+        print(GremlinAPIConfig.base_uri)

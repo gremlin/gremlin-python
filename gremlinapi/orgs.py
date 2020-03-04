@@ -24,11 +24,11 @@ class GremlinAPIOrgs(object):
 
     @classmethod
     def list_orgs(cls, https_client=get_gremlin_httpclient(), **kwargs):
-        pass
+        return "list_orgs"
 
     @classmethod
     def get_org(cls, https_client=get_gremlin_httpclient(), **kwargs):
-        pass
+        return "get_org"
 
     @classmethod
     def create_org(cls, https_client=get_gremlin_httpclient(), **kwargs):

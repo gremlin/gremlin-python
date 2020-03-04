@@ -2,27 +2,13 @@
 #
 # Copyright (C) 2020 Kyle Hultman <kyle@gremlin.com>, Gremlin Inc <sales@gremlin.com>
 
-import json
+
 import logging
-import time
-
-from gremlinapi.exceptions import (
-    APIError,
-    ProxyError,
-    ClientError,
-    HTTPTimeout,
-    HTTPError
-)
-
-from gremlinapi.http_clients import get_gremlin_httpclient
 
 log = logging.getLogger('GremlinAPI.client')
 
 
-class GremlinAPI(object):
-    def __init__(self):
-        self._base_uri = 'https://api.gremlin.com/v1'
-
+class GremlinAPIConfig(object):
     @property
     def api_key(self):
         """API Key for API authorization"""
@@ -71,6 +57,15 @@ class GremlinAPI(object):
         return self.company_name
 
     @property
+    def max_bearer_interval(self):
+        return self._max_bearer_interval
+
+    @max_bearer_interval.setter
+    def max_bearer_interval(self, max_bearer_interval):
+        self._max_bearer_interval = max_bearer_interval
+        return self.max_bearer_interval
+
+    @property
     def password(self):
         """Password for login"""
         return self._password
@@ -79,6 +74,15 @@ class GremlinAPI(object):
     def password(self, password):
         self._password = password
         return self.password
+
+    @property
+    def team_guid(self):
+        return self._team_guid
+
+    @team_guid.setter
+    def team_guid(self, team_guid):
+        self._team_guid = team_guid
+        return self.team_guid
 
     @property
     def user(self):
@@ -90,34 +94,11 @@ class GremlinAPI(object):
         self._user = user
         return self.user
 
-    """Will be moving the bulk of this logic to the GremlinAPIUsersAuth module"""
-    @classmethod
-    def login(cls, https_client = get_gremlin_httpclient()):
-        if not cls.user and cls.password and cls.company_name:
-            error_msg = f'Missing credentials; User: {cls.user}; Password: {cls.password}; Company: {cls.company_name}'
-            log.fatal(error_msg)
-            raise APIError(error_msg)
+    @property
+    def user_mfa_token_value(self):
+        return self._user_mfa_token_value
 
-        uri = f'{cls.base_uri}/users/auth'
-        payload = {"email": cls.user, "password": cls.password, "companyName": cls.company_name}
-        if(not cls.bearer_timestamp
-           or not cls.bearer_token
-           or (time.monotonic() - cls.bearer_timestamp >= cls.max_bearer_interval)):
-            try:
-                log.debug(f'Login API call to {uri} with payload {payload}')
-                r = https_client.api_call('post', uri, data=payload)
-                cls.bearer_timestamp = time.monotonic()
-                cls.bearer_token = r.json()[0]['header']
-                return r.json()[0]['header']
-            except HTTPTimeout:
-                time.sleep(1)
-                cls.login()
-            except ClientError:
-                raise
-            except ProxyError:
-                raise
-            except HTTPError:
-                raise
-
-        else:
-            return cls.bearer_token
+    @user_mfa_token_value.setter
+    def user_mfa_token_value(self, user_mfa_token_value):
+        self._user_mfa_token_value = user_mfa_token_value
+        return self.user_mfa_token_value

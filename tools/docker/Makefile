@@ -28,17 +28,19 @@ docker-push:
 	docker push $(DOCKER_IMAGE):latest
 
 docker-run:
-	docker run --rm -v ~/.ssh/:/root/.ssh --mount type=bind,source="$(PWD)/src",target=/opt/bootcamp \
+	docker run --rm -v ~/.ssh/:/root/.ssh --mount type=bind,source="$(PWD)/../..",target=/opt/gremlin-python \
 	--env-file=env.vars --name $(DOCKER_NAME) --entrypoint "/bin/ash" $(DOCKER_IMAGE):latest
 
 docker-run-interactive:
-	docker run -it --rm -v ~/.ssh/:/root/.ssh --mount type=bind,source="$(PWD)/src",target=/opt/bootcamp \
+	docker run -it --rm -v ~/.ssh/:/root/.ssh --mount type=bind,source="$(PWD)/../..",target=/opt/gremlin-python \
 	--env-file=env.vars --name $(DOCKER_NAME) --entrypoint "/bin/ash" $(DOCKER_IMAGE):latest
 
-$(MAJOR_VERSION_FILE): $(BUILD_VERSION_FILE)
+$(MAJOR_VERSION_FILE):
 	@if ! test -f $(MAJOR_VERSION_FILE); then echo 0 > $(MAJOR_VERSION_FILE); fi
 	@echo $$(($$(shell cat $(MAJOR_VERSION_FILE)) + 1)) > $(MAJOR_VERSION_FILE)
+	@echo $$(($$(shell cat $(MAJOR_VERSION_FILE)).$(shell cat $(MINOR_VERSION_FILE)))) > $(BUILD_VERSION_FILE)
 
-$(MINOR_VERSION_FILE): $(BUILD_VERSION_FILE)
+$(MINOR_VERSION_FILE):
 	@if ! test -f $(MINOR_VERSION_FILE); then echo 0 > $(MINOR_VERSION_FILE); fi
 	@echo $$(($$(shell cat $(MINOR_VERSION_FILE)) + 1)) > $(MINOR_VERSION_FILE)
+	@echo $$(($$(shell cat $(MAJOR_VERSION_FILE)).$(shell cat $(MINOR_VERSION_FILE)))) > $(BUILD_VERSION_FILE)

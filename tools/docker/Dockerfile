@@ -38,7 +38,7 @@ RUN curl -s -L $AWS_IAMAUTH_DOWNLOAD -o /usr/local/bin/aws-iam-authenticator && 
 RUN echo $KUBECTL_DOWNLOAD
 RUN curl -s -L $KUBECTL_DOWNLOAD -o /usr/bin/kubectl && chmod 755 /usr/bin/kubectl
 
-RUN mkdir -p /opt/bootcamp
+RUN mkdir -p /opt/gremlin-python
 #ADD src /opt/bootcamp
 #
 #RUN chmod 755 /opt/bootcamp/bootcamp.py
