@@ -10,6 +10,8 @@ BUILD_DATE=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 
 KUBECTL_VERSION=$(shell curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
 
+ENV_VARS=env.vars
+
 all: docker-build #docker-push
 
 docker-build: $(MINOR_VERSION_FILE)
@@ -28,10 +30,12 @@ docker-push:
 	docker push $(DOCKER_IMAGE):latest
 
 docker-run:
+	@if ! test -f $(ENV_VARS); then touch $(ENV_VARS); fi
 	docker run --rm -v ~/.ssh/:/root/.ssh --mount type=bind,source="$(PWD)/../..",target=/opt/gremlin-python \
 	--env-file=env.vars --name $(DOCKER_NAME) --entrypoint "/bin/ash" $(DOCKER_IMAGE):latest
 
 docker-run-interactive:
+	@if ! test -f $(ENV_VARS); then touch $(ENV_VARS); fi
 	docker run -it --rm -v ~/.ssh/:/root/.ssh --mount type=bind,source="$(PWD)/../..",target=/opt/gremlin-python \
 	--env-file=env.vars --name $(DOCKER_NAME) --entrypoint "/bin/ash" $(DOCKER_IMAGE):latest
 
