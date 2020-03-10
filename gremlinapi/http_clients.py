@@ -9,7 +9,8 @@ from gremlinapi.exceptions import (
     ProxyError,
     ClientError,
     HTTPTimeout,
-    HTTPError
+    HTTPError,
+    HTTPBadHeader
 )
 
 try:
@@ -27,6 +28,22 @@ class GremlinAPIHttpClient(object):
         error_message = f'This function is not implemented, please consume the proper http library for your environment'
         log.fatal(error_message)
         raise NotImplementedError(error_message)
+
+    @classmethod
+    def header(cls, *args, **kwargs):
+        api_key = kwargs.pop('api_key', None)
+        bearer_token = kwargs.pop('bearer_token', None)
+        if api_key and not bearer_token:
+            return f'Authorization: Key {api_key}'
+        if bearer_token:
+            return f'Authorization: Bearer {bearer_token}'
+        else:
+            error_msg = f'Missing API Key or Bearer Token, none supplied: {api_key}, {bearer_token}'
+            log.fatal(error_msg)
+            raise HTTPBadHeader(error_msg)
+
+
+
 
 
 class GremlineAPIRequestsClient(GremlinAPIHttpClient):

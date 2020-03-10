@@ -38,3 +38,8 @@ class HTTPError(GremlinAPIException):
     def __init__(self, status_code=None, reason=None):
         message = f'Request returned status code {status_code} {reason}'
         super(HTTPError, self).__init__(message)
+
+class HTTPBadHeader(GremlinAPIException):
+    def __init__(self, reason=None):
+        message = f'Failed to create HTTPHeader: {reason}'
+        super(HTTPBadHeader, self).__init__(message)
