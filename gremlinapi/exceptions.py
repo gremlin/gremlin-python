@@ -19,6 +19,10 @@ class APIError(GremlinAPIException):
     def __init__(self, message):
         super(APIError, self).__init__(message)
 
+class GremlinAuthError(GremlinAPIException):
+    def __init__(self, message):
+        super(GremlinAuthError, self).__init__(message)
+
 class ProxyError(GremlinAPIException):
     def __init__(self, uri, method, **kwargs):
         message = f'Error for {method} to {uri}, please verify proxy configuration'
