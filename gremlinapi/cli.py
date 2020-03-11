@@ -104,31 +104,34 @@ def _get_args(args=None):
                       action="store",
                       dest="gremlin_team_guid",
                       default=os.getenv('GREMLIN_TEAM_GUID', ''))
-    return p.parse_args(args)
+    return p.parse_args(args), p
 
 def _parse_args():
-    args = _get_args(sys.argv[1:])
+    args, parser = _get_args(sys.argv[1:])
     # Sanity check input
-    if not (args.gremlin_user and args.gremlin_password) and not (args.gremlin_bearer or args.gremlin_api_key):
-        error_msg = f'No form of API authentication provided: {args}'
-        log.fatal(error_msg)
-        raise GremlinAuthError(error_msg)
-    elif args.gremlin_api_key:
-        log.debug(f'API authentication supplied: key {args.gremlin_api_key}')
-    elif args.bearer:
-        log.debug(f'Bearer supplied at CLI runtime: {args.bearer}')
-        GremlinAPIConfig.bearer_token = args.bearer
-    elif args.gremlin_user and args.gremlin_password:
-        log.debug(f'User authentication provided for user: {args.gremlin_user}')
-        GremlinAPIConfig.user = args.gremlin_user
-        GremlinAPIConfig.password = args.gremlin_password
-        if args.gremlin_user_mfa_token:
-            log.debug(f'MFA token provided for user {args.gremlin_user}')
-            GremlinAPIConfig.user_mfa_token_value = args.gremlin_user_mfa_token
-    else:
-        error_msg = f'Unexpected state, authentication logic fallthrough: {args}'
-        log.fatal(error_msg)
-        raise GremlinAuthError(error_msg)
+    try:
+        if not (args.gremlin_user and args.gremlin_password) and not (args.gremlin_bearer or args.gremlin_api_key):
+            error_msg = f'No form of API authentication provided: {args}'
+            log.fatal(error_msg)
+            raise GremlinAuthError(error_msg)
+        elif args.gremlin_api_key:
+            log.debug(f'API authentication supplied: key {args.gremlin_api_key}')
+        elif args.bearer:
+            log.debug(f'Bearer supplied at CLI runtime: {args.bearer}')
+            GremlinAPIConfig.bearer_token = args.bearer
+        elif args.gremlin_user and args.gremlin_password:
+            log.debug(f'User authentication provided for user: {args.gremlin_user}')
+            GremlinAPIConfig.user = args.gremlin_user
+            GremlinAPIConfig.password = args.gremlin_password
+            if args.gremlin_user_mfa_token:
+                log.debug(f'MFA token provided for user {args.gremlin_user}')
+                GremlinAPIConfig.user_mfa_token_value = args.gremlin_user_mfa_token
+        else:
+            error_msg = f'Unexpected state, authentication logic fallthrough: {args}'
+            log.fatal(error_msg)
+            raise GremlinAuthError(error_msg)
+    except GremlinAuthError:
+        parser.print_help()
 
 
 def main():
