@@ -91,4 +91,4 @@ class GremlinAPIUsersAuthMFA(object):
             error_msg = f'User credential not supplied {kwargs}'
             log.fatal(error_msg)
             raise GremlinAuthError(error_msg)
-        return https_client.api_call('POST', uri, **{'body': payload, 'headers': dict()})
+        return https_client.api_call('POST', uri, **{'data': payload, 'headers': dict()})

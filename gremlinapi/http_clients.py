@@ -84,6 +84,7 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
                 body = resp.content
 
         if resp.status_code >= 400:
+            log.debug(f'{client}\n{uri}\n{data}\n')
             raise HTTPError(resp, body)
         return resp, body
 

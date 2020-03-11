@@ -81,6 +81,7 @@ def login(user=GremlinAPIConfig.user, password=GremlinAPIConfig.password,
         else:
             log.debug(f'Non-MFA Login for {user} in company {company_name}')
             auth_response = userAuth.auth_user(user=user, password=password, company=company_name)
+        log.debug(auth_response)
         GremlinAPIConfig.bearer_token = auth_response
         GremlinAPIConfig.bearer_timestamp = time.monotonic()
     else:
