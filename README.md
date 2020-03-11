@@ -2,20 +2,41 @@
 
 ## Installation
 
+python3 setup.py install
+
 ## Usage
 
 ## Authentication
 
 #### API User Keys
 
+```python
+from gremlinapi.config import GremlinAPIConfig as config
+config.api_key = 'Key MU3...ZiTk...Lo...4zO..c='
+```
+
 #### User Provided Bearer Token
+
+```python
+from gremlinapi.config import GremlinAPIConfig as config
+config.bearer_token = 'Bearer MU3...ZiTk...Lo...4zO..c='
+```
 
 #### User login
 
 ```python
-import gremlinapi as gapi
+import gremlinapi
+gremlinapi.login(user='kyle@gremlin.com',
+                 password='looksL1keIshouldCh4ng3th1sagain!',
+                 company_name="Gremlin Inc.")
+```
 
-gapi.login(user=user, password=password)
+```python
+import gremlinapi
+gremlinapi.login(user='kyle@gremlin.com',
+                 password='looksL1keIshouldCh4ng3th1sagain!',
+                 company_name="Gremlin Inc.",
+                 mfa_token_value="8675309")
 
 ```
 
