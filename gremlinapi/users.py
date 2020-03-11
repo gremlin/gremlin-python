@@ -23,22 +23,20 @@ class GremlinAPIUsers(object):
     @register_cli_action('list_user', ('',), ('teamId',))
     def list_users(cls, https_client=get_gremlin_httpclient(), **kwargs):
         endpoint = '/users'
-        uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
         payload = {'teamId': kwargs.get('teamId', None)}
         if not (payload['teamId']):
             error_msg = f'Missing teamId from request, assuming non-RBAC enabled request'
             log.debug(error_msg)
-            payload = dict()
         else:
-            uri += f'?teamId={payload["teamId"]}'
-        header = https_client.header()
-        (resp, body) = https_client.api_call('GET', uri, **{'headers':header})
+            endpoint += f'?teamId={payload["teamId"]}'
+        headers = https_client.header()
+        (resp, body) = https_client.api_call('GET', endpoint, **{'headers':headers})
         return body
 
     @classmethod
     @register_cli_action('invite_user', ('',), ('',))
     def invite_user(cls, https_client=get_gremlin_httpclient(), **kwargs):
-        users = '/users/invite'
+        endpoint = '/users/invite'
         pass
 
     @classmethod
@@ -62,7 +60,6 @@ class GremlinAPIUsersAuth(object):
     @register_cli_action('auth_user', ('',), ('',))
     def auth_user(cls, https_client=get_gremlin_httpclient(), **kwargs):
         endpoint = '/users/auth'
-        uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
         payload = {
             'email': kwargs.get('user', None),
             'password': kwargs.get('password', None),
@@ -72,7 +69,7 @@ class GremlinAPIUsersAuth(object):
             error_msg = f'User credential not supplied {kwargs}'
             log.fatal(error_msg)
             raise GremlinAuthError(error_msg)
-        (resp, body) = https_client.api_call('POST', uri, **{'data': payload})
+        (resp, body) = https_client.api_call('POST', endpoint, **{'data': payload})
         return body
 
     @classmethod
@@ -100,7 +97,6 @@ class GremlinAPIUsersAuthMFA(object):
     @register_cli_action('auth_user_mfa', ('user', 'password', 'token', 'company',), ('get_company_session',))
     def auth_user(cls, https_client=get_gremlin_httpclient(), **kwargs):
         endpoint = '/users/auth/mfa/auth'
-        uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
         payload = {
             'email': kwargs.get('user', None),
             'password': kwargs.get('password', None),
@@ -111,5 +107,5 @@ class GremlinAPIUsersAuthMFA(object):
             error_msg = f'User credential not supplied {kwargs}'
             log.fatal(error_msg)
             raise GremlinAuthError(error_msg)
-        (resp, body) = https_client.api_call('POST', uri, **{'data': payload})
+        (resp, body) = https_client.api_call('POST', endpoint, **{'data': payload})
         return body

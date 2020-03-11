@@ -55,7 +55,7 @@ class GremlinAPIHttpClient(object):
 
 class GremlineAPIRequestsClient(GremlinAPIHttpClient):
     @classmethod
-    def api_call(cls, method, uri, *args, **kwargs):
+    def api_call(cls, method, endpoint, *args, **kwargs):
 
         request_methods = {
             "HEAD": requests.head,
@@ -66,6 +66,7 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
             "PATCH": requests.patch,
         }
 
+        uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
         client = request_methods.get(method.upper())
         raw_content = kwargs.pop("raw_content", False)
         data = None

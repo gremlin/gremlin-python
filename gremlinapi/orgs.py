@@ -25,10 +25,10 @@ class GremlinAPIOrgs(object):
 
     @classmethod
     def list_orgs(cls, https_client=get_gremlin_httpclient(), **kwargs):
+        method = 'GET'
         endpoint = '/orgs'
-        uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
         header = https_client.header()
-        (resp, body) = https_client.api_call('GET', uri, **{'headers':header})
+        (resp, body) = https_client.api_call(method, endpoint, **{'headers':header})
         return body
 
     @classmethod
