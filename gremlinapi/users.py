@@ -20,12 +20,20 @@ class GremlinAPIUsers(object):
         pass
 
     @classmethod
-    @register_cli_action('list_user', ('',), ('team_id',))
+    @register_cli_action('list_user', ('',), ('teamId',))
     def list_users(cls, https_client=get_gremlin_httpclient(), **kwargs):
         endpoint = '/users'
-        team_id = kwargs.pop('team_id', None)
-
-        pass
+        uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
+        payload = {'teamId': kwargs.get('teamId', None)}
+        if not (payload['teamId']):
+            error_msg = f'Missing teamId from request, assuming non-RBAC enabled request'
+            log.debug(error_msg)
+            payload = dict()
+        else:
+            uri += f'?teamId={payload["teamId"]}'
+        header = https_client.header()
+        (resp, body) = https_client.api_call('GET', uri, **{'headers':header})
+        return body
 
     @classmethod
     @register_cli_action('invite_user', ('',), ('',))
@@ -53,7 +61,19 @@ class GremlinAPIUsersAuth(object):
     @classmethod
     @register_cli_action('auth_user', ('',), ('',))
     def auth_user(cls, https_client=get_gremlin_httpclient(), **kwargs):
-        pass
+        endpoint = '/users/auth'
+        uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
+        payload = {
+            'email': kwargs.get('user', None),
+            'password': kwargs.get('password', None),
+            'companyName': kwargs.get('company', None)
+        }
+        if not (payload['email'] and payload['password'] and payload['companyName']):
+            error_msg = f'User credential not supplied {kwargs}'
+            log.fatal(error_msg)
+            raise GremlinAuthError(error_msg)
+        (resp, body) = https_client.api_call('POST', uri, **{'data': payload})
+        return body
 
     @classmethod
     @register_cli_action('auth_user_sso', ('',), ('',))
@@ -91,4 +111,5 @@ class GremlinAPIUsersAuthMFA(object):
             error_msg = f'User credential not supplied {kwargs}'
             log.fatal(error_msg)
             raise GremlinAuthError(error_msg)
-        return https_client.api_call('POST', uri, **{'data': payload, 'headers': dict()})
+        (resp, body) = https_client.api_call('POST', uri, **{'data': payload})
+        return body

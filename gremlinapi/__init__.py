@@ -69,6 +69,10 @@ GremlinAPIConfig.bearer_timestamp = _bearer_token_timestamp
 GremlinAPIConfig.max_bearer_interval = _max_bearer_interval
 
 
+def _response_to_bearer(auth_response):
+    log.debug(auth_response[0]['header'])
+    return auth_response[0]['header']
+
 def login(user=GremlinAPIConfig.user, password=GremlinAPIConfig.password,
           company_name=GremlinAPIConfig.company_name, mfa_token_value=GremlinAPIConfig.user_mfa_token_value):
     if(not _bearer_token_timestamp
@@ -82,7 +86,7 @@ def login(user=GremlinAPIConfig.user, password=GremlinAPIConfig.password,
             log.debug(f'Non-MFA Login for {user} in company {company_name}')
             auth_response = userAuth.auth_user(user=user, password=password, company=company_name)
         log.debug(auth_response)
-        GremlinAPIConfig.bearer_token = auth_response
+        GremlinAPIConfig.bearer_token = _response_to_bearer(auth_response)
         GremlinAPIConfig.bearer_timestamp = time.monotonic()
     else:
         return GremlinAPIConfig.bearer_token

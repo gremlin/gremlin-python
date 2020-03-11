@@ -5,6 +5,7 @@
 import json
 import logging
 
+from gremlinapi.config import GremlinAPIConfig
 from gremlinapi.exceptions import (
     ProxyError,
     ClientError,
@@ -24,7 +25,11 @@ class GremlinAPIOrgs(object):
 
     @classmethod
     def list_orgs(cls, https_client=get_gremlin_httpclient(), **kwargs):
-        return "list_orgs"
+        endpoint = '/orgs'
+        uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
+        header = https_client.header()
+        (resp, body) = https_client.api_call('GET', uri, **{'headers':header})
+        return body
 
     @classmethod
     def get_org(cls, https_client=get_gremlin_httpclient(), **kwargs):

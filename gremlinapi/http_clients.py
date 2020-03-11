@@ -13,6 +13,8 @@ from gremlinapi.exceptions import (
     HTTPBadHeader
 )
 
+from gremlinapi.config import GremlinAPIConfig
+
 try:
     import requests
     import requests.adapters
@@ -31,16 +33,21 @@ class GremlinAPIHttpClient(object):
 
     @classmethod
     def header(cls, *args, **kwargs):
-        api_key = kwargs.pop('api_key', None)
-        bearer_token = kwargs.pop('bearer_token', None)
+        api_key = kwargs.get('api_key', GremlinAPIConfig.api_key)
+        bearer_token = kwargs.get('bearer_token', GremlinAPIConfig.bearer_token)
+        header = dict()
         if api_key and not bearer_token:
-            return f'Authorization: Key {api_key}'
+            header['Authorization'] = 'Key {api_key}'
         if bearer_token:
-            return f'Authorization: Bearer {bearer_token}'
+            if "Bearer" in bearer_token:
+                header['Authorization'] = bearer_token
+            else:
+                header['Authorization'] = f'Bearer {bearer_token}'
         else:
             error_msg = f'Missing API Key or Bearer Token, none supplied: {api_key}, {bearer_token}'
             log.fatal(error_msg)
             raise HTTPBadHeader(error_msg)
+        return header
 
 
 
@@ -84,7 +91,7 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
                 body = resp.content
 
         if resp.status_code >= 400:
-            log.debug(f'{client}\n{uri}\n{data}\n')
+            log.debug(f'{client}\n{uri}\n{data}\n{kwargs}')
             raise HTTPError(resp, body)
         return resp, body
 

@@ -22,3 +22,9 @@ gapi.login(user=user, password=password)
 ## Launching Attacks
 
 ## Organization and Team management
+
+```python
+import gremlinapi
+gremlinapi.config.GremlinAPIConfig.bearer_token = 'Bearer MU3...ZiTk...Lo...4zO..c='
+gremlinapi.orgs.GremlinAPIOrgs.list_orgs()
+```
