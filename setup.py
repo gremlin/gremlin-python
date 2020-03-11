@@ -4,9 +4,8 @@ from distutils.file_util import copy_file
 from setuptools import setup, find_packages
 
 
-__version__ = None
-with open('sendgrid/version.py') as f:
-    exec(f.read())
+__version__ = 0.1
+
 
 def getRequires():
     deps = ['python_http_client>=3.2.1']
