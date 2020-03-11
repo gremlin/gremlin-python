@@ -62,9 +62,9 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
         client = request_methods.get(method.upper())
         raw_content = kwargs.pop("raw_content", False)
         data = None
-        if data in kwargs:
+        if 'data' in kwargs:
             data = kwargs.pop('data')
-        elif body in kwargs:
+        elif 'body' in kwargs:
             if "Content-Type" not in kwargs["headers"]:
                 kwargs["headers"]["Content-Type"] = "application/json"
             data = json.dumps(kwargs.pop("body"))

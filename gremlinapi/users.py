@@ -6,6 +6,8 @@ import logging
 
 from gremlinapi.cli import register_cli_action
 
+from gremlinapi.exceptions import GremlinAuthError
+
 from gremlinapi.http_clients import get_gremlin_httpclient
 from gremlinapi.config import GremlinAPIConfig
 
@@ -78,4 +80,15 @@ class GremlinAPIUsersAuthMFA(object):
     @register_cli_action('auth_user_mfa', ('user', 'password', 'token', 'company',), ('get_company_session',))
     def auth_user(cls, https_client=get_gremlin_httpclient(), **kwargs):
         endpoint = '/users/auth/mfa/auth'
-        print(GremlinAPIConfig.base_uri)
+        uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
+        payload = {
+            'user': kwargs.get('user', None),
+            'password': kwargs.get('password', None),
+            'mfa_token_value': kwargs.get('mfa_token_value', None),
+            'company': kwargs.get('company', None)
+        }
+        if not (payload['user'] and payload['password'] and payload['mfa_token_value'] and payload['company']):
+            error_msg = f'User credential not supplied {kwargs}'
+            log.fatal(error_msg)
+            raise GremlinAuthError(error_msg)
+        return https_client.api_call('POST', uri, **{'body': payload, 'headers': dict()})
