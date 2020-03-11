@@ -82,12 +82,12 @@ class GremlinAPIUsersAuthMFA(object):
         endpoint = '/users/auth/mfa/auth'
         uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
         payload = {
-            'user': kwargs.get('user', None),
+            'email': kwargs.get('user', None),
             'password': kwargs.get('password', None),
-            'mfa_token_value': kwargs.get('mfa_token_value', None),
-            'company': kwargs.get('company', None)
+            'token': kwargs.get('mfa_token_value', None),
+            'companyName': kwargs.get('company', None)
         }
-        if not (payload['user'] and payload['password'] and payload['mfa_token_value'] and payload['company']):
+        if not (payload['email'] and payload['password'] and payload['token'] and payload['companyName']):
             error_msg = f'User credential not supplied {kwargs}'
             log.fatal(error_msg)
             raise GremlinAuthError(error_msg)
