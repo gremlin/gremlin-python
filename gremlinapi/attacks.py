@@ -2,7 +2,6 @@
 #
 # Copyright (C) 2020 Kyle Hultman <kyle@gremlin.com>, Gremlin Inc <sales@gremlin.com>
 
-import json
 import logging
 
 from gremlinapi.exceptions import (
