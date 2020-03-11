@@ -31,12 +31,12 @@ docker-push:
 
 docker-run:
 	@if ! test -f $(ENV_VARS); then touch $(ENV_VARS); fi
-	docker run --rm -v ~/.ssh/:/root/.ssh --mount type=bind,source="$(PWD)/../..",target=/opt/gremlin-python \
+	docker run --rm -v ~/.ssh/:/root/.ssh --mount type=bind,source="$(PWD)",target=/opt/gremlin-python \
 	--env-file=env.vars --name $(DOCKER_NAME) --entrypoint "/bin/ash" $(DOCKER_IMAGE):latest
 
 docker-run-interactive:
 	@if ! test -f $(ENV_VARS); then touch $(ENV_VARS); fi
-	docker run -it --rm -v ~/.ssh/:/root/.ssh --mount type=bind,source="$(PWD)/../..",target=/opt/gremlin-python \
+	docker run -it --rm -v ~/.ssh/:/root/.ssh --mount type=bind,source="$(PWD)",target=/opt/gremlin-python \
 	--env-file=env.vars --name $(DOCKER_NAME) --entrypoint "/bin/ash" $(DOCKER_IMAGE):latest
 
 $(MAJOR_VERSION_FILE):
