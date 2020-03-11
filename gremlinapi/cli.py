@@ -4,6 +4,7 @@
 
 import argparse
 import functools
+import importlib
 import logging
 import os
 import sys
@@ -36,7 +37,7 @@ def register_cli_action(cls_names, required=tuple(), optional=tuple()):
         return wrapped_f
     return wrap
 
-def _get_args(args=None):
+def _base_args():
     p = argparse.ArgumentParser(description="Gremlin API Command Line Interface")
     p.add_argument("--version",
                    help="Display the version.",
@@ -104,10 +105,23 @@ def _get_args(args=None):
                       action="store",
                       dest="gremlin_team_guid",
                       default=os.getenv('GREMLIN_TEAM_GUID', ''))
-    return p.parse_args(args), p
+    return p
+
+def _get_parser(cli_module):
+    parser = _base_args()
+    return cli_module.extend_parser(parser)
 
 def _parse_args():
-    args, parser = _get_args(sys.argv[1:])
+    parser = _base_args()
+    #args = parser.parse_known_args(sys.argv[1:])
+    (options, args) = parser.parse_known_args(sys.argv)
+    cli_module = importlib.import_module('gremlinapi.cli.cli')
+    parser = _get_parser(cli_module)
+    try:
+        import argcomplete
+        argcomplete.autocomplete(parser)
+    except Exception:
+        pass
     # Sanity check input
     try:
         if not (args.gremlin_user and args.gremlin_password) and not (args.gremlin_bearer or args.gremlin_api_key):
@@ -136,4 +150,9 @@ def _parse_args():
 
 def main():
     _parse_args()
+
+
+
+
+
 
