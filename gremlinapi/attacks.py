@@ -103,7 +103,7 @@ class GremlinAPIAttacks(object):
             log.critical(error_msg)
             raise GremlinParameterError(error_msg)
         if team_id:
-            endpoint += '?teamId={team_id};'
+            endpoint += '/?teamId={team_id};'
         (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
         return body
 
@@ -113,7 +113,7 @@ class GremlinAPIAttacks(object):
         method = 'DELETE'
         endpoint = '/attacks'
         if 'teamId' in kwargs:
-            endpoint += f'?teamId={kwargs["teamId"]}'
+            endpoint += f'/?teamId={kwargs["teamId"]}'
         headers = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
         return body
@@ -121,6 +121,17 @@ class GremlinAPIAttacks(object):
     @classmethod
     @register_cli_action('halt_attack', ('guid',), ('teamId',))
     def halt_attack(cls, https_client=get_gremlin_httpclient(), **kwargs):
-        pass
-
+        method = 'DELETE'
+        endpoint = '/attacks'
+        if guid:
+            endpoint += f'/{guid}'
+        else:
+            error_msg = f'Attack GUID was not passed: {kwargs}'
+            log.critical(error_msg)
+            raise GremlinParameterError(error_msg)
+        if 'teamId' in kwargs:
+            endpoint += f'/?teamId={kwargs["teamId"]}'
+        headers = https_client.header()
+        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        return body
 
