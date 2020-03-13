@@ -18,20 +18,18 @@ from gremlinapi.http_clients import get_gremlin_httpclient
 
 log = logging.getLogger('GremlinAPI.client')
 
-log = logging.getLogger('GremlinAPI.client')
-
 
 class GremlinAPIContainers(object):
 
     @classmethod
     @register_cli_action('list_containers', ('',), ('teamId'))
-    def list_containers(cls, http_client=get_gremlin_httpclient(), **kwargs):
+    def list_containers(cls, https_client=get_gremlin_httpclient(), **kwargs):
         endpoint = '/containers'
         method = 'GET'
-        headers = http_client.header()
+        headers = https_client.header()
         team_id = kwargs.get('teamId', None)
         if team_id:
             endpoint += f'/?teamId={team_id}'
-        (resp, body) = http_client.api_call(method, endpoint, **{'headers': headers})
+        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
         return body
 
