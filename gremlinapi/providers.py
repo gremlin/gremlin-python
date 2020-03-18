@@ -21,4 +21,22 @@ log = logging.getLogger('GremlinAPI.client')
 
 
 class GremlinAPIProviders(GremlinAPI):
-    pass
+
+    @classmethod
+    @register_cli_action('list_providers', ('',), ('',))
+    def list_providers(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        endpoint = '/providers'
+        header = https_client.header()
+        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        return body
+
+    @classmethod
+    @register_cli_action('list_aws_services', ('',), ('',))
+    def list_aws_services(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        endpoint = '/providers/aws'
+        header = https_client.header()
+        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        return body
+
