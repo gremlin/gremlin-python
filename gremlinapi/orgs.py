@@ -35,11 +35,7 @@ class GremlinAPIOrgs(GremlinAPI):
     @register_cli_action('get_org', ('identifier',), ('',))
     def get_org(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
-        identifier = kwargs.get('identifier', None)
-        if not identifier:
-            error_msg = f'Organization identifier not provided to org endpoint: {kwargs}'
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
+        identifier = cls._error_if_not_identifier(**kwargs)
         endpoint = f'/orgs/{identifier}'
         header = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
@@ -50,11 +46,7 @@ class GremlinAPIOrgs(GremlinAPI):
     def create_org(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
         endpoint = '/orgs'
-        data = kwargs.get('body', None)
-        if not data:
-            error_msg = f'JSON body not provided to org endpoint, create_org: {kwargs}'
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
+        data = cls._error_if_not_body(**kwargs)
         header = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'body': data, 'headers': header})
         return body
