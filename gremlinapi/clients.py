@@ -22,9 +22,6 @@ log = logging.getLogger('GremlinAPI.client')
 
 class GremlinAPIClients(GremlinAPI):
 
-    def __init__(self):
-        pass
-
     @classmethod
     @register_cli_action('activate_client', ('guid',), ('teamId',))
     def activate_client(cls, https_client=get_gremlin_httpclient(), **kwargs):
