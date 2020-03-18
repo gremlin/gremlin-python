@@ -90,6 +90,7 @@ class GremlinAPIKubernetesAttacks(GremlinAPI):
             error_msg = f'JSON Attack body not provided: {kwargs}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
+        team_id = kwargs.get('teamId', None)
         if team_id:
             endpoint += f'/?teamId={team_id}'
         headers = https_client.header()
@@ -104,6 +105,7 @@ class GremlinAPIKubernetesTargets(GremlinAPI):
     def list_kubernetes_targets(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = '/kubernetes/targets'
+        team_id = kwargs.get('teamId', None)
         if team_id:
             endpoint += f'/?teamId={team_id}'
         headers = https_client.header()
