@@ -27,7 +27,7 @@ class GremlinAPIExecutions(GremlinAPI):
         task_id = kwargs.get('taskId', None)
         if task_id:
             endpoint += f'/?taskId={task_id}'
-        return cls._optional_taskid_endpoint(endpoint, **kwargs)
+        return cls._optional_team_endpoint(endpoint, **kwargs)
 
     @classmethod
     @register_cli_action('list_executions', ('',), ('taskId', 'teamId'))
