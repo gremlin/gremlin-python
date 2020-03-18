@@ -31,10 +31,7 @@ class GremlinAPIMetrics(GremlinAPI):
             error_msg = f'Attack ID not provided to metrics endpoint: {kwargs}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        endpoint = f'/metrics/attacks/{attack_id}'
-        team_id = kwargs.get('teamId')
-        if team_id:
-            endpoint += f'/?teamId={team_id}'
+        endpoint = cls._optional_team_endpoint(f'/metrics/attacks/{attack_id}', **kwargs)
         headers = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
         return body
@@ -53,10 +50,7 @@ class GremlinAPIMetrics(GremlinAPI):
             error_msg = f'Scenario Run Number not provided to metrics endpoint: {kwargs}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        endpoint = f'/metrics/scenarios/{scenario_id}/runs/{scenario_run_number}'
-        team_id = kwargs.get('teamId')
-        if team_id:
-            endpoint += f'/?teamId={team_id}'
+        endpoint = cls._optional_team_endpoint(f'/metrics/scenarios/{scenario_id}/runs/{scenario_run_number}', **kwargs)
         headers = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
         return body

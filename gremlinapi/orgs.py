@@ -63,10 +63,7 @@ class GremlinAPIOrgs(GremlinAPI):
     @register_cli_action('new_certificate', ('',), ('teamId',))
     def new_certificate(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
-        endpoint = '/orgs/auth/certificate'
-        team_id = kwargs.get('teamId', None)
-        if team_id:
-            endpoint += f'/?teamId={team_id}'
+        endpoint = cls._optional_team_endpoint('/orgs/auth/certificate', **kwargs)
         header = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
         return body
@@ -75,10 +72,7 @@ class GremlinAPIOrgs(GremlinAPI):
     @register_cli_action('delete_certificate', ('',), ('teamId',))
     def delete_certificate(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'DELETE'
-        endpoint = '/orgs/auth/certificate'
-        team_id = kwargs.get('teamId', None)
-        if team_id:
-            endpoint += f'/?teamId={team_id}'
+        endpoint = cls._optional_team_endpoint('/orgs/auth/certificate', **kwargs)
         header = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
         return body
@@ -87,10 +81,7 @@ class GremlinAPIOrgs(GremlinAPI):
     @register_cli_action('delete_old_certificate', ('',), ('teamId',))
     def delete_old_certificate(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'DELETE'
-        endpoint = '/orgs/auth/certificate/old'
-        team_id = kwargs.get('teamId', None)
-        if team_id:
-            endpoint += f'/?teamId={team_id}'
+        endpoint = cls._optional_team_endpoint('/orgs/auth/certificate/old', **kwargs)
         header = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
         return body
@@ -99,10 +90,7 @@ class GremlinAPIOrgs(GremlinAPI):
     @register_cli_action('reset_secret', ('',), ('identifier', 'teamId'))
     def reset_secret(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
-        endpoint = '/orgs/auth/secret/reset'
-        team_id = kwargs.get('teamId', None)
-        if team_id:
-            endpoint += f'/?teamId={team_id}'
+        endpoint = cls._optional_team_endpoint('/orgs/auth/secret/reset', **kwargs)
         data = dict()
         identifier = kwargs.get('identifier', None)
         if identifier:

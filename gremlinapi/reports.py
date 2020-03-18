@@ -24,12 +24,11 @@ log = logging.getLogger('GremlinAPI.client')
 
 class GremlinAPIReports(GremlinAPI):
 
-    @staticmethod
-    def _report_endpoint(endpoint, **kwargs):
+    @classmethod
+    def _report_endpoint(cls, endpoint, **kwargs):
         start = kwargs.get('start', None)
         end = kwargs.get('end', None)
         period = kwargs.get('period', None)
-        team_id = kwargs.get('teamId', None)
         if start or end or period or team_id:
             endpoint += '/?'
             if start:
@@ -38,9 +37,7 @@ class GremlinAPIReports(GremlinAPI):
                 endpoint += f'end={end}&'
             if period:
                 endpoint += f'period={period}&'
-            if team_id:
-                endpoint += f'teamId={team_id}'
-        return endpoint
+        return cls._optional_team_endpoint(endpoint, **kwargs)
 
     @classmethod
     @register_cli_action('report_attacks', ('',), ('start', 'end', 'period', 'teamId'))

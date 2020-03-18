@@ -26,10 +26,7 @@ class GremlinAPIMetadata(GremlinAPI):
     @register_cli_action('get_metadata', ('',), ('teamId',))
     def get_metadata(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
-        endpoint = '/metadata'
-        team_id = kwargs.get('teamId', None)
-        if team_id:
-            endpoint += f'/?teamId={team_id}'
+        endpoint = cls._optional_team_endpoint('/metadata', **kwargs)
         headers = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
         return body
