@@ -26,10 +26,7 @@ class GremlinAPIKubernetesAttacks(GremlinAPI):
     @register_cli_action('list_all_kubernetes_attacks', ('',), ('teamId'))
     def list_all_kubernetes_attacks(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
-        endpoint = '/kubernetes/attacks'
-        team_id = kwargs.get('teamId', None)
-        if team_id:
-            endpoint += f'/?teamId={team_id}'
+        endpoint = cls._optional_team_endpoint('/kubernetes/attacks', **kwargs)
         headers = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
         return body
@@ -43,10 +40,7 @@ class GremlinAPIKubernetesAttacks(GremlinAPI):
             error_msg = f'Attack GUID not supplied to get_k8_attack: {kwargs}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        endpoint = f'/kubernetes/attacks/{guid}'
-        team_id = kwargs.get('teamId', None)
-        if team_id:
-            endpoint += f'/?teamId={team_id}'
+        endpoint = cls._optional_team_endpoint(f'/kubernetes/attacks/{guid}', **kwargs)
         headers = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
         return body
@@ -60,10 +54,7 @@ class GremlinAPIKubernetesAttacks(GremlinAPI):
             error_msg = f'Attack GUID not supplied to get_k8_attack: {kwargs}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        endpoint = f'/kubernetes/attacks/{guid}/halt'
-        team_id = kwargs.get('teamId', None)
-        if team_id:
-            endpoint += f'/?teamId={team_id}'
+        endpoint = cls._optional_team_endpoint(f'/kubernetes/attacks/{guid}/halt', **kwargs)
         headers = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
         return body
@@ -72,10 +63,7 @@ class GremlinAPIKubernetesAttacks(GremlinAPI):
     @register_cli_action('halt_all_kubernetes_attacks', ('',), ('teamId',))
     def halt_all_kubernetes_attacks(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
-        endpoint = f'/kubernetes/attacks/halt'
-        team_id = kwargs.get('teamId', None)
-        if team_id:
-            endpoint += f'/?teamId={team_id}'
+        endpoint = cls._optional_team_endpoint('/kubernetes/attacks/halt', **kwargs)
         headers = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
         return body
@@ -84,15 +72,12 @@ class GremlinAPIKubernetesAttacks(GremlinAPI):
     @register_cli_action('new_kubernetes_attack', ('body',), ('teamId'))
     def new_kubernetes_attack(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
-        endpoint = f'/kubernetes/attacks/new'
         data = kwargs.get('body', None)
         if not data:
             error_msg = f'JSON Attack body not provided: {kwargs}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        team_id = kwargs.get('teamId', None)
-        if team_id:
-            endpoint += f'/?teamId={team_id}'
+        endpoint = cls._optional_team_endpoint('/kubernetes/attacks/new', **kwargs)
         headers = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'body': data, 'headers': headers})
         return body
@@ -104,10 +89,7 @@ class GremlinAPIKubernetesTargets(GremlinAPI):
     @register_cli_action('list_kubernetes_targets', ('',), ('teamId',))
     def list_kubernetes_targets(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
-        endpoint = '/kubernetes/targets'
-        team_id = kwargs.get('teamId', None)
-        if team_id:
-            endpoint += f'/?teamId={team_id}'
+        endpoint = cls._optional_team_endpoint('/kubernetes/targets', **kwargs)
         headers = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'body': data, 'headers': headers})
         return body
