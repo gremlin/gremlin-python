@@ -30,7 +30,7 @@ class GremlinAPI(object):
         if team_id:
             if '/?' in endpoint and not str(endpoint).endswith('?'):
                 endpoint += f'&teamId={team_id}'
-            elif '/?' in endpoint and str(endpoint).endswith('?'):
+            elif '/?' in endpoint and (str(endpoint).endswith('?') or str(endpoint).endswith('&')):
                 endpoint += f'teamId={team_id}'
             elif '/?' not in endpoint:
                 endpoint += f'/?teamId={team_id}'
@@ -38,7 +38,7 @@ class GremlinAPI(object):
 
     @classmethod
     def _error_if_not_body(cls, **kwargs):
-        body = kwargs.get('guid', None)
+        body = kwargs.get('body', None)
         if not body:
             error_msg = f'JSON Body not supplied: {kwargs}'
             log.fatal(error_msg)
@@ -62,4 +62,22 @@ class GremlinAPI(object):
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
         return identifier
+
+    @classmethod
+    def _payload(cls, **kwargs):
+        headers = kwargs.get('headers', None)
+        body = kwargs.get('body', None)
+        data = kwargs.get('data', None)
+        payload = {'headers': headers, 'data': data, 'body': body}
+        payload = {k: v for k, v in payload.items() if v is not None}
+        return payload
+
+
+    @classmethod
+    def _warn_if_not_body(cls, **kwargs):
+        body = kwargs.get('body', None)
+        if not body:
+            error_msg = f'JSON Body not supplied: {kwargs}'
+            log.warning(error_msg)
+        return body
 

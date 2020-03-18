@@ -27,8 +27,8 @@ class GremlinAPIScenarios(GremlinAPI):
     def list_scenarios(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._optional_team_endpoint('/scenarios', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -37,8 +37,8 @@ class GremlinAPIScenarios(GremlinAPI):
         method = 'POST'
         data = cls._error_if_not_body(**kwargs)
         endpoint = cls._optional_team_endpoint('/scenarios', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'body': data, 'headers': header})
+        payload = cls._payload(**{'headers': https_client.header(), 'body': data})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -47,8 +47,8 @@ class GremlinAPIScenarios(GremlinAPI):
         method = 'GET'
         guid = cls._error_if_not_guid(**kwargs)
         endpoint = cls._optional_team_endpoint(f'/scenarios/{guid}', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -58,18 +58,56 @@ class GremlinAPIScenarios(GremlinAPI):
         guid = cls._error_if_not_guid(**kwargs)
         data = cls._error_if_not_body(**kwargs)
         endpoint = cls._optional_team_endpoint(f'/scenarios/{guid}', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'body': data, 'headers': header})
+        payload = cls._payload(**{'headers': https_client.header(), 'body': data})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
     @register_cli_action('archive_scenario', ('guid',), ('teamId',))
     def archive_scenario(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
-        method = 'GET'
+        method = 'POST'
         guid = cls._error_if_not_guid(**kwargs)
         endpoint = cls._optional_team_endpoint(f'/scenarios/{guid}/archive', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('restore_scenario', ('guid',), ('teamId',))
+    def restore_scenario(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'POST'
+        guid = cls._error_if_not_guid(**kwargs)
+        endpoint = cls._optional_team_endpoint(f'/scenarios/{guid}/restore', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('list_scenario_runs', ('guid',), ('startDate', 'endDate', 'teamId',))
+    def list_scenario_runs(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        guid = cls._error_if_not_guid(**kwargs)
+        timeset = ''
+        start = kwargs.get('startDate', None)
+        end = kwargs.get('endDate', None)
+        if start:
+            timeset += f'startDate={start}&'
+        if end:
+            timeset += f'endDate={end}'
+        endpoint = cls._optional_team_endpoint(f'/scenarios/{guid}/runs/?{timeset}', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('run_scenario', ('guid',), ('teamId', 'body',))
+    def run_scenario(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'POST'
+        guid = cls._error_if_not_guid(**kwargs)
+        data = cls._warn_if_not_body(**kwargs)
+        endpoint = cls._optional_team_endpoint(f'/scenarios/{guid}/runs', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header(), 'body': data})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
 
