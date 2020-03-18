@@ -4,6 +4,7 @@
 
 import logging
 
+from gremlinapi.cli import register_cli_action
 from gremlinapi.exceptions import (
     GremlinParameterError,
     ProxyError,
@@ -12,14 +13,14 @@ from gremlinapi.exceptions import (
     HTTPError
 )
 
-from gremlinapi.cli import register_cli_action
+from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.http_clients import get_gremlin_httpclient
 
 
 log = logging.getLogger('GremlinAPI.client')
 
 
-class GremlinAPICompanies(object):
+class GremlinAPICompanies(GremlinAPI):
 
     @classmethod
     @register_cli_action('get_company', ('identifier',), ('',))

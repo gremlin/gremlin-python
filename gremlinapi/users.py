@@ -5,23 +5,29 @@
 import logging
 
 from gremlinapi.cli import register_cli_action
+from gremlinapi.exceptions import (
+    GremlinParameterError,
+    ProxyError,
+    ClientError,
+    HTTPTimeout,
+    HTTPError
+)
 
-from gremlinapi.exceptions import GremlinAuthError
-
+from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.http_clients import get_gremlin_httpclient
-from gremlinapi.config import GremlinAPIConfig
+
 
 log = logging.getLogger('GremlinAPI.client')
 
 
-class GremlinAPIUsers(object):
+class GremlinAPIUsers(GremlinAPI):
 
     def __init__(self):
         pass
 
     @classmethod
     @register_cli_action('list_user', ('',), ('teamId',))
-    def list_users(cls, https_client=get_gremlin_httpclient(), **kwargs):
+    def list_users(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         endpoint = '/users'
         payload = {'teamId': kwargs.get('teamId', None)}
         if not (payload['teamId']):
@@ -35,30 +41,30 @@ class GremlinAPIUsers(object):
 
     @classmethod
     @register_cli_action('invite_user', ('',), ('',))
-    def invite_user(cls, https_client=get_gremlin_httpclient(), **kwargs):
+    def invite_user(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         endpoint = '/users/invite'
         pass
 
     @classmethod
     @register_cli_action('delete_user', ('email',), ('',))
-    def delete_user(cls, https_client=get_gremlin_httpclient(), **kwargs):
+    def delete_user(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         enpoint = '/users'
         pass
 
     @classmethod
     @register_cli_action('update_user', ('',), ('',))
-    def update_user(cls, https_client=get_gremlin_httpclient(), **kwargs):
+    def update_user(cls, https_client=get_gremlin_httpclient(), *args, **kwargs:
         enpoint = '/users'
         pass
 
-class GremlinAPIUsersAuth(object):
+class GremlinAPIUsersAuth(GremlinAPI):
 
     def __init__(self):
         pass
 
     @classmethod
     @register_cli_action('auth_user', ('',), ('',))
-    def auth_user(cls, https_client=get_gremlin_httpclient(), **kwargs):
+    def auth_user(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         endpoint = '/users/auth'
         payload = {
             'email': kwargs.get('user', None),
@@ -74,28 +80,31 @@ class GremlinAPIUsersAuth(object):
 
     @classmethod
     @register_cli_action('auth_user_sso', ('',), ('',))
-    def auth_user_sso(cls, https_client=get_gremlin_httpclient(), **kwargs):
+    def auth_user_sso(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         pass
 
     @classmethod
     @register_cli_action('invalidate_session', ('',), ('',))
-    def invalidate_session(cls, https_client=get_gremlin_httpclient(), **kwargs):
+    def invalidate_session(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         pass
 
     @classmethod
     @register_cli_action('email_companies', ('',), ('',))
-    def email_companies(cls, https_client=get_gremlin_httpclient(), **kwargs):
+    def email_companies(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         pass
 
     @classmethod
     @register_cli_action('saml_metadata', ('',), ('',))
-    def saml_metadata(cls, https_client=get_gremlin_httpclient(), **kwargs):
+    def saml_metadata(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         pass
 
-class GremlinAPIUsersAuthMFA(object):
+class GremlinAPIUsersAuthMFA(GremlinAPI):
+    def __init__(self):
+        super.__init__(self)
+
     @classmethod
     @register_cli_action('auth_user_mfa', ('user', 'password', 'token', 'company',), ('get_company_session',))
-    def auth_user(cls, https_client=get_gremlin_httpclient(), **kwargs):
+    def auth_user(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         endpoint = '/users/auth/mfa/auth'
         payload = {
             'email': kwargs.get('user', None),

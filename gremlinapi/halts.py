@@ -4,6 +4,7 @@
 
 import logging
 
+from gremlinapi.cli import register_cli_action
 from gremlinapi.exceptions import (
     GremlinParameterError,
     ProxyError,
@@ -12,7 +13,7 @@ from gremlinapi.exceptions import (
     HTTPError
 )
 
-from gremlinapi.cli import register_cli_action
+from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.http_clients import get_gremlin_httpclient
 
 
@@ -20,7 +21,7 @@ log = logging.getLogger('GremlinAPI.client')
 
 
 
-class GremlinAPIHalts(object):
+class GremlinAPIHalts(GremlinAPI):
 
     @classmethod
     @register_cli_action('halt_all_attacks', ('',), ('teamId', 'body'))
