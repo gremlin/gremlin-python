@@ -23,6 +23,15 @@ log = logging.getLogger('GremlinAPI.client')
 class GremlinAPIScenarios(GremlinAPI):
 
     @classmethod
+    def _error_if_not_run_number(cls, **kwargs):
+        run_number = kwargs.get('runNumber', None)
+        if not run_number:
+            error_msg = f'parameter runNumber not passed: {kwargs}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        return run_number
+
+    @classmethod
     @register_cli_action('list_scenarios', ('',), ('teamId',))
     def list_scenarios(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
@@ -110,6 +119,120 @@ class GremlinAPIScenarios(GremlinAPI):
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
+    @classmethod
+    @register_cli_action('get_scenario_run_details', ('guid', 'runNumber',), ('teamId',))
+    def get_scenario_run_details(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        guid = cls._error_if_not_guid(**kwargs)
+        run_number = cls._error_if_not_run_number(**kwargs)
+        endpoint = cls._optional_team_endpoint(f'/scenarios/{guid}/runs/{run_number}', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('update_scenario_result_flags', ('guid', 'runNumber', 'body',), ('teamId',))
+    def update_scenario_result_flags(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'PUT'
+        guid = cls._error_if_not_guid(**kwargs)
+        run_number = cls._error_if_not_run_number(**kwargs)
+        data = cls._error_if_not_body(**kwargs)
+        endpoint = cls._optional_team_endpoint(f'/scenarios/{guid}/runs/{run_number}/resultFlags', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header(), 'body': data})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('update_scenario_result_notes', ('guid', 'runNumber', 'body',), ('teamId',))
+    def update_scenario_result_notes(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'PUT'
+        guid = cls._error_if_not_guid(**kwargs)
+        run_number = cls._error_if_not_run_number(**kwargs)
+        data = cls._error_if_not_body(**kwargs)
+        endpoint = cls._optional_team_endpoint(f'/scenarios/{guid}/runs/{run_number}/resultNotes', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header(), 'body': data})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('list_scenario_schedules', ('guid',), ('teamId',))
+    def list_scenario_schedules(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        guid = cls._error_if_not_guid(**kwargs)
+        endpoint = cls._optional_team_endpoint(f'/scenarios/{guid}/schedules', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('list_active_scenarios', ('',), ('teamId',))
+    def list_active_scenarios(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        endpoint = cls._optional_team_endpoint(f'/scenarios/active', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('list_archived_scenarios', ('',), ('teamId',))
+    def list_archived_scenarios(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        endpoint = cls._optional_team_endpoint(f'/scenarios/archived', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('list_draft_scenarios', ('',), ('teamId',))
+    def list_draft_scenarios(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        endpoint = cls._optional_team_endpoint(f'/scenarios/drafts', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('halt_scenario', ('guid', 'runNumber'), ('teamId',))
+    def list_draft_scenarios(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'POST'
+        guid = cls._error_if_not_guid(**kwargs)
+        run_number = cls._error_if_not_run_number(**kwargs)
+        endpoint = cls._optional_team_endpoint(f'/scenarios/halt/{guid}/runs/{run_number}', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
 
 class GremlinAPIScenariosRecommended(GremlinAPI):
-    pass
+
+    @classmethod
+    @register_cli_action('list_recommended_scenarios', ('',), ('teamId',))
+    def list_recommended_scenarios(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        endpoint = cls._optional_team_endpoint(f'/scenarios/recommended', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('get_recommended_scenario', ('guid',), ('teamId',))
+    def get_recommended_scenario(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        guid = cls._error_if_not_guid(**kwargs)
+        endpoint = cls._optional_team_endpoint(f'/scenarios/recommended/{guid}', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('get_recommended_scenario_static', ('staticEndpointName',), ('teamId',))
+    def get_recommended_scenario_static(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        static_endpoint_name = kwargs.get('staticEndpointName', None)
+        if not static_endpoint_name:
+            error_msg = f'staticEndpointName parameter not supplied: {kwargs}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        endpoint = cls._optional_team_endpoint(f'/scenarios/recommended/static/{static_endpoint_name}', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
