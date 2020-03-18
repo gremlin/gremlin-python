@@ -21,7 +21,16 @@ log = logging.getLogger('GremlinAPI.client')
 
 
 class GremlinAPIScenarios(GremlinAPI):
-    pass
+
+    @classmethod
+    @register_cli_action('list_scenarios', ('',), ('teamId',))
+    def list_scenarios(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        endpoint = cls._optional_team_endpoint('/scenarios', **kwargs)
+        header = https_client.header()
+        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        return body
+
 
 class GremlinAPIScenariosRecommended(GremlinAPI):
     pass

@@ -23,3 +23,14 @@ class GremlinAPI(object):
     def __init__(self):
         pass
 
+    @classmethod
+    def _optional_team_endpoint(cls, endpoint, **kwargs):
+        team_id = kwargs.get('teamId', None)
+        if team_id:
+            if '/?' in endpoint and not str(endpoint).endswith('?'):
+                endpoint += f'&teamId={team_id}'
+            elif '/?' in endpoint and str(endpoint).endswith('?'):
+                endpoint += f'teamId={team_id}'
+            elif '/?' not in endpoint:
+                endpoint += f'/?teamId={team_id}'
+        return endpoint
