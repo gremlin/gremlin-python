@@ -23,18 +23,17 @@ log = logging.getLogger('GremlinAPI.client')
 class GremlinAPIExecutions(GremlinAPI):
 
     @classmethod
+    def _optional_taskid_endpoint(cls, endpoint, **kwargs):
+        task_id = kwargs.get('taskId', None)
+        if task_id:
+            endpoint += f'/?taskId={task_id}'
+        return cls._optional_taskid_endpoint(endpoint, **kwargs)
+
+    @classmethod
     @register_cli_action('list_executions', ('',), ('taskId', 'teamId'))
     def list_executions(cls, https_client=get_gremlin_httpclient(), **kwargs):
-        endpoint = '/executions'
         method = 'GET'
-        task_id = kwargs.get('taskId', None)
-        team_id = kwargs.get('teamId', None)
-        if task_id or team_id:
-            endpoint += '/?'
-            if task_id:
-                endpoint += f'taskId={task_id}&'
-            if team_id:
-                endpoint += f'teamId={team_id}'
+        endpoint = cls._optional_taskid_endpoint('/executions', **kwargs)
         headers = https_client.header()
         (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
         return body
