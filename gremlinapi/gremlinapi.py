@@ -8,6 +8,7 @@ import time
 
 from gremlinapi.exceptions import (
     APIError,
+    GremlinParameterError,
     ProxyError,
     ClientError,
     HTTPTimeout,
@@ -34,3 +35,21 @@ class GremlinAPI(object):
             elif '/?' not in endpoint:
                 endpoint += f'/?teamId={team_id}'
         return endpoint
+
+    @classmethod
+    def _error_if_not_body(cls, **kwargs):
+        body = kwargs.get('guid', None)
+        if not body:
+            error_msg = f'JSON Body not supplied: {kwargs}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        return body
+
+    @classmethod
+    def _error_if_not_guid(cls, **kwargs):
+        guid = kwargs.get('guid', None)
+        if not guid:
+            error_msg = f'GUID parameter not supplied: {kwargs}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        return guid
