@@ -51,7 +51,7 @@ class GremlinAPICompanies(GremlinAPI):
         return body
 
     @classmethod
-    @register_cli_action('invite_company_user', ('identifier','body'), ('',))
+    @register_cli_action('invite_company_user', ('identifier', 'body'), ('',))
     def invite_company_user(cls, https_client=get_gremlin_httpclient(), **kwargs):
         identifier = kwargs.get('identifier', None)
         if not identifier:

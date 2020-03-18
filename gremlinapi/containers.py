@@ -25,12 +25,9 @@ class GremlinAPIContainers(GremlinAPI):
     @classmethod
     @register_cli_action('list_containers', ('',), ('teamId'))
     def list_containers(cls, https_client=get_gremlin_httpclient(), **kwargs):
-        endpoint = '/containers'
         method = 'GET'
+        endpoint = cls._optional_team_endpoint(f'/containers', **kwargs)
         headers = https_client.header()
-        team_id = kwargs.get('teamId', None)
-        if team_id:
-            endpoint += f'/?teamId={team_id}'
         (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
         return body
 
