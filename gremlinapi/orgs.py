@@ -26,7 +26,7 @@ class GremlinAPIOrgs(GremlinAPI):
         pass
 
     @classmethod
-    def list_orgs(cls, https_client=get_gremlin_httpclient(), **kwargs):
+    def list_orgs(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = '/orgs'
         header = https_client.header()
