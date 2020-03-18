@@ -46,6 +46,15 @@ class GremlinAPI(object):
         return body
 
     @classmethod
+    def _error_if_not_email(cls, **kwargs):
+        email = kwargs.get('email', None)
+        if not email:
+            error_msg = f'email address not passed: {kwargs}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        return email
+
+    @classmethod
     def _error_if_not_guid(cls, **kwargs):
         guid = kwargs.get('guid', None)
         if not guid:
@@ -62,6 +71,15 @@ class GremlinAPI(object):
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
         return identifier
+
+    @classmethod
+    def _error_if_not_team_id(cls, **kwargs):
+        team_id = kwargs.get('teamId', None)
+        if not team_id:
+            error_msg = f'teamId required parameter not supplied: {kwargs}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        return team_id
 
     @classmethod
     def _payload(cls, **kwargs):
