@@ -27,8 +27,8 @@ class GremlinAPIKubernetesAttacks(GremlinAPI):
     def list_all_kubernetes_attacks(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._optional_team_endpoint('/kubernetes/attacks', **kwargs)
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -37,8 +37,8 @@ class GremlinAPIKubernetesAttacks(GremlinAPI):
         method = 'GET'
         guid = cls._error_if_not_guid(**kwargs)
         endpoint = cls._optional_team_endpoint(f'/kubernetes/attacks/{guid}', **kwargs)
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -47,8 +47,8 @@ class GremlinAPIKubernetesAttacks(GremlinAPI):
         method = 'POST'
         guid = cls._error_if_not_guid(**kwargs)
         endpoint = cls._optional_team_endpoint(f'/kubernetes/attacks/{guid}/halt', **kwargs)
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -56,8 +56,8 @@ class GremlinAPIKubernetesAttacks(GremlinAPI):
     def halt_all_kubernetes_attacks(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
         endpoint = cls._optional_team_endpoint('/kubernetes/attacks/halt', **kwargs)
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -66,8 +66,8 @@ class GremlinAPIKubernetesAttacks(GremlinAPI):
         method = 'POST'
         data = cls._error_if_not_body(**kwargs)
         endpoint = cls._optional_team_endpoint('/kubernetes/attacks/new', **kwargs)
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'body': data, 'headers': headers})
+        payload = cls._payload(**{'headers': https_client.header(), 'body': data})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
 
@@ -78,7 +78,7 @@ class GremlinAPIKubernetesTargets(GremlinAPI):
     def list_kubernetes_targets(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._optional_team_endpoint('/kubernetes/targets', **kwargs)
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'body': data, 'headers': headers})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 

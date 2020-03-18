@@ -34,7 +34,7 @@ class GremlinAPIExecutions(GremlinAPI):
     def list_executions(cls, https_client=get_gremlin_httpclient(), **kwargs):
         method = 'GET'
         endpoint = cls._optional_taskid_endpoint('/executions', **kwargs)
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 

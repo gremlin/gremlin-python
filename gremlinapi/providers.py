@@ -27,8 +27,8 @@ class GremlinAPIProviders(GremlinAPI):
     def list_providers(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = '/providers'
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -36,7 +36,7 @@ class GremlinAPIProviders(GremlinAPI):
     def list_aws_services(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = '/providers/aws'
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 

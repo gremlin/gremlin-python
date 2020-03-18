@@ -44,8 +44,8 @@ class GremlinAPIReports(GremlinAPI):
     def report_attacks(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._report_endpoint('/reports/attacks', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -53,8 +53,8 @@ class GremlinAPIReports(GremlinAPI):
     def report_clients(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._report_endpoint('/reports/clients', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -62,8 +62,8 @@ class GremlinAPIReports(GremlinAPI):
     def report_companies(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._report_endpoint('/reports/companies', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -71,8 +71,8 @@ class GremlinAPIReports(GremlinAPI):
     def report_teams(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._report_endpoint('/reports/teams', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -80,8 +80,8 @@ class GremlinAPIReports(GremlinAPI):
     def report_users(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._report_endpoint('/reports/users', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
 class GremlinAPIReportsSecurity(GremlinAPI):
@@ -119,8 +119,8 @@ class GremlinAPIReportsSecurity(GremlinAPI):
     def report_security_access(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._report_endpoint('/reports/security/access', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -128,8 +128,8 @@ class GremlinAPIReportsSecurity(GremlinAPI):
     def report_security_access_by_team(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._team_report_endpoint('/reports/security/accessByTeam', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -137,8 +137,8 @@ class GremlinAPIReportsSecurity(GremlinAPI):
     def report_security_activity(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._report_endpoint('/reports/security/activity', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -146,8 +146,8 @@ class GremlinAPIReportsSecurity(GremlinAPI):
     def report_security_activity_by_team(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._team_report_endpoint('/reports/security/activityByTeam', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -155,8 +155,8 @@ class GremlinAPIReportsSecurity(GremlinAPI):
     def report_security_auth(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._report_endpoint('/reports/security/auth', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -164,8 +164,8 @@ class GremlinAPIReportsSecurity(GremlinAPI):
     def report_security_auth_by_team(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._team_report_endpoint('/reports/security/authByTeam', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -173,8 +173,8 @@ class GremlinAPIReportsSecurity(GremlinAPI):
     def report_security_denied_access(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._report_endpoint('/reports/security/deniedAccess', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -182,8 +182,8 @@ class GremlinAPIReportsSecurity(GremlinAPI):
     def report_security_denied_access_by_team(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._team_report_endpoint('/reports/security/deniedAccessByTeam', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -191,8 +191,8 @@ class GremlinAPIReportsSecurity(GremlinAPI):
     def report_security_denied_access_auth_endpoints(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._report_endpoint('/reports/security/deniedAccessAuthEndpoints', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -202,8 +202,8 @@ class GremlinAPIReportsSecurity(GremlinAPI):
                                                             *args, **kwargs):
         method = 'GET'
         endpoint = cls._team_report_endpoint('/reports/security/deniedAccessAuthEndpointsByTeam', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -211,8 +211,8 @@ class GremlinAPIReportsSecurity(GremlinAPI):
     def report_security_denied_user_access(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._user_report_endpoint('/reports/security/deniedUserAccess', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -221,8 +221,8 @@ class GremlinAPIReportsSecurity(GremlinAPI):
     def report_security_denied_user_access_auth_endpoints(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._user_report_endpoint('/reports/security/deniedUserAccessAuthEndpoints', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -230,8 +230,8 @@ class GremlinAPIReportsSecurity(GremlinAPI):
     def report_security_user_access(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._user_report_endpoint('/reports/security/userAccess', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -239,8 +239,8 @@ class GremlinAPIReportsSecurity(GremlinAPI):
     def report_security_user_activity(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._user_report_endpoint('/reports/security/userActivity', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -248,7 +248,7 @@ class GremlinAPIReportsSecurity(GremlinAPI):
     def report_security_user_auth(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = cls._user_report_endpoint('/reports/security/userAuth', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 

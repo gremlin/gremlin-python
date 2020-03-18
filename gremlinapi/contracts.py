@@ -29,7 +29,7 @@ class GremlinAPIContracts(GremlinAPI):
         identifier = cls._error_if_not_identifier(**kwargs)
         data = cls._error_if_not_body(**kwargs)
         endpoint = f'/companies/{identifier}/contracts/current'
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'body': data, 'headers': headers})
+        payload = cls._payload(**{'headers': https_client.header(), 'body': data})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 

@@ -55,8 +55,8 @@ class GremlinAPIMetrics(GremlinAPI):
         method = 'GET'
         attack_id = cls._error_if_not_attack_id(**kwargs)
         endpoint = cls._optional_team_endpoint(f'/metrics/attacks/{attack_id}', **kwargs)
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -66,7 +66,7 @@ class GremlinAPIMetrics(GremlinAPI):
         scenario_id = cls._error_if_not_scenario_id(**kwargs)
         scenario_run_number = cls._error_if_not_scenario_run_number(**kwargs)
         endpoint = cls._optional_team_endpoint(f'/metrics/scenarios/{scenario_id}/runs/{scenario_run_number}', **kwargs)
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 

@@ -27,8 +27,8 @@ class GremlinAPIOrgs(GremlinAPI):
     def list_orgs(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
         endpoint = '/orgs'
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -37,8 +37,8 @@ class GremlinAPIOrgs(GremlinAPI):
         method = 'GET'
         identifier = cls._error_if_not_identifier(**kwargs)
         endpoint = f'/orgs/{identifier}'
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -47,8 +47,8 @@ class GremlinAPIOrgs(GremlinAPI):
         method = 'POST'
         endpoint = '/orgs'
         data = cls._error_if_not_body(**kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'body': data, 'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -56,8 +56,8 @@ class GremlinAPIOrgs(GremlinAPI):
     def new_certificate(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
         endpoint = cls._optional_team_endpoint('/orgs/auth/certificate', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -65,8 +65,8 @@ class GremlinAPIOrgs(GremlinAPI):
     def delete_certificate(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'DELETE'
         endpoint = cls._optional_team_endpoint('/orgs/auth/certificate', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -74,8 +74,8 @@ class GremlinAPIOrgs(GremlinAPI):
     def delete_old_certificate(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'DELETE'
         endpoint = cls._optional_team_endpoint('/orgs/auth/certificate/old', **kwargs)
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': header})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -87,7 +87,7 @@ class GremlinAPIOrgs(GremlinAPI):
         identifier = kwargs.get('identifier', None)
         if identifier:
             data['identifier'] = identifier
-        header = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'data': data, 'headers': header})
+        payload = cls._payload(**{'headers': https_client.header(), 'data': data})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 

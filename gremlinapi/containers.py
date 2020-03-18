@@ -27,7 +27,7 @@ class GremlinAPIContainers(GremlinAPI):
     def list_containers(cls, https_client=get_gremlin_httpclient(), **kwargs):
         method = 'GET'
         endpoint = cls._optional_team_endpoint(f'/containers', **kwargs)
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 

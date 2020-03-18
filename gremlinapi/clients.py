@@ -32,8 +32,8 @@ class GremlinAPIClients(GremlinAPI):
             log.critical(error_msg)
             raise GremlinParameterError(error_msg)
         endpoint = cls._optional_team_endpoint(f'/clients/{guid}/activate', **kwargs)
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -46,8 +46,8 @@ class GremlinAPIClients(GremlinAPI):
             log.critical(error_msg)
             raise GremlinParameterError(error_msg)
         endpoint = cls._optional_team_endpoint(f'/clients/{guid}', **kwargs)
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -55,8 +55,8 @@ class GremlinAPIClients(GremlinAPI):
     def list_active_clients(cls, https_client=get_gremlin_httpclient(), **kwargs):
         method = 'GET'
         endpoint = cls._optional_team_endpoint(f'/clients/activate', **kwargs)
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
@@ -64,6 +64,6 @@ class GremlinAPIClients(GremlinAPI):
     def list_clients(cls, https_client=get_gremlin_httpclient(), **kwargs):
         method = 'GET'
         endpoint = cls._optional_team_endpoint(f'/clients', **kwargs)
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
