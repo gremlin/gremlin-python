@@ -53,3 +53,13 @@ class GremlinAPI(object):
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
         return guid
+
+    @classmethod
+    def _error_if_not_identifier(cls, **kwargs):
+        identifier = kwargs.get('identifier', None)
+        if not identifier:
+            error_msg = f'Company identifier not supplied correctly: {kwargs}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        return identifier
+

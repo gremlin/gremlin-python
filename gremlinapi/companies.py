@@ -23,15 +23,6 @@ log = logging.getLogger('GremlinAPI.client')
 class GremlinAPICompanies(GremlinAPI):
 
     @classmethod
-    def _error_if_not_identifier(cls, **kwargs):
-        identifier = kwargs.get('identifier', None)
-        if not identifier:
-            error_msg = f'Company identifier not supplied correctly: {kwargs}'
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        return identifier
-
-    @classmethod
     def _error_if_not_email(cls, **kwargs):
         email = kwargs.get('email', None)
         if not email:
