@@ -42,6 +42,16 @@ gremlinapi.login(email='kyle@gremlin.com',
 
 ```
 
+#### Team IDs
+
+When using a Gremlin RBAC enabled account, you must specify the `teamId` to parameter for most requests. Additionally,
+you may supply this globally via the `GremlinAPIConfig` module:
+
+```python
+from gremlinapi.config import GremlinAPIConfig as config
+config.team_guid = team_guid
+```
+
 ## Launching Attacks
 
 #### Example 1
