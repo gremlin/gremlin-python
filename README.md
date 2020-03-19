@@ -88,3 +88,11 @@ from gremlinapi.orgs import GremlinAPIOrgs as orgs
 config.bearer_token = 'Bearer MU3...ZiTk...Lo...4zO..c='
 orgs.list_orgs()
 ```
+
+#### Create a team
+```python
+from gremlinapi.config import GremlinAPIConfig as config
+from gremlinapi.orgs import GremlinAPIOrgs as orgs
+config.bearer_token = 'Bearer MU3...ZiTk...Lo...4zO..c='
+
+```

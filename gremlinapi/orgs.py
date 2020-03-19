@@ -42,12 +42,14 @@ class GremlinAPIOrgs(GremlinAPI):
         return body
 
     @classmethod
-    @register_cli_action('create_org', ('body',), ('',))
+    @register_cli_action('create_org', ('name',), ('',))
     def create_org(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
         endpoint = '/orgs'
-        data = cls._error_if_not_json_body(**kwargs)
-        payload = cls._payload(**{'headers': https_client.header(), 'body': data})
+        data = {
+            'name': cls._error_if_not_param('name', **kwargs)
+        }
+        payload = cls._payload(**{'headers': https_client.header(), 'data': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
