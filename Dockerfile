@@ -1,15 +1,11 @@
 FROM alpine:latest
 LABEL maintainer="kyle@gremlin.com"
 
-
 # Runtime arguments
 ARG BUILD_DATE
 ARG IMAGE_NAME
-ARG KUBECTL_VERSION="v1.16.1"
-ARG KUBECTL_DOWNLOAD="https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
-ARG HELM_DOWNLOAD="https://raw.githubusercontent.com/helm/helm/master/scripts/get"
-ARG EKSCTL_DOWNLOAD="https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_Linux_amd64.tar.gz"
 ARG AWS_IAMAUTH_DOWNLOAD="https://amazon-eks.s3-us-west-2.amazonaws.com/1.14.6/2019-08-22/bin/linux/amd64/aws-iam-authenticator"
+ARG GREMLIN_PYTHON_REPO="https://github.com/gremlin/gremlin-python.git"
 
 # Container Labels
 LABEL org.label-schema.schema-version="1.0"
@@ -27,21 +23,19 @@ RUN python3 -m ensurepip  && \
     if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
     rm -r /root/.cache
 
-RUN pip --no-cache-dir install --upgrade awscli bitly_api boto3 datadog jinja2 kubernetes==9.0.1
-
-RUN curl $HELM_DOWNLOAD | bash
-
-RUN curl --silent --location $EKSCTL_DOWNLOAD | tar xz -C /usr/local/bin && chmod 755 /usr/local/bin/eksctl
+RUN pip --no-cache-dir install --upgrade awscli boto3
 
 RUN curl -s -L $AWS_IAMAUTH_DOWNLOAD -o /usr/local/bin/aws-iam-authenticator && chmod 755 /usr/local/bin/aws-iam-authenticator
 
-RUN echo $KUBECTL_DOWNLOAD
-RUN curl -s -L $KUBECTL_DOWNLOAD -o /usr/bin/kubectl && chmod 755 /usr/bin/kubectl
-
 RUN mkdir -p /opt/gremlin-python
-#ADD src /opt/bootcamp
-#
-#RUN chmod 755 /opt/bootcamp/bootcamp.py
 
-ENTRYPOINT ["python3", "/opt/bootcamp/bootcamp.py", "-x"]
-CMD ["make build"]
+WORKDIR /opt/gremlin-python
+
+# RUN git clone $GREMLIN_PYTHON_REPO .
+COPY . .
+
+# uncomment to install the package container wide
+# RUN python3 setup.py install
+
+ENTRYPOINT ["/bin/ash"]
+CMD ["/bin/ash"]
