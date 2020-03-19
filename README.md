@@ -42,6 +42,40 @@ gremlinapi.login(email='kyle@gremlin.com',
 
 ## Launching Attacks
 
+#### Request Body
+
+```python
+from gremlinapi.config import GremlinAPIConfig as config
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+config.bearer_token = 'Bearer MU....ziTk....40z...c='
+config.team_guid = '9676868b-60d2-5ebe-aa66-c1de8162ff9d'
+body = {
+    'target': {
+        'type': "Random",
+        'containers': {
+            'multiSelectLabels': {
+                "com.amazonaws.ecs.container-name": [
+                    "swissknife"
+                ]
+            }
+        },
+        'exact': 1
+    },
+    'command': {
+        'type': 'latency',
+        'commandType': 'Latency',
+        'args': [
+            '-l', '60',
+            '-h', '^api.gremlin.com',
+            '-m', '100',
+            '-P', 'ICMP'
+        ],
+        'providers': []
+    }
+}
+attacks.create_attack(body=body, teamId=config.team_guid)
+```
+
 ## Organization and Team management
 
 ```python
