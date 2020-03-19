@@ -29,7 +29,7 @@ class GremlinAPI(object):
     @classmethod
     def _optional_team_endpoint(cls, endpoint, **kwargs):
         team_id = cls._warn_if_not_param('teamId', **kwargs)
-        if not team_id and 'str' in type(config.team_guid):
+        if not team_id and type(config.team_guid) is str:
             team_id = config.team_guid
         if team_id:
             if '/?' in endpoint and not str(endpoint).endswith('?'):
