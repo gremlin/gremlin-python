@@ -6,7 +6,7 @@ python3 setup.py install
 
 ## Usage
 
-## Authentication
+## Basic Authentication
 
 #### API User Keys
 
@@ -76,13 +76,15 @@ body = {
         'providers': []
     }
 }
-attacks.create_attack(body=body, teamId=config.team_guid)
+attack_guid = attacks.create_attack(body=body, teamId=config.team_guid)
 ```
 
 ## Organization and Team management
 
+#### List all teams
 ```python
-import gremlinapi
-gremlinapi.config.GremlinAPIConfig.bearer_token = 'Bearer MU3...ZiTk...Lo...4zO..c='
-gremlinapi.orgs.GremlinAPIOrgs.list_orgs()
+from gremlinapi.config import GremlinAPIConfig as config
+from gremlinapi.orgs import GremlinAPIOrgs as orgs
+config.bearer_token = 'Bearer MU3...ZiTk...Lo...4zO..c='
+orgs.list_orgs()
 ```
