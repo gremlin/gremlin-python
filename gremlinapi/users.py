@@ -244,11 +244,11 @@ class GremlinAPIUsersAuth(GremlinAPI):
 class GremlinAPIUsersAuthMFA(GremlinAPI):
 
     @classmethod
-    @register_cli_action('auth_user_mfa', ('user', 'password', 'token', 'company',), ('getCompanySession',))
+    @register_cli_action('auth_user_mfa', ('email', 'password', 'token', 'company',), ('getCompanySession',))
     def auth_user(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
         data = {
-            'email': kwargs.get('user', None),
+            'email': kwargs.get('email', None),
             'password': kwargs.get('password', None),
             'token': kwargs.get('token', None),
             'companyName': kwargs.get('company', None)
