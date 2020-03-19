@@ -24,114 +24,95 @@ class GremlinAPIAttacks(GremlinAPI):
 
 
     @classmethod
-    def _common_list_method(cls, https_client=get_gremlin_httpclient(), **kwargs):
-        endpoint = kwargs.get('endpoint', None)
+    def _list_endpoint(cls, endpoint, *args, **kwargs):
         if not endpoint:
-            error_msg = f'endpoint not passed correctly: {kwargs}'
+            error_msg = f'endpoint not passed correctly: {args} :: {kwargs}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        method = 'GET'
-        headers = https_client.header()
-        source = kwargs.get('source', None)
-        page_size = kwargs.get('pageSize', None)
-        team_id = kwargs.get('teamId', None)
-        if source or page_size or team_id:
+        source = cls._warn_if_not_param('source', **kwargs)
+        page_size = cls._warn_if_not_param('pageSize', **kwargs)
+        if source or page_size:
             endpoint += '/?'
             if source and (source.lower() == 'adhoc' or source.lower() == 'scenario'):
                 endpoint += f'source={source}&'
             if page_size and isinstance(page_size, int):
                 endpoint += f'pageSize={page_size}&'
-            if team_id:
-                endpoint += f'teamId={team_id}&'
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
-        return body
+        return cls._optional_team_endpoint(endpoint, **kwargs)
 
     @classmethod
     @register_cli_action('create_attack', ('body',), ('teamId',))
-    def create_attack(cls, https_client=get_gremlin_httpclient(), **kwargs):
-        endpoint = '/attacks/new'
+    def create_attack(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'POST'
+        data = cls._error_if_not_json_body(**kwargs)
+        endpoint = cls._optional_team_endpoint('/attacks/new', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header(), 'body': data})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
 
     @classmethod
     @register_cli_action('list_active_attacks', ('',), ('source', 'pageSize', 'teamId'))
-    def list_active_attacks(cls, https_client=get_gremlin_httpclient(), **kwargs):
-        """
-        :param https_client:
-        :param kwargs: { source(adhoc or scenario, query), pageSize(int32, query), teamId(string, query) }
-        :return:
-        """
-        endpoint = '/attacks/active'
-        kwargs['endpoint'] = endpoint
-        return cls._common_list_method(https_client, kwargs)
+    def list_active_attacks(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        endpoint = cls._list_endpoint('/attacks/active', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
 
     @classmethod
     @register_cli_action('list_attacks', ('',), ('source', 'pageSize', 'teamId'))
-    def list_attacks(cls, https_client=get_gremlin_httpclient(), **kwargs):
+    def list_attacks(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         """
         :param https_client:
         :param kwargs: { source(adhoc or scenario, query), pageSize(int32, query), teamId(string, query) }
         :return:
         """
-        endpoint = '/attacks'
-        kwargs['endpoint'] = endpoint
-        return cls._common_list_method(https_client, **kwargs)
+        method = 'GET'
+        endpoint = cls._list_endpoint('/attacks', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
 
 
     @classmethod
     @register_cli_action('list_complete_attacks', ('',), ('source', 'pageSize', 'teamId'))
-    def list_completed_attacks(cls, https_client=get_gremlin_httpclient(), **kwargs):
+    def list_completed_attacks(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         """
         :param https_client:
         :param kwargs: { source(adhoc or scenario, query), pageSize(int32, query), teamId(string, query) }
         :return:
         """
-        endpoint = '/attacks/completed'
-        kwargs['endpoint'] = endpoint
-        return cls._common_list_method(https_client, **kwargs)
+        method = 'GET'
+        endpoint = cls._list_endpoint('/attacks/completed', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
 
     @classmethod
     @register_cli_action('get_attack', ('guid',), ('teamId',))
-    def get_attack(cls, https_client=get_gremlin_httpclient(), **kwargs):
-        endpoint = '/attacks'
+    def get_attack(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
-        headers = https_client.header()
-        guid = kwargs.get('guid', None)
-        team_id = kwargs.get('teamId', None)
-        if guid:
-            endpoint += f'/{guid}'
-        else:
-            error_msg = f'Attack GUID was not passed: {kwargs}'
-            log.critical(error_msg)
-            raise GremlinParameterError(error_msg)
-        if team_id:
-            endpoint += '/?teamId={team_id};'
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        guid = cls._error_if_not_param('guid', **kwargs)
+        endpoint = cls._optional_team_endpoint(f'/attacks/{guid}', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
     @register_cli_action('halt_all_attacks', ('',), ('teamId',))
-    def halt_all_attacks(cls, https_client=get_gremlin_httpclient(), **kwargs):
+    def halt_all_attacks(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'DELETE'
-        endpoint = '/attacks'
-        if 'teamId' in kwargs:
-            endpoint += f'/?teamId={kwargs["teamId"]}'
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        endpoint = cls._optional_team_endpoint('/attacks', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
     @register_cli_action('halt_attack', ('guid',), ('teamId',))
-    def halt_attack(cls, https_client=get_gremlin_httpclient(), **kwargs):
+    def halt_attack(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'DELETE'
-        endpoint = '/attacks'
-        if guid:
-            endpoint += f'/{guid}'
-        else:
-            error_msg = f'Attack GUID was not passed: {kwargs}'
-            log.critical(error_msg)
-            raise GremlinParameterError(error_msg)
-        if 'teamId' in kwargs:
-            endpoint += f'/?teamId={kwargs["teamId"]}'
-        headers = https_client.header()
-        (resp, body) = https_client.api_call(method, endpoint, **{'headers': headers})
+        guid = cls._error_if_not_param('guid', **kwargs)
+        endpoint = cls._optional_team_endpoint(f'/attacks/{guid}', **kwargs)
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
