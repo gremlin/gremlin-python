@@ -26,9 +26,9 @@ class GremlinAPIReports(GremlinAPI):
 
     @classmethod
     def _report_endpoint(cls, endpoint, **kwargs):
-        start = kwargs.get('start', None)
-        end = kwargs.get('end', None)
-        period = kwargs.get('period', None)
+        start = cls._warn_if_not_param('start', **kwargs)
+        end = cls._warn_if_not_param('end', **kwargs)
+        period =cls._warn_if_not_param('period', **kwargs)
         if start or end or period or team_id:
             endpoint += '/?'
             if start:
@@ -88,25 +88,21 @@ class GremlinAPIReportsSecurity(GremlinAPI):
 
     @classmethod
     def _report_endpoint(cls, endpoint, **kwargs):
-        start = kwargs.get('start', str(date.today()))
-        end = kwargs.get('end', str(date.today()))
-        format = kwargs.get('format', 'JSON')
+        start = cls._warn_if_not_param('start', str(date.today()), **kwargs)
+        end = cls._warn_if_not_param('end', str(date.today()), **kwargs)
+        format = cls._warn_if_not_param('format', 'JSON', **kwargs)
         endpoint += f'/?start={start}&end={end}&format={format}'
         return endpoint
 
     @classmethod
     def _team_report_endpoint(cls, endpoint, **kwargs):
-        team_id = kwargs.get('teamId', None)
-        if not team_id:
-            error_msg = f'teamId not supplied to reports.security endpoint: {kwargs}'
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
+        team_id = cls._error_if_not_param('teamId', **kwargs)
         endpoint += cls._report_endpoint(endpoint, **kwargs) + f'&teamId={team_id}'
         return endpoint
 
     @classmethod
     def _user_report_endpoint(cls, endpoint, **kwargs):
-        email = kwargs.get('teamId', None)
+        email = cls._error_if_not_param('teamId', **kwargs)
         if not email:
             error_msg = f'userEmail not supplied to reports.security endpoint: {kwargs}'
             log.fatal(error_msg)

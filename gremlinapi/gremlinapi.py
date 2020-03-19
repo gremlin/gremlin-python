@@ -26,7 +26,7 @@ class GremlinAPI(object):
 
     @classmethod
     def _optional_team_endpoint(cls, endpoint, **kwargs):
-        team_id = kwargs.get('teamId', None)
+        team_id = cls._warn_if_not_param('teamId', **kwargs)
         if team_id:
             if '/?' in endpoint and not str(endpoint).endswith('?'):
                 endpoint += f'&teamId={team_id}'
@@ -37,8 +37,8 @@ class GremlinAPI(object):
         return endpoint
 
     @classmethod
-    def _error_if_not_body(cls, **kwargs):
-        body = kwargs.get('body', None)
+    def _error_if_not_json_body(cls, **kwargs):
+        body = cls._warn_if_not_json_body(**kwargs)
         if not body:
             error_msg = f'JSON Body not supplied: {kwargs}'
             log.fatal(error_msg)
@@ -46,58 +46,23 @@ class GremlinAPI(object):
         return body
 
     @classmethod
-    def _error_if_not_company_name(cls, **kwargs):
-        company_name = kwargs.get('companyName', None)
-        if not company_name:
-            error_msg = f'companyName not supplied: {kwargs}'
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        return company_name
-
-    @classmethod
     def _error_if_not_email(cls, **kwargs):
-        email = kwargs.get('email', None)
+        email = cls._warn_if_not_param('email', **kwargs)
         if not email:
             error_msg = f'email address not passed: {kwargs}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
+        # Do some email regex validation here...
         return email
 
     @classmethod
-    def _error_if_not_guid(cls, **kwargs):
-        guid = kwargs.get('guid', None)
-        if not guid:
-            error_msg = f'GUID parameter not supplied: {kwargs}'
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        return guid
-
-    @classmethod
-    def _error_if_not_identifier(cls, **kwargs):
-        identifier = kwargs.get('identifier', None)
-        if not identifier:
-            error_msg = f'Company identifier not supplied correctly: {kwargs}'
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        return identifier
-
-    @classmethod
     def _error_if_not_param(cls, parameter_name, **kwargs):
-        param = kwargs.get(parameter_name, None)
+        param = cls._warn_if_not_param(parameter_name, **kwargs)
         if not param:
             error_msg = f'{parameter_name} not supplied: {kwargs}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
         return param
-
-    @classmethod
-    def _error_if_not_team_id(cls, **kwargs):
-        team_id = kwargs.get('teamId', None)
-        if not team_id:
-            error_msg = f'teamId required parameter not supplied: {kwargs}'
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        return team_id
 
     @classmethod
     def _payload(cls, **kwargs):
@@ -108,12 +73,21 @@ class GremlinAPI(object):
         payload = {k: v for k, v in payload.items() if v is not None}
         return payload
 
-
     @classmethod
-    def _warn_if_not_body(cls, **kwargs):
-        body = kwargs.get('body', None)
+    def _warn_if_not_json_body(cls, **kwargs):
+        body = cls._warn_if_not_param('body', **kwargs)
         if not body:
             error_msg = f'JSON Body not supplied: {kwargs}'
             log.warning(error_msg)
+        # Do some json validation
         return body
+
+    @classmethod
+    def _warn_if_not_param(cls, parameter_name, default=None, **kwargs):
+        param = kwargs.get(parameter_name, None)
+        if not param:
+            error_msg = f'{parameter_name} not found in arguments: {kwargs}'
+            log.warning(error_msg)
+            param = default
+        return param
 

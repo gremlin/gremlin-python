@@ -35,7 +35,7 @@ class GremlinAPITemplates(GremlinAPI):
     @register_cli_action('create_template', ('body',), ('teamId',))
     def create_template(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
-        data = cls._error_if_not_body(**kwargs)
+        data = cls._error_if_not_json_body(**kwargs)
         endpoint = cls._optional_team_endpoint(f'/templates', **kwargs)
         payload = cls._payload(**{'headers': https_client.header(), 'body': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
@@ -45,7 +45,7 @@ class GremlinAPITemplates(GremlinAPI):
     @register_cli_action('get_template', ('guid',), ('teamId',))
     def get_template(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
-        guid = cls._error_if_not_guid(**kwargs)
+        guid = cls._error_if_not_param('guid', **kwargs)
         endpoint = cls._optional_team_endpoint(f'/templates/{guid}', **kwargs)
         payload = cls._payload(**{'headers': https_client.header()})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
@@ -55,7 +55,7 @@ class GremlinAPITemplates(GremlinAPI):
     @register_cli_action('delete_template', ('guid',), ('teamId',))
     def delete_template(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'DELETE'
-        guid = cls._error_if_not_guid(**kwargs)
+        guid = cls._error_if_not_param('guid', **kwargs)
         endpoint = cls._optional_team_endpoint(f'/templates/{guid}', **kwargs)
         payload = cls._payload(**{'headers': https_client.header()})
         (resp, body) = https_client.api_call(method, endpoint, **payload)

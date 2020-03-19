@@ -26,11 +26,7 @@ class GremlinAPIClients(GremlinAPI):
     @register_cli_action('activate_client', ('guid',), ('teamId',))
     def activate_client(cls, https_client=get_gremlin_httpclient(), **kwargs):
         method = 'PUT'
-        guid = kwargs.get('guid', None)
-        if not guid:
-            error_msg = f'Client GUID was not passed: {kwargs}'
-            log.critical(error_msg)
-            raise GremlinParameterError(error_msg)
+        guid = cls._error_if_not_param('guid', **kwargs)
         endpoint = cls._optional_team_endpoint(f'/clients/{guid}/activate', **kwargs)
         payload = cls._payload(**{'headers': https_client.header()})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
@@ -40,11 +36,7 @@ class GremlinAPIClients(GremlinAPI):
     @register_cli_action('deactivate_client', ('guid',), ('teamId',))
     def deactivate_client(cls, https_client=get_gremlin_httpclient(), **kwargs):
         method = 'DELETE'
-        guid = kwargs.get('guid', None)
-        if not guid:
-            error_msg = f'Client GUID was not passed: {kwargs}'
-            log.critical(error_msg)
-            raise GremlinParameterError(error_msg)
+        guid = cls._error_if_not_param('guid', **kwargs)
         endpoint = cls._optional_team_endpoint(f'/clients/{guid}', **kwargs)
         payload = cls._payload(**{'headers': https_client.header()})
         (resp, body) = https_client.api_call(method, endpoint, **payload)

@@ -24,7 +24,7 @@ class GremlinAPIExecutions(GremlinAPI):
 
     @classmethod
     def _optional_taskid_endpoint(cls, endpoint, **kwargs):
-        task_id = kwargs.get('taskId', None)
+        task_id = cls._warn_if_not_param('taskId', **kwargs)
         if task_id:
             endpoint += f'/?taskId={task_id}'
         return cls._optional_team_endpoint(endpoint, **kwargs)

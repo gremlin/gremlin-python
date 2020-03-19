@@ -45,7 +45,7 @@ class GremlinAPIUsers(GremlinAPI):
     @register_cli_action('add_user_to_team', ('body',), ('teamId',))
     def add_user_to_team(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
-        data = cls._error_if_not_body(**kwargs)
+        data = cls._error_if_not_json_body(**kwargs)
         endpoint = cls._optional_team_endpoint(f'/users', **kwargs)
         payload = cls._payload(**{'headers': https_client.header(), 'body': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
@@ -129,7 +129,7 @@ class GremlinAPIUsers(GremlinAPI):
         method = 'GET'
         email = cls._error_if_not_email(**kwargs)
         company_id = kwargs.get('companyId', None)
-        team_id = cls._error_if_not_team_id(**kwargs)
+        team_id =  cls._error_if_not_param('teamnId', **kwargs)
         renew_token = kwargs.get('renewToken', None)
         if not company_id:
             error_msg = f'orgId required parameter not supplied: {kwargs}'
@@ -158,7 +158,7 @@ class GremlinAPIUsers(GremlinAPI):
     @register_cli_action('update_user_self', ('body',), ('',))
     def get_user_self(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'PATCH'
-        data = cls._error_if_not_body(**kwargs)
+        data = cls._error_if_not_json_body(**kwargs)
         endpoint = f'/users/self'
         payload = cls._payload(**{'headers': https_client.header(), 'body': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
