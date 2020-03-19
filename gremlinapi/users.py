@@ -94,7 +94,7 @@ class GremlinAPIUsers(GremlinAPI):
 
     @classmethod
     @register_cli_action('revoke_user_invite', ('email',), ('teamId',))
-    def list_users(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+    def revoke_user_invite(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'DELETE'
         email = cls._error_if_not_email(**kwargs)
         endpoint = cls._optional_team_endpoint(f'/users/invite/{email}', **kwargs)
