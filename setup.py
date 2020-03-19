@@ -3,8 +3,10 @@ import os
 from distutils.file_util import copy_file
 from setuptools import setup, find_packages
 
+from gremlinapi.util import get_version
 
-__version__ = 0.1
+
+__version__ = get_version()
 
 
 def getRequires():
