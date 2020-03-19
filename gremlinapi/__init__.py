@@ -21,6 +21,7 @@ from gremlinapi.http_clients import get_gremlin_httpclient
 from gremlinapi.kubernetes import (GremlinAPIKubernetesAttacks as KubernetesAttacks,
                                    GremlinAPIKubernetesTargets as KubernetesTargets)
 from gremlinapi.metadata import GremlinAPIMetadata as Metadata
+from gremlinapi.metrics import GremlinAPIMetrics as Metrics
 from gremlinapi.orgs import GremlinAPIOrgs as Orgs
 from gremlinapi.providers import GremlinAPIProviders as Providers
 from gremlinapi.reports import GremlinAPIReports as Reports, GremlinAPIReportsSecurity as SecurityReports
