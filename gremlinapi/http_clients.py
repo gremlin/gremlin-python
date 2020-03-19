@@ -89,7 +89,7 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
                 body = resp.json()
             except ValueError:
                 # No JSON in response
-                body = resp.content
+                body = str(resp.content, resp.encoding)
 
         if resp.status_code >= 400:
             log.debug(f'{client}\n{uri}\n{data}\n{kwargs}')
