@@ -42,7 +42,10 @@ gremlinapi.login(email='kyle@gremlin.com',
 
 ## Launching Attacks
 
-#### Request Body
+#### Example 1
+
+This will launch a 100ms latency attack, limited to ICMP traffic, against a single random container
+with the ECS container-name `swissknife`
 
 ```python
 from gremlinapi.config import GremlinAPIConfig as config
@@ -51,7 +54,7 @@ config.bearer_token = 'Bearer MU....ziTk....40z...c='
 config.team_guid = '9676868b-60d2-5ebe-aa66-c1de8162ff9d'
 body = {
     'target': {
-        'type': "Random",
+        'type': 'Random',
         'containers': {
             'multiSelectLabels': {
                 "com.amazonaws.ecs.container-name": [
