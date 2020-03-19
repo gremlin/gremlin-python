@@ -36,7 +36,7 @@ import gremlinapi
 gremlinapi.login(email='kyle@gremlin.com',
                  password='looksL1keIshouldCh4ng3th1sagain!',
                  company_name="Gremlin Inc.",
-                 mfa_token_value="8675309")
+                 token="8675309")
 
 ```
 
