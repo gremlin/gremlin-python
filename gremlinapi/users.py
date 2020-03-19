@@ -246,6 +246,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
     @classmethod
     @register_cli_action('auth_user_mfa', ('user', 'password', 'token', 'company',), ('getCompanySession',))
     def auth_user(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'POST'
         data = {
             'email': kwargs.get('user', None),
             'password': kwargs.get('password', None),
@@ -257,7 +258,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
         endpoint = '/users/auth/mfa/auth'
         if get_company_session:
             endpoint += '/?getCompanySession=true'
-        (resp, body) = https_client.api_call('POST', endpoint, **payload)
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
