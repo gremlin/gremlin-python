@@ -6,7 +6,7 @@ python3 setup.py install
 
 ## Usage
 
-## Basic Authentication
+## Authenticate to the API
 
 #### API User Keys
 
@@ -22,7 +22,7 @@ from gremlinapi.config import GremlinAPIConfig as config
 config.bearer_token = 'Bearer MU3...ZiTk...Lo...4zO..c='
 ```
 
-#### User login
+#### User Login
 
 ```python
 import gremlinapi
@@ -30,6 +30,8 @@ gremlinapi.login(email='kyle@gremlin.com',
                  password='looksL1keIshouldCh4ng3th1sagain!',
                  company_name="Gremlin Inc.")
 ```
+
+#### User Login with MFA
 
 ```python
 import gremlinapi
@@ -170,5 +172,258 @@ pprint.pprint(new_team_details)
                             'AwEHoUQDQgAEOEb1Dxa58N95g30S9S05B0v3O9USUg1hAuxKfxjLHeuO/R60yuR5\n'
                             'RYZ0y4lz87iUSI4eAaBGhCLkwba4GyvZqA==\n'
                             '-----END EC PRIVATE KEY-----\n'}
+```
 
+## Scenarios
+
+#### List all scenarios
+
+```python
+from gremlinapi.config import GremlinAPIConfig as config
+from gremlinapi.scenarios import GremlinAPIScenarios as scenarios
+config.bearer_token = 'Bearer MU3...ZiTk...Lo...4zO..c='
+team_id = 'c98194da-90a9-5666-b9cd-e5bfe0fdfee3'
+scenarios_list = scenarios.list_scenarios(teamId=team_id)
+```
+
+```python
+import pprint
+pprint.pprint(scenarios_list)
+```
+
+```python
+[{'create_source': 'WebApp',
+  'created_at': '2019-10-14T21:02:47.397Z',
+  'created_by': 'community@gremlin.com',
+  'description': 'Confidently adopt cloud auto-scaling services. Verify your '
+                 'users have a positive experience and your application '
+                 'behaves as expected while hosts come and go.',
+  'guid': 'ed49ebae-d45d-4412-89eb-aed45d841255',
+  'hypothesis': 'When CPU usage ramps up and hits a set threshold, active '
+                'instances will increase and decrease when CPU usage goes '
+                'down. User sessions will remain active without throwing any '
+                'errors.',
+  'last_run_at': '2019-10-14T21:02:47.865Z',
+  'name': 'Validate Auto-Scaling',
+  'org_id': 'c98194da-90a9-5666-b9cd-e5bfe0fdfee3',
+  'recommended_scenario_id': 'd543fb53-cbd8-4b92-83fb-53cbd8cb9250',
+  'state': 'PUBLISHED',
+  'steps': [{'attacks': [{'attackType': 'ILFI',
+                          'impactDefinition': {'commandArgs': {'allCores': True,
+                                                               'cliArgs': ['cpu',
+                                                                           '-l',
+                                                                           '60',
+                                                                           '-p',
+                                                                           '5',
+                                                                           '-a'],
+                                                               'length': 60,
+                                                               'percent': 5},
+                                               'commandType': 'CPU'},
+                          'targetDefinition': {'strategy': {'percentage': 100},
+                                               'strategyType': 'Random',
+                                               'targetType': 'Container'}}],
+             'delay': 5},
+            {'attacks': [{'attackType': 'ILFI',
+                          'impactDefinition': {'commandArgs': {'allCores': True,
+                                                               'cliArgs': ['cpu',
+                                                                           '-l',
+                                                                           '60',
+                                                                           '-p',
+                                                                           '10',
+                                                                           '-a'],
+                                                               'length': 60,
+                                                               'percent': 10},
+                                               'commandType': 'CPU'},
+                          'targetDefinition': {'strategy': {'percentage': 100},
+                                               'strategyType': 'Random',
+                                               'targetType': 'Container'}}],
+             'delay': 5},
+            {'attacks': [{'attackType': 'ILFI',
+                          'impactDefinition': {'commandArgs': {'allCores': True,
+                                                               'cliArgs': ['cpu',
+                                                                           '-l',
+                                                                           '60',
+                                                                           '-p',
+                                                                           '15',
+                                                                           '-a'],
+                                                               'length': 60,
+                                                               'percent': 15},
+                                               'commandType': 'CPU'},
+                          'targetDefinition': {'strategy': {'percentage': 100},
+                                               'strategyType': 'Random',
+                                               'targetType': 'Container'}}],
+             'delay': 5},
+            {'attacks': [{'attackType': 'ILFI',
+                          'impactDefinition': {'commandArgs': {'allCores': True,
+                                                               'cliArgs': ['cpu',
+                                                                           '-l',
+                                                                           '60',
+                                                                           '-p',
+                                                                           '20',
+                                                                           '-a'],
+                                                               'length': 60,
+                                                               'percent': 20},
+                                               'commandType': 'CPU'},
+                          'targetDefinition': {'strategy': {'percentage': 100},
+                                               'strategyType': 'Random',
+                                               'targetType': 'Container'}}],
+             'delay': 5}],
+  'tiers': ['Free', 'Enterprise'],
+  'updated_at': '2019-10-14T21:02:48.107Z'},
+ {'create_source': 'WebApp',
+  'created_at': '2019-10-14T20:36:59.952Z',
+  'created_by': 'community@gremlin.com',
+  'description': 'Confidently adopt cloud auto-scaling services. Verify your '
+                 'users have a positive experience and your application '
+                 'behaves as expected while hosts come and go.',
+  'guid': 'bdaeef1c-4dbd-47bd-aeef-1c4dbdf7bd3a',
+  'hypothesis': 'When CPU usage ramps up and hits a set threshold, active '
+                'instances will increase and decrease when CPU usage goes '
+                'down. User sessions will remain active without throwing any '
+                'errors.',
+  'last_run_at': '2019-10-14T20:37:00.128Z',
+  'name': 'Validate Auto-Scaling',
+  'org_id': 'c98194da-90a9-5666-b9cd-e5bfe0fdfee3',
+  'recommended_scenario_id': 'd543fb53-cbd8-4b92-83fb-53cbd8cb9250',
+  'state': 'PUBLISHED',
+  'steps': [{'attacks': [{'attackType': 'ILFI',
+                          'impactDefinition': {'commandArgs': {'allCores': True,
+                                                               'cliArgs': ['cpu',
+                                                                           '-l',
+                                                                           '60',
+                                                                           '-p',
+                                                                           '5',
+                                                                           '-a'],
+                                                               'length': 60,
+                                                               'percent': 5},
+                                               'commandType': 'CPU'},
+                          'targetDefinition': {'strategy': {'percentage': 100},
+                                               'strategyType': 'Random',
+                                               'targetType': 'Container'}}],
+             'delay': 5},
+            {'attacks': [{'attackType': 'ILFI',
+                          'impactDefinition': {'commandArgs': {'allCores': True,
+                                                               'cliArgs': ['cpu',
+                                                                           '-l',
+                                                                           '60',
+                                                                           '-p',
+                                                                           '10',
+                                                                           '-a'],
+                                                               'length': 60,
+                                                               'percent': 10},
+                                               'commandType': 'CPU'},
+                          'targetDefinition': {'strategy': {'percentage': 100},
+                                               'strategyType': 'Random',
+                                               'targetType': 'Container'}}],
+             'delay': 5},
+            {'attacks': [{'attackType': 'ILFI',
+                          'impactDefinition': {'commandArgs': {'allCores': True,
+                                                               'cliArgs': ['cpu',
+                                                                           '-l',
+                                                                           '60',
+                                                                           '-p',
+                                                                           '15',
+                                                                           '-a'],
+                                                               'length': 60,
+                                                               'percent': 15},
+                                               'commandType': 'CPU'},
+                          'targetDefinition': {'strategy': {'percentage': 100},
+                                               'strategyType': 'Random',
+                                               'targetType': 'Container'}}],
+             'delay': 5},
+            {'attacks': [{'attackType': 'ILFI',
+                          'impactDefinition': {'commandArgs': {'allCores': True,
+                                                               'cliArgs': ['cpu',
+                                                                           '-l',
+                                                                           '60',
+                                                                           '-p',
+                                                                           '20',
+                                                                           '-a'],
+                                                               'length': 60,
+                                                               'percent': 20},
+                                               'commandType': 'CPU'},
+                          'targetDefinition': {'strategy': {'percentage': 100},
+                                               'strategyType': 'Random',
+                                               'targetType': 'Container'}}],
+             'delay': 5}],
+  'tiers': ['Free', 'Enterprise'],
+  'updated_at': '2019-10-14T20:37:00.314Z'},
+ {'create_source': 'WebApp',
+  'created_at': '2019-10-13T23:40:23.434Z',
+  'created_by': 'community@gremlin.com',
+  'description': 'Confidently adopt cloud auto-scaling services. Verify your '
+                 'users have a positive experience and your application '
+                 'behaves as expected while hosts come and go.',
+  'guid': '4d9e313a-dcab-4d69-9e31-3adcabdd6964',
+  'hypothesis': 'When CPU usage ramps up and hits a set threshold, active '
+                'instances will increase and decrease when CPU usage goes '
+                'down. User sessions will remain active without throwing any '
+                'errors.',
+  'last_run_at': '2019-10-13T23:40:24.467Z',
+  'name': 'Validate Auto-Scaling',
+  'org_id': 'c98194da-90a9-5666-b9cd-e5bfe0fdfee3',
+  'recommended_scenario_id': 'd543fb53-cbd8-4b92-83fb-53cbd8cb9250',
+  'state': 'PUBLISHED',
+  'steps': [{'attacks': [{'attackType': 'ILFI',
+                          'impactDefinition': {'commandArgs': {'allCores': True,
+                                                               'cliArgs': ['cpu',
+                                                                           '-l',
+                                                                           '60',
+                                                                           '-p',
+                                                                           '5',
+                                                                           '-a'],
+                                                               'length': 60,
+                                                               'percent': 5},
+                                               'commandType': 'CPU'},
+                          'targetDefinition': {'strategy': {'percentage': 100},
+                                               'strategyType': 'Random',
+                                               'targetType': 'Host'}}],
+             'delay': 5},
+            {'attacks': [{'attackType': 'ILFI',
+                          'impactDefinition': {'commandArgs': {'allCores': True,
+                                                               'cliArgs': ['cpu',
+                                                                           '-l',
+                                                                           '60',
+                                                                           '-p',
+                                                                           '10',
+                                                                           '-a'],
+                                                               'length': 60,
+                                                               'percent': 10},
+                                               'commandType': 'CPU'},
+                          'targetDefinition': {'strategy': {'percentage': 100},
+                                               'strategyType': 'Random',
+                                               'targetType': 'Host'}}],
+             'delay': 5},
+            {'attacks': [{'attackType': 'ILFI',
+                          'impactDefinition': {'commandArgs': {'allCores': True,
+                                                               'cliArgs': ['cpu',
+                                                                           '-l',
+                                                                           '60',
+                                                                           '-p',
+                                                                           '15',
+                                                                           '-a'],
+                                                               'length': 60,
+                                                               'percent': 15},
+                                               'commandType': 'CPU'},
+                          'targetDefinition': {'strategy': {'percentage': 100},
+                                               'strategyType': 'Random',
+                                               'targetType': 'Host'}}],
+             'delay': 5},
+            {'attacks': [{'attackType': 'ILFI',
+                          'impactDefinition': {'commandArgs': {'allCores': True,
+                                                               'cliArgs': ['cpu',
+                                                                           '-l',
+                                                                           '60',
+                                                                           '-p',
+                                                                           '20',
+                                                                           '-a'],
+                                                               'length': 60,
+                                                               'percent': 20},
+                                               'commandType': 'CPU'},
+                          'targetDefinition': {'strategy': {'percentage': 100},
+                                               'strategyType': 'Random',
+                                               'targetType': 'Host'}}],
+             'delay': 5}],
+  'tiers': ['Free', 'Enterprise'],
+  'updated_at': '2019-10-13T23:40:24.742Z'}]
 ```
