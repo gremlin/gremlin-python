@@ -188,48 +188,151 @@ class GremlinAPIUsersAuth(GremlinAPI):
             'password': cls._error_if_not_param('password', **kwargs),
             'companyName': cls._error_if_not_param('companyName', **kwargs)
         }
+        get_company_session = cls._warn_if_not_param('getCompanySession', **kwargs)
         payload = cls._payload(**{'data': data})
         endpoint = '/users/auth'
+        if get_company_session:
+            endpoint += '/?getCompanySession=true'
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
-    @register_cli_action('auth_user_sso', ('',), ('',))
+    @register_cli_action('auth_user_sso', ('accessToken', 'email', 'provider', 'companyName'), ('getCompanySession',))
     def auth_user_sso(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
-        pass
+        method = 'POST'
+        data = {
+            'accessToken': cls._error_if_not_param('accessToken', **kwargs),
+            'email': cls._error_if_not_param('email', **kwargs),
+            'provider': cls._error_if_not_param('provider', **kwargs),
+            'companyName': cls._error_if_not_param('companyName', **kwargs)
+        }
+        get_company_session = cls._warn_if_not_param('getCompanySession', **kwargs)
+        payload = cls._payload(**{'data': data})
+        endpoint = '/users/auth'
+        if get_company_session:
+            endpoint += '/?getCompanySession=true'
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
 
     @classmethod
     @register_cli_action('invalidate_session', ('',), ('',))
     def invalidate_session(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
-        pass
+        method = 'DELETE'
+        endpoint = '/users/auth'
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
 
     @classmethod
-    @register_cli_action('email_companies', ('',), ('',))
-    def email_companies(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
-        pass
+    @register_cli_action('get_company_affiliations', ('email',), ('',))
+    def get_company_affiliations(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        email = cls._error_if_not_email(**kwargs)
+        endpoint = f'/users/auth/emailCompanies/?email={email}'
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
 
     @classmethod
-    @register_cli_action('saml_metadata', ('',), ('',))
-    def saml_metadata(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
-        pass
+    @register_cli_action('get_saml_metadata', ('',), ('',))
+    def get_saml_metadata(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        endpoint = '/users/auth/saml/metadata'
+        (resp, body) = https_client.api_call(method, endpoint)
+        return body
 
 class GremlinAPIUsersAuthMFA(GremlinAPI):
-    def __init__(self):
-        super.__init__(self)
 
     @classmethod
-    @register_cli_action('auth_user_mfa', ('user', 'password', 'token', 'company',), ('get_company_session',))
+    @register_cli_action('auth_user_mfa', ('user', 'password', 'token', 'company',), ('getCompanySession',))
     def auth_user(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
-        endpoint = '/users/auth/mfa/auth'
-        payload = {
+        data = {
             'email': kwargs.get('user', None),
             'password': kwargs.get('password', None),
-            'token': kwargs.get('mfa_token_value', None),
+            'token': kwargs.get('token', None),
             'companyName': kwargs.get('company', None)
         }
-        if not (payload['email'] and payload['password'] and payload['token'] and payload['companyName']):
-            error_msg = f'User credential not supplied {kwargs}'
-            log.fatal(error_msg)
-            raise GremlinAuthError(error_msg)
-        (resp, body) = https_client.api_call('POST', endpoint, **{'data': payload})
+        get_company_session = cls._warn_if_not_param('getCompanySession', **kwargs)
+        payload = cls._payload(**{'data': data})
+        endpoint = '/users/auth/mfa/auth'
+        if get_company_session:
+            endpoint += '/?getCompanySession=true'
+        (resp, body) = https_client.api_call('POST', endpoint, **payload)
         return body
+
+    @classmethod
+    def auth_user_mfa(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        # Alias to auth_user
+        return cls.auth_user(https_client, *args, **kwargs)
+
+    @classmethod
+    @register_cli_action('get_mfa_status', ('email',), (''))
+    def get_mfa_status(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        email = cls._error_if_not_email(**kwargs)
+        endpoint = f'/users/auth/mfa/{email}/enabled'
+        (resp, body) = https_client.api_call(method, endpoint)
+        return body
+
+    @classmethod
+    @register_cli_action('get_user_mfa_status', ('',), ('',))
+    def get_user_mfa_status(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'GET'
+        endpoint = '/users/auth/mfa/info'
+        payload = cls._payload(**{'headers': https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('disable_mfa', ('email', 'password', 'token',), ('',))
+    def disable_mfa(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'POST'
+        data = {
+            'email': cls._error_if_not_email(**kwargs),
+            'password': cls._error_if_not_param('password', **kwargs),
+            'token': cls._error_if_not_param('token', **kwargs)
+        }
+        endpoint = '/users/auth/mfa/disable'
+        payload = cls._payload(**{'data': data})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('force_disable_mfa', ('email',), ('',))
+    def force_disable_mfa(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'POST'
+        data = {
+            'email': cls._error_if_not_email(**kwargs)
+        }
+        endpoint = '/users/auth/mfa/forceDisable'
+        payload = cls._payload(**{'headers': https_client.header(), 'data': data})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('enable_mfa', ('email', 'password', 'provider',), ('',))
+    def enable_mfa(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'POST'
+        data = {
+            'email': cls._error_if_not_email(**kwargs),
+            'password': cls._error_if_not_param('password', **kwargs),
+            'provider': cls._error_if_not_param('provider', **kwargs)
+        }
+        endpoint = '/users/auth/mfa/enable'
+        payload = cls._payload(**{'data': data})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action('validate_token', ('email', 'token',), (''))
+    def validate_token(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+        method = 'POST'
+        data = {
+            'email': cls._error_if_not_email(**kwargs),
+            'token': cls._error_if_not_param('token', **kwargs)
+        }
+        endpoint = '/users/auth/mfa/validate'
+        payload = cls._payload(**{'data': data})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
