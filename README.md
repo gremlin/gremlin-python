@@ -26,14 +26,14 @@ config.bearer_token = 'Bearer MU3...ZiTk...Lo...4zO..c='
 
 ```python
 import gremlinapi
-gremlinapi.login(user='kyle@gremlin.com',
+gremlinapi.login(email='kyle@gremlin.com',
                  password='looksL1keIshouldCh4ng3th1sagain!',
                  company_name="Gremlin Inc.")
 ```
 
 ```python
 import gremlinapi
-gremlinapi.login(user='kyle@gremlin.com',
+gremlinapi.login(email='kyle@gremlin.com',
                  password='looksL1keIshouldCh4ng3th1sagain!',
                  company_name="Gremlin Inc.",
                  mfa_token_value="8675309")

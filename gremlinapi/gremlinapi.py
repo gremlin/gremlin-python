@@ -46,6 +46,15 @@ class GremlinAPI(object):
         return body
 
     @classmethod
+    def _error_if_not_company_name(cls, **kwargs):
+        company_name = kwargs.get('companyName', None)
+        if not company_name:
+            error_msg = f'companyName not supplied: {kwargs}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        return company_name
+
+    @classmethod
     def _error_if_not_email(cls, **kwargs):
         email = kwargs.get('email', None)
         if not email:
@@ -71,6 +80,15 @@ class GremlinAPI(object):
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
         return identifier
+
+    @classmethod
+    def _error_if_not_param(cls, parameter_name, **kwargs):
+        param = kwargs.get(parameter_name, None)
+        if not param:
+            error_msg = f'{parameter_name} not supplied: {kwargs}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        return param
 
     @classmethod
     def _error_if_not_team_id(cls, **kwargs):

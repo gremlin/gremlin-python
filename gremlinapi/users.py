@@ -7,6 +7,7 @@ import logging
 from gremlinapi.cli import register_cli_action
 from gremlinapi.exceptions import (
     GremlinParameterError,
+    GremlinAuthError,
     ProxyError,
     ClientError,
     HTTPTimeout,
@@ -178,23 +179,18 @@ class GremlinAPIUsers(GremlinAPI):
 
 class GremlinAPIUsersAuth(GremlinAPI):
 
-    def __init__(self):
-        pass
-
     @classmethod
-    @register_cli_action('auth_user', ('',), ('',))
+    @register_cli_action('auth_user', ('email', 'password', 'companyName',), ('getCompanySession',))
     def auth_user(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
-        endpoint = '/users/auth'
-        payload = {
-            'email': kwargs.get('user', None),
-            'password': kwargs.get('password', None),
-            'companyName': kwargs.get('company', None)
+        method = 'POST'
+        data = {
+            'email': cls._error_if_not_param('email', **kwargs),
+            'password': cls._error_if_not_param('password', **kwargs),
+            'companyName': cls._error_if_not_param('companyName', **kwargs)
         }
-        if not (payload['email'] and payload['password'] and payload['companyName']):
-            error_msg = f'User credential not supplied {kwargs}'
-            log.fatal(error_msg)
-            raise GremlinAuthError(error_msg)
-        (resp, body) = https_client.api_call('POST', endpoint, **{'data': payload})
+        payload = cls._payload(**{'data': data})
+        endpoint = '/users/auth'
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
