@@ -108,7 +108,7 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
 class GremlinAPIurllibClient(GremlinAPIHttpClient):
     @classmethod
     def api_call(cls, method, uri, *args, **kwargs):
-        error_message = f'This function is not yet implemented'
+        error_message = f'URLlib client not yet implemented, please install requests library'
         log.fatal(error_message)
         raise NotImplementedError(error_message)
 
