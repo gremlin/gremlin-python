@@ -117,5 +117,6 @@ def get_gremlin_httpclient():
     if requests:
         return GremlineAPIRequestsClient
     else:
-        return GremlinAPIurllibClient
+        #return GremlinAPIurllibClient
+        return GremlineAPIRequestsClient
 
