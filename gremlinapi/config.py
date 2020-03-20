@@ -18,7 +18,7 @@ class GremlinAPIConfig(object):
         self._company_name = None
         self._max_bearer_interval = None
         self._password = None
-        self._team_guid = None
+        self._team_id = None
         self._user = None
         self._user_mfa_token_value = None
 
@@ -90,13 +90,13 @@ class GremlinAPIConfig(object):
         return self.password
 
     @property
-    def team_guid(self):
-        return self._team_guid
+    def team_id(self):
+        return self._team_id
 
-    @team_guid.setter
-    def team_guid(self, team_guid):
-        self._team_guid = team_guid
-        return self.team_guid
+    @team_id.setter
+    def team_id(self, team_id):
+        self._team_id = team_id
+        return self.team_id
 
     @property
     def user(self):
