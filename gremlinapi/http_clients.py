@@ -20,6 +20,7 @@ try:
     import requests.adapters
 except ImportError:
     requests = None
+    import urllib3
 
 log = logging.getLogger('GremlinAPI.client')
 
@@ -106,11 +107,38 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
 
 
 class GremlinAPIurllibClient(GremlinAPIHttpClient):
+    """Fallback library in the event requests library is unavailable."""
     @classmethod
-    def api_call(cls, method, uri, *args, **kwargs):
-        error_message = f'URLlib client not yet implemented, please install requests library'
-        log.fatal(error_message)
-        raise NotImplementedError(error_message)
+    def api_call(cls, method, endpoint, *args, **kwargs):
+
+        log.warning(f'The request to {endpoint} is using the urllib3 library. Consider installing th requests library.')
+        form_data = None
+        request_body = None
+
+        if 'data' in kwargs:
+            form_data = kwargs.pop('data')
+        elif 'body' in kwargs:
+            if "Content-Type" not in kwargs["headers"]:
+                kwargs["headers"]["Content-Type"] = "application/json"
+            request_body = json.dumps(kwargs.pop("body"))
+
+        uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
+        http_client = urllib3.PoolManager()
+
+        if form_data:
+            resp = http_client.request(method, uri, fields=form_data, **kwargs)
+        elif request_body:
+            resp = http_client.request(method, uri, body=request_body, **kwargs)
+        else:
+            resp = http_client.request(method, uri, **kwargs)
+        log.debug(resp)
+
+        if resp.status >= 400:
+            log.debug(f'Failed response: {resp.status}\n{http_client}\n{uri}\n{kwargs}\n{resp}')
+            raise HTTPError(resp)
+
+        body = json.loads(resp.data)
+        return resp, body
 
 
 def get_gremlin_httpclient():
