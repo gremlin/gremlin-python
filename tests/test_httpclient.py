@@ -28,6 +28,12 @@ class TestHttpClient(unittest.TestCase):
         header = https_client.header()
         self.assertIn(api_key, header['Authorization'])
 
+    def test_bearer_token(self):
+        config.bearer_token = bearer_token
+        https_client = get_gremlin_httpclient()
+        header = https_client.header()
+        self.assertIn(bearer_token, header['Authorization'])
+
 
 if __name__ == '__main__':
     unittest.main()
