@@ -467,3 +467,9 @@ pprint.pprint(scenarios_list)
   'tiers': ['Free', 'Enterprise'],
   'updated_at': '2019-10-13T23:40:24.742Z'}]
 ```
+
+
+## Support
+
+Support for this library is provided by the Gremlin and Chaos Engineering community.
+[Join us on slack!](https://www.gremlin.com/slack/)
