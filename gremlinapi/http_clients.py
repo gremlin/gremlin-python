@@ -37,7 +37,10 @@ class GremlinAPIHttpClient(object):
         bearer_token = kwargs.get('bearer_token', GremlinAPIConfig.bearer_token)
         header = dict()
         if api_key and not bearer_token:
-            header['Authorization'] = 'Key {api_key}'
+            if "Key" in api_key:
+                header['Authorization'] = api_key
+            else:
+                header['Authorization'] = f'Key {api_key}'
         if bearer_token:
             if "Bearer" in bearer_token:
                 header['Authorization'] = bearer_token
