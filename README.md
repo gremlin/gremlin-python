@@ -71,7 +71,11 @@ from gremlinapi.config import GremlinAPIConfig as config
 config.team_id = team_id
 ```
 
-## Launching Attacks
+## Examples
+
+See [Examples](examples/README.md) for more more functionality
+
+### Launching Attacks
 
 #### Example 1
 
@@ -110,7 +114,7 @@ body = {
 attack_guid = attacks.create_attack(body=body, teamId=config.team_id)
 ```
 
-## Organization and Team management
+### Organization and Team management
 
 #### List all teams
 ```python
@@ -203,7 +207,7 @@ pprint.pprint(new_team_details)
                             '-----END EC PRIVATE KEY-----\n'}
 ```
 
-## Scenarios
+### Scenarios
 
 #### List all scenarios
 
