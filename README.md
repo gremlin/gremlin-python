@@ -2,7 +2,26 @@
 
 ## Installation
 
-python3 setup.py install
+If on a mac, ensure you have xcrun installed
+```shell script
+  xcode-select --install
+```
+
+Build and run this project's self contained docker image with all the necessary dependencies
+```shell script
+  make docker-build && make docker-run-interactive
+```
+
+Setup Gremlin
+```shell script
+    python3 setup.py install
+```
+
+Enter the python interpreter
+```shell script
+    python3
+```
+
 
 ## Usage
 
