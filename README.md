@@ -2,14 +2,11 @@
 
 ## Installation
 
+### Global Package Install
+
 If on a mac, ensure you have xcrun installed
 ```shell script
   xcode-select --install
-```
-
-Build and run this project's self contained docker image with all the necessary dependencies
-```shell script
-  make docker-build && make docker-run-interactive
 ```
 
 Setup Gremlin
@@ -22,6 +19,12 @@ Enter the python interpreter
     python3
 ```
 
+### Use Packaged Docker runtime
+
+Build and run this project's self contained docker image with all the necessary dependencies
+```shell script
+  make docker-build && make docker-run-interactive
+```
 
 ## Usage
 
