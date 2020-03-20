@@ -33,12 +33,20 @@ class GremlinAPIHttpClient(object):
 
     @classmethod
     def header(cls, *args, **kwargs):
-        api_key = kwargs.get('api_key', GremlinAPIConfig.api_key)
-        bearer_token = kwargs.get('bearer_token', GremlinAPIConfig.bearer_token)
+        api_key = kwargs.get('api_key', None)
+        bearer_token = kwargs.get('bearer_token', None)
         header = dict()
+        if not (api_key and bearer_token):
+            if GremlinAPIConfig.bearer_token:
+                bearer_token = GremlinAPIConfig.bearer_token
+            if GremlinAPIConfig.api_key:
+                api_key = GremlinAPIConfig.api_key
         if api_key and not bearer_token:
-            header['Authorization'] = 'Key {api_key}'
-        if bearer_token:
+            if "Key" in api_key:
+                header['Authorization'] = api_key
+            else:
+                header['Authorization'] = f'Key {api_key}'
+        elif bearer_token:
             if "Bearer" in bearer_token:
                 header['Authorization'] = bearer_token
             else:
@@ -100,7 +108,7 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
 class GremlinAPIurllibClient(GremlinAPIHttpClient):
     @classmethod
     def api_call(cls, method, uri, *args, **kwargs):
-        error_message = f'This function is not yet implemented'
+        error_message = f'URLlib client not yet implemented, please install requests library'
         log.fatal(error_message)
         raise NotImplementedError(error_message)
 

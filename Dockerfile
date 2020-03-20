@@ -23,7 +23,7 @@ RUN python3 -m ensurepip  && \
     if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
     rm -r /root/.cache
 
-RUN pip --no-cache-dir install --upgrade awscli boto3
+RUN pip --no-cache-dir install --upgrade awscli boto3 requests
 
 RUN curl -s -L $AWS_IAMAUTH_DOWNLOAD -o /usr/local/bin/aws-iam-authenticator && chmod 755 /usr/local/bin/aws-iam-authenticator
 

@@ -9,9 +9,23 @@ log = logging.getLogger('GremlinAPI.client')
 
 
 class GremlinAPIConfig(object):
+
+    def __init__(self):
+        self._api_key = None
+        self._base_uri = None
+        self._bearer_timestamp = None
+        self._bearer_token = None
+        self._company_name = None
+        self._max_bearer_interval = None
+        self._password = None
+        self._team_guid = None
+        self._user = None
+        self._user_mfa_token_value = None
+
     @property
     def api_key(self):
-        """API Key for API authorization"""
+        if not self._api_key:
+            return None
         return self._api_key
 
     @api_key.setter
