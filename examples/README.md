@@ -21,3 +21,8 @@ See individual .md files
 [Users](users.md)
 
 
+
+##### Disclaimer
+Examples are not complete implementation of code. Please use these as a springboard to understand
+the methods this library exposes.
+

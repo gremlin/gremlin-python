@@ -28,6 +28,10 @@ Build and run this project's self contained docker image with all the necessary 
 
 ## Usage
 
+### CLI
+
+Coming soon
+
 ## Authenticate to the API
 
 #### API User Keys
