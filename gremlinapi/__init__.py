@@ -56,7 +56,7 @@ _api_user = os.getenv('GREMLIN_USER', '')
 _api_password = os.getenv('GREMLIN_PASSWORD', '')
 _api_user_mfa_token = os.getenv('GREMLIN_USER_MFA_TOKEN', None)
 _api_company = os.getenv('GREMLIN_COMPANY', '')
-_api_team_guid = os.getenv('GREMLIN_TEAM_GUID', '')
+_api_team_id = os.getenv('GREMLIN_TEAM_ID', '')
 
 
 GremlinAPIConfig.user = _api_user
