@@ -68,3 +68,66 @@ attack_guid = attacks.create_attack(body=body, teamId=config.team_id)
 ```
 
 ##### Packet Loss
+
+## List Attacks
+
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+team_id = 'TEAM_ID/UUID'
+attack_list = attacks.list_attacks(teamId=team_id)
+
+from pprint import pprint
+pprint(attack_list)
+```
+
+## List Active Attacks
+
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+team_id = 'TEAM_ID/UUID'
+active_attacks = attacks.list_active_attacks(teamId=team_id)
+
+from pprint import pprint
+pprint(active_attacks)
+```
+
+## List Completed Attacks
+
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+team_id = 'TEAM_ID/UUID'
+completed_attacks = attacks.list_completed_attacks(teamId=team_id)
+
+from pprint import pprint
+pprint(completed_attacks)
+```
+
+## Get Attack Details
+
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+team_id = 'TEAM_ID/UUID'
+attack_id = 'ATTACK_ID'
+attack_details = attacks.get_attack(guid=attack_id, teamId=team_id)
+
+from pprint import pprint
+pprint(attack_details)
+```
+
+## Halt Attack
+
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+team_id = 'TEAM_ID/UUID'
+attack_id = 'ATTACK_ID'
+confirmation = attacks.halt_attack(guid=attack_id, teamId=team_id)
+```
+
+## Halt _ALL_ Attacks
+
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+team_id = 'TEAM_ID/UUID'
+
+confirmation = attacks.halt_all_attacks(teamId=team_id)
+```
