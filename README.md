@@ -2,7 +2,26 @@
 
 ## Installation
 
-python3 setup.py install
+If on a mac, ensure you have xcrun installed
+```shell script
+  xcode-select --install
+```
+
+Build and run this project's self contained docker image with all the necessary dependencies
+```shell script
+  make docker-build && make docker-run-interactive
+```
+
+Setup Gremlin
+```shell script
+    python3 setup.py install
+```
+
+Enter the python interpreter
+```shell script
+    python3
+```
+
 
 ## Usage
 
@@ -49,7 +68,7 @@ you may supply this globally via the `GremlinAPIConfig` module:
 
 ```python
 from gremlinapi.config import GremlinAPIConfig as config
-config.team_guid = team_guid
+config.team_id = team_id
 ```
 
 ## Launching Attacks
@@ -63,7 +82,7 @@ with the ECS container-name `swissknife`
 from gremlinapi.config import GremlinAPIConfig as config
 from gremlinapi.attacks import GremlinAPIAttacks as attacks
 config.bearer_token = 'Bearer MU....ziTk....40z...c='
-config.team_guid = '9676868b-60d2-5ebe-aa66-c1de8162ff9d'
+config.team_id = '9676868b-60d2-5ebe-aa66-c1de8162ff9d'
 body = {
     'target': {
         'type': 'Random',
@@ -88,7 +107,7 @@ body = {
         'providers': []
     }
 }
-attack_guid = attacks.create_attack(body=body, teamId=config.team_guid)
+attack_guid = attacks.create_attack(body=body, teamId=config.team_id)
 ```
 
 ## Organization and Team management
