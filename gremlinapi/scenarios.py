@@ -184,7 +184,7 @@ class GremlinAPIScenarios(GremlinAPI):
 
     @classmethod
     @register_cli_action('halt_scenario', ('guid', 'runNumber'), ('teamId',))
-    def list_draft_scenarios(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+    def halt_scenario(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
         guid = cls._error_if_not_param('guid', **kwargs)
         run_number = cls._error_if_not_param('runNumber', **kwargs)
