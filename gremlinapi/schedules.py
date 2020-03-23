@@ -22,14 +22,14 @@ log = logging.getLogger('GremlinAPI.client')
 
 class GremlinAPISchedules(GremlinAPI):
 
-    @classmethod
-    @register_cli_action('list_schedules', ('',), ('teamId',))
-    def list_schedules(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
-        method = 'GET'
-        endpoint = cls._optional_team_endpoint(f'/schedules', **kwargs)
-        payload = cls._payload(**{'headers': https_client.header()})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+    # @classmethod
+    # @register_cli_action('list_schedules', ('',), ('teamId',))
+    # def list_schedules(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+    #     method = 'GET'
+    #     endpoint = cls._optional_team_endpoint(f'/schedules', **kwargs)
+    #     payload = cls._payload(**{'headers': https_client.header()})
+    #     (resp, body) = https_client.api_call(method, endpoint, **payload)
+    #     return body
 
     @classmethod
     @register_cli_action('create_schedule', ('body',), ('teamId',))
