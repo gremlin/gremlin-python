@@ -2,14 +2,11 @@
 
 ## Installation
 
+### Global Package Install
+
 If on a mac, ensure you have xcrun installed
 ```shell script
   xcode-select --install
-```
-
-Build and run this project's self contained docker image with all the necessary dependencies
-```shell script
-  make docker-build && make docker-run-interactive
 ```
 
 Setup Gremlin
@@ -22,8 +19,18 @@ Enter the python interpreter
     python3
 ```
 
+### Use Packaged Docker runtime
+
+Build and run this project's self contained docker image with all the necessary dependencies
+```shell script
+  make docker-build && make docker-run-interactive
+```
 
 ## Usage
+
+### CLI
+
+Coming soon
 
 ## Authenticate to the API
 
@@ -68,10 +75,14 @@ you may supply this globally via the `GremlinAPIConfig` module:
 
 ```python
 from gremlinapi.config import GremlinAPIConfig as config
-config.team_guid = team_guid
+config.team_id = team_id
 ```
 
-## Launching Attacks
+## Examples
+
+See [Examples](examples/README.md) for more more functionality
+
+### Launching Attacks
 
 #### Example 1
 
@@ -82,7 +93,7 @@ with the ECS container-name `swissknife`
 from gremlinapi.config import GremlinAPIConfig as config
 from gremlinapi.attacks import GremlinAPIAttacks as attacks
 config.bearer_token = 'Bearer MU....ziTk....40z...c='
-config.team_guid = '9676868b-60d2-5ebe-aa66-c1de8162ff9d'
+config.team_id = '9676868b-60d2-5ebe-aa66-c1de8162ff9d'
 body = {
     'target': {
         'type': 'Random',
@@ -107,10 +118,10 @@ body = {
         'providers': []
     }
 }
-attack_guid = attacks.create_attack(body=body, teamId=config.team_guid)
+attack_guid = attacks.create_attack(body=body, teamId=config.team_id)
 ```
 
-## Organization and Team management
+### Organization and Team management
 
 #### List all teams
 ```python
@@ -203,7 +214,7 @@ pprint.pprint(new_team_details)
                             '-----END EC PRIVATE KEY-----\n'}
 ```
 
-## Scenarios
+### Scenarios
 
 #### List all scenarios
 
@@ -456,3 +467,9 @@ pprint.pprint(scenarios_list)
   'tiers': ['Free', 'Enterprise'],
   'updated_at': '2019-10-13T23:40:24.742Z'}]
 ```
+
+
+## Support
+
+Support for this library is provided by the Gremlin and Chaos Engineering community.
+[Join us on slack!](https://www.gremlin.com/slack/)

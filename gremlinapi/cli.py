@@ -99,12 +99,12 @@ def _base_args():
                       action="store",
                       dest="gremlin_company",
                       default=os.getenv('GREMLIN_COMPANY', ''))
-    auth.add_argument("-t", "--teamid",
+    auth.add_argument("-t", "--team_id",
                       help="Gremlin Team ID, required for RBAC enabled accounts",
                       type=str,
                       action="store",
-                      dest="gremlin_team_guid",
-                      default=os.getenv('GREMLIN_TEAM_GUID', ''))
+                      dest="gremlin_team_id",
+                      default=os.getenv('GREMLIN_TEAM_ID', ''))
     return p
 
 def _get_parser(cli_module):
