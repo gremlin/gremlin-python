@@ -32,21 +32,21 @@ class GremlinAPIKubernetesAttacks(GremlinAPI):
         return body
 
     @classmethod
-    @register_cli_action('get_kubernetes_attack', ('guid',), ('teamId'))
+    @register_cli_action('get_kubernetes_attack', ('uid',), ('teamId'))
     def get_kubernetes_attack(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
-        guid = cls._error_if_not_param('guid', **kwargs)
-        endpoint = cls._optional_team_endpoint(f'/kubernetes/attacks/{guid}', **kwargs)
+        uid = cls._error_if_not_param('uid', **kwargs)
+        endpoint = cls._optional_team_endpoint(f'/kubernetes/attacks/{uid}', **kwargs)
         payload = cls._payload(**{'headers': https_client.header()})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
-    @register_cli_action('halt_kubernetes_attack', ('guid',), ('teamId',))
+    @register_cli_action('halt_kubernetes_attack', ('uid',), ('teamId',))
     def halt_kubernetes_attack(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
-        guid = cls._error_if_not_param('guid', **kwargs)
-        endpoint = cls._optional_team_endpoint(f'/kubernetes/attacks/{guid}/halt', **kwargs)
+        uid = cls._error_if_not_param('uid', **kwargs)
+        endpoint = cls._optional_team_endpoint(f'/kubernetes/attacks/{uid}/halt', **kwargs)
         payload = cls._payload(**{'headers': https_client.header()})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
