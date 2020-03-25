@@ -58,6 +58,9 @@ _api_user_mfa_token = os.getenv('GREMLIN_USER_MFA_TOKEN', None)
 _api_company = os.getenv('GREMLIN_COMPANY', '')
 _api_team_id = os.getenv('GREMLIN_TEAM_ID', '')
 
+_http_proxy = os.getenv('GREMLIN_HTTP_PROXY', os.getenv('HTTP_PROXY', None))
+_https_proxy = os.getenv('GREMLIN_HTTPS_PROXY', os.getenv('HTTPS_PROXY', None))
+
 
 GremlinAPIConfig.user = _api_user
 GremlinAPIConfig.password = _api_password
@@ -68,7 +71,8 @@ GremlinAPIConfig.api_key = _api_key
 GremlinAPIConfig.bearer_token = _api_bearer_token
 GremlinAPIConfig.bearer_timestamp = _bearer_token_timestamp
 GremlinAPIConfig.max_bearer_interval = _max_bearer_interval
-
+GremlinAPIConfig.http_proxy = _http_proxy
+GremlinAPIConfig.https_proxy = _https_proxy
 
 def _response_to_bearer(auth_response):
     log.debug(auth_response[0]['header'])

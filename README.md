@@ -34,6 +34,17 @@ Coming soon
 
 ## Authenticate to the API
 
+The Gremlin API requires a form of authentication, either API Key or Bearer Token. API Keys are the least privileged
+form of authentication, are easy to manage and change, but do not allow for company wide actions 
+[see https://www.gremlin.com/docs/api-reference/overview/](https://www.gremlin.com/docs/api-reference/overview/) for
+a list of which API endpoints support API Keys vs. Bearer Tokens.
+
+A bearer token may be provided to the API instead of an API Key, and this allow the owner of the bearer token to use
+an escalated set of permissions and actions, pending the user has those roles in the RBAC schema. Because bearer tokens
+are short lived, the user may chose to use the login function instead of directly providing a bearer token. The downside
+to this is that user credentials are directly exposed, and may end up in logs. When using the login function, the Gremlin API will return a bearer token which will be used on the users behalf to
+execute API actions.
+
 #### API User Keys
 
 ```python
@@ -79,6 +90,21 @@ you may supply this globally via the `GremlinAPIConfig` module:
 ```python
 from gremlinapi.config import GremlinAPIConfig as config
 config.team_id = team_id
+```
+
+## Proxy Support
+
+This library supports system wide `HTTP_PROXY` and `HTTPS_PROXY` environment variables.
+
+Additionally, proxy configuration may be directly configured inside the library, or the use of 
+`GREMLIN_HTTP_PROXY` and `GREMLIN_HTTPS_PROXY` can be utilized to isolate the communication stream.
+
+### Direct Proxy Configuration
+
+```python
+from gremlinapi.config import GremlinAPIConfig as config
+config.http_proxy = 'http://user:pass@myproxy:port'
+config.https_proxy = 'https://user:pass@myproxy:port'
 ```
 
 ## Examples
