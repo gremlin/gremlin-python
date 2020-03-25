@@ -140,7 +140,13 @@ class GremlinAPIurllibClient(GremlinAPIHttpClient):
             request_body = json.dumps(kwargs.pop("body"))
 
         uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
-        http_client = urllib3.PoolManager()
+
+        if GremlinAPIConfig.https_proxy and type(GremlinAPIConfig.https_proxy) is str:
+            http_client = urllib3.ProxyManager(GremlinAPIConfig.https_proxy)
+        elif GremlinAPIConfig.http_proxy and type(GremlinAPIConfig.http_proxy) is str:
+            http_client = urllib3.ProxyManager(GremlinAPIConfig.http_proxy)
+        else:
+            http_client = urllib3.PoolManager()
 
         if form_data:
             resp = http_client.request(method, uri, fields=form_data, **kwargs)
