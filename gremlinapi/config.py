@@ -16,6 +16,8 @@ class GremlinAPIConfig(object):
         self._bearer_timestamp = None
         self._bearer_token = None
         self._company_name = None
+        self._http_proxy = False
+        self._https_proxy = False
         self._max_bearer_interval = None
         self._password = None
         self._team_id = None
@@ -69,6 +71,24 @@ class GremlinAPIConfig(object):
     def company_name(self, company_name):
         self._company_name = company_name
         return self.company_name
+
+    @property
+    def http_proxy(self):
+        return self._http_proxy
+
+    @http_proxy.setter
+    def http_proxy(self, http_proxy):
+        self._http_proxy = http_proxy
+        return self.http_proxy
+
+    @property
+    def https_proxy(self):
+        return self._https_proxy
+
+    @https_proxy.setter
+    def https_proxy(self, https_proxy):
+        self._https_proxy = https_proxy
+        return self.https_proxy
 
     @property
     def max_bearer_interval(self):

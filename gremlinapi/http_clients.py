@@ -58,11 +58,25 @@ class GremlinAPIHttpClient(object):
             raise HTTPBadHeader(error_msg)
         return header
 
-
-
+    @classmethod
+    def proxies(cls):
+        error_message = f'This function is not implemented, please consume the proper http library for your environment'
+        log.fatal(error_message)
+        raise NotImplementedError(error_message)
 
 
 class GremlineAPIRequestsClient(GremlinAPIHttpClient):
+    @classmethod
+    def proxies(cls):
+        proxies = dict()
+
+        if GremlinAPIConfig.http_proxy and type(GremlinAPIConfig.http_proxy) is str:
+            proxies['http'] = GremlinAPIConfig.http_proxy
+        if GremlinAPIConfig.https_proxy and type(GremlinAPIConfig.https_proxy) is str:
+            proxies['https'] = GremlinAPIConfig.https_proxy
+
+        return proxies
+
     @classmethod
     def api_call(cls, method, endpoint, *args, **kwargs):
 
@@ -85,6 +99,8 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
             if "Content-Type" not in kwargs["headers"]:
                 kwargs["headers"]["Content-Type"] = "application/json"
             data = json.dumps(kwargs.pop("body"))
+
+        kwargs['proxies'] = cls.proxies()
 
         if data:
             resp = client(uri, data=data, **kwargs)
@@ -124,7 +140,13 @@ class GremlinAPIurllibClient(GremlinAPIHttpClient):
             request_body = json.dumps(kwargs.pop("body"))
 
         uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
-        http_client = urllib3.PoolManager()
+
+        if GremlinAPIConfig.https_proxy and type(GremlinAPIConfig.https_proxy) is str:
+            http_client = urllib3.ProxyManager(GremlinAPIConfig.https_proxy)
+        elif GremlinAPIConfig.http_proxy and type(GremlinAPIConfig.http_proxy) is str:
+            http_client = urllib3.ProxyManager(GremlinAPIConfig.http_proxy)
+        else:
+            http_client = urllib3.PoolManager()
 
         if form_data:
             resp = http_client.request(method, uri, fields=form_data, **kwargs)
