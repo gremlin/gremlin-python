@@ -132,3 +132,5 @@ dmypy.json
 # IntelliJ local settings
 .idea
 gremlin-python.iml
+
+_*.json

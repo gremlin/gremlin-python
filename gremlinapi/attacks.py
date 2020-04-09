@@ -114,3 +114,115 @@ class GremlinAPIAttacks(GremlinAPI):
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
+
+class GremlinTargetHelper:
+    def __init__(self, *args, **kwargs):
+        self._target_type = kwargs.get('targetType', 'Random')  # Validate Random or Exact
+        self._target_model = {
+            'type': 'Random',  # Random or Exact
+            'hosts': {  # could also just be 'all' instead of dictionary
+                'ids': ['list', 'of', 'hosts'],
+                'multiSelectTags': {  # Exclusive of ids
+                    'os-type': ['Linux'],
+                    'zone': ['us-east-1a'],
+                    'region': ['us-east-1'],
+                    'local-hostname': ['list', 'of', 'internal', 'hostnames'],
+                    'local-ip': ['list', 'of', 'ip addresses'],
+                    'public-hostname': ['list', 'of', 'external', 'hostname'],
+                    'any-tag': ['any', 'list', 'of', 'values']
+                }
+            },
+            'containers': {  # could also just be 'all'
+                'ids': ['list', 'of', 'container', 'ids'],
+                'multiSelectLabels': {
+                    'any-label': ['any', 'list', 'of', 'values']
+                }
+            },
+            'percent': 100,  # Integer, only used with type: random
+            'exact': 1  # Exclusive to percent, used to target X hosts
+        }
+
+class GremlinTargetHosts(GremlinTargetHelper):
+    def __init__(self):
+        super.__init__()
+
+
+class GremlinTargetContainers(GremlinTargetHelper):
+    def __init__(self):
+        super.__init__()
+
+
+class GremlinAttackHelper:
+    def __init__(self, *args, **kwargs):
+        self._target_type = kwargs.get('targetType', 'Random')  # Validate Random or Exact
+
+
+class GremlinResourceAttackHelper(GremlinAttackHelper):
+    def __init__(self):
+        super.__init__()
+
+
+class GremlinStateAttackHelper(GremlinAttackHelper):
+    def __init__(self):
+        super.__init__()
+
+
+class GremlinNetworkAttackHelper(GremlinAttackHelper):
+    def __init__(self):
+        super.__init__()
+
+
+
+class GremlinCPUAttack(GremlinResourceAttackHelper):
+    def __init__(self):
+        pass
+
+
+class GremlinMemoryAttack(GremlinResourceAttackHelper):
+    def __init__(self):
+        pass
+
+
+class GremlinDiskSpaceAttack(GremlinResourceAttackHelper):
+    def __init__(self):
+        pass
+
+
+class GremlinDiskIOAttack(GremlinResourceAttackHelper):
+    def __init__(self):
+        pass
+
+
+class GremlinShutdownAttack(GremlinStateAttackHelper):
+    def __init__(self):
+        pass
+
+
+class GremlinProcessKillerAttack(GremlinStateAttackHelper):
+    def __init__(self):
+        pass
+
+
+class GremlinTimeTravelAttack(GremlinStateAttackHelper):
+    def __init__(self):
+        pass
+
+
+class GremlinBlackholeAttack(GremlinNetworkAttackHelper):
+    def __init__(self):
+        pass
+
+
+class GremlinDNSAttack(GremlinNetworkAttackHelper):
+    def __init__(self):
+        pass
+
+
+class GremlinLatencyAttack(GremlinNetworkAttackHelper):
+    def __init__(self):
+        pass
+
+
+class GremlinPacketLossAttack(GremlinNetworkAttackHelper):
+    def __init__(self):
+        pass
