@@ -21,8 +21,6 @@ log = logging.getLogger('GremlinAPI.client')
 
 
 class GremlinAPIAttacks(GremlinAPI):
-
-
     @classmethod
     def _list_endpoint(cls, endpoint, *args, **kwargs):
         if not endpoint:

@@ -42,7 +42,7 @@ __version__ = get_version()
 logging.getLogger('GremlinAPI.client').addHandler(logging.StreamHandler())
 
 log = logging.getLogger('GremlinAPI.client')
-log.setLevel(logging.DEBUG)
+# log.setLevel(logging.DEBUG)
 
 # API Settings
 _api_host = 'https://api.gremlin.com'
