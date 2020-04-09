@@ -41,8 +41,16 @@ __version__ = get_version()
 # Logging Configuration
 logging.getLogger('GremlinAPI.client').addHandler(logging.StreamHandler())
 
+logging_levels = {
+    'CRITICAL': logging.CRITICAL,
+    'ERROR': logging.ERROR,
+    'WARNING': logging.WARNING,
+    'INFO': logging.INFO,
+    'DEBUG': logging.DEBUG
+}
+
 log = logging.getLogger('GremlinAPI.client')
-# log.setLevel(logging.DEBUG)
+log.setLevel(logging_levels.get(os.getenv('GREMLIN_PYTHON_API_LOG_LEVEL', 'WARNING'), logging.WARNING))
 
 # API Settings
 _api_host = 'https://api.gremlin.com'
