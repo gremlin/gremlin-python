@@ -46,7 +46,7 @@ class GremlinAPIClients(GremlinAPI):
     @register_cli_action('list_active_clients', ('',), ('teamId',))
     def list_active_clients(cls, https_client=get_gremlin_httpclient(), **kwargs):
         method = 'GET'
-        endpoint = cls._optional_team_endpoint(f'/clients/activate', **kwargs)
+        endpoint = cls._optional_team_endpoint(f'/clients/active', **kwargs)
         payload = cls._payload(**{'headers': https_client.header()})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
