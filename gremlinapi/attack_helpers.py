@@ -6,12 +6,16 @@ import json
 import logging
 
 from gremlinapi.exceptions import (
+    GremlinIdentifierError,
     GremlinParameterError
 )
 
-from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.attacks import GremlinAPIAttacks as attacks
 from gremlinapi.clients import GremlinAPIClients as clients
+from gremlinapi.containers import GremlinAPIContainers as containers
+
+
+log = logging.getLogger('GremlinAPI.client')
 
 
 class GremlinAttackTargetHelper(object):
@@ -77,6 +81,12 @@ class GremlinAttackTargetHelper(object):
 class GremlinTargetHosts(GremlinAttackTargetHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._active_clients = list()
+        self._active_identifiers = list()
+        self._ids = [None]
+        self._multiSelectTags = dict()
+        self._target_all_hosts = False
+        self.target_all_hosts = kwargs.get('target_all_hosts', False)
         self._target_model = {
             'hosts': {  # could also just be 'all' instead of dictionary
                 'ids': ['list', 'of', 'hosts'],
@@ -92,9 +102,62 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
             }
         }
 
+    @property
+    def ids(self):
+        return self._ids
+
+    @ids.setter
+    def ids(self, identifiers=None):
+        if not isinstance(identifiers, list):
+            error_msg = f'ids expects a list of strings, received {type(identifiers)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        for _identifier in identifiers:
+            if not isinstance(_identifier, str):
+                error_msg = f'Identifier not string; ids expect a string or list of strings'
+                log.fatal(error_msg)
+                raise GremlinParameterError(error_msg)
+            if self._valid_identifier(_identifier):
+                self._ids.append(_identifier)
+            else:
+                error_msg = f'Target identifier "{_identifier}" not found in active clients'
+                log.warning(error_msg)
+                raise GremlinIdentifierError(error_msg)
+
+    @property
+    def target_all_hosts(self):
+        return self._target_all_hosts
+
+    @target_all_hosts.setter
+    def target_all_hosts(self, targetAllHosts=False):
+        if targetAllHosts != False:
+            self._target_all_hosts = True
+        else:
+            self._target_all_hosts = False
+
+    def _filter_active_identifiers(self):
+        if not len(self._active_identifiers) > 0:
+            self._load_active_clients()
+            for _client in self._active_clients:
+                self._active_identifiers.append(_client['identifier'])
+
+    def _load_active_clients(self):
+        if not len(self._active_clients) > 0:
+            self._active_clients = clients.list_active_clients()
+
+    def _valid_identifier(self, identifier=None):
+        if not self._active_identifiers:
+            self._filter_active_identifiers()
+        if identifier in self._active_identifiers:
+            return True
+        return False
+
     def __repr__(self):
         model = json.loads(super().__repr__())
-        model['hosts'] = dict()
+        if self.target_all_hosts:
+            model['hosts'] = 'all'
+        else:
+            model['hosts'] = dict()
         return json.dumps(model)
 
 
