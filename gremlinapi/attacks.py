@@ -117,31 +117,35 @@ class GremlinAPIAttacks(GremlinAPI):
 
 class GremlinAttackTargetHelper:
     def __init__(self, *args, **kwargs):
+        self._target_type = None
+        self._exact = None
+        self._percent = None
         self._allowed_target_types = {'exact': 'Exact', 'random': 'Random'}
-        self._target_type = kwargs.get('targetType', 'Random')  # Validate Random or Exact
+        self.target_type = kwargs.get('target_type', 'random')  # Validate Random or Exact
         self._target_model = {
             'type': 'Random',  # Random or Exact
-            'hosts': {  # could also just be 'all' instead of dictionary
-                'ids': ['list', 'of', 'hosts'],
-                'multiSelectTags': {  # Exclusive of ids
-                    'os-type': ['Linux'],
-                    'zone': ['us-east-1a'],
-                    'region': ['us-east-1'],
-                    'local-hostname': ['list', 'of', 'internal', 'hostnames'],
-                    'local-ip': ['list', 'of', 'ip addresses'],
-                    'public-hostname': ['list', 'of', 'external', 'hostname'],
-                    'any-tag': ['any', 'list', 'of', 'values']
-                }
-            },
-            'containers': {  # could also just be 'all'
-                'ids': ['list', 'of', 'container', 'ids'],
-                'multiSelectLabels': {
-                    'any-label': ['any', 'list', 'of', 'values']
-                }
-            },
             'percent': 100,  # Integer, only used with type: random
             'exact': 1  # Exclusive to percent, used to target X hosts
         }
+
+    def __repr__(self):
+        model = dict()
+        model['type'] = self.target_type
+        if self.target_type is 'Exact':
+            model['exact'] = self.exact
+
+
+    @property
+    def exact(self):
+        return self._exact
+
+    @exact.setter
+    def exact(self, exactTargets=None):
+        if not isinstance(exactTargets, int) and exactTargets > 0:
+            error_msg = f'Exact number of targets must be an integer greater than 0'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._exact = exactTargets
 
     @property
     def target_type(self):
