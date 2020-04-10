@@ -121,19 +121,22 @@ class GremlinAttackTargetHelper:
         self._exact = None
         self._percent = None
         self._allowed_target_types = {'exact': 'Exact', 'random': 'Random'}
+        self.exact = kwargs.get('exact', 1)
+        self.percent = kwargs.get('percent', 1)
         self.target_type = kwargs.get('target_type', 'random')  # Validate Random or Exact
-        self._target_model = {
-            'type': 'Random',  # Random or Exact
-            'percent': 100,  # Integer, only used with type: random
-            'exact': 1  # Exclusive to percent, used to target X hosts
-        }
 
     def __repr__(self):
         model = dict()
         model['type'] = self.target_type
         if self.target_type is 'Exact':
             model['exact'] = self.exact
-
+        elif self.target_type is 'Random':
+            model['percent'] = self.percent
+        else:
+            error_msg = f'Type not correctly set, needs to be one of {str(self._allowed_target_types.keys())[1:-2]}'
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+        return model
 
     @property
     def exact(self):
@@ -146,6 +149,18 @@ class GremlinAttackTargetHelper:
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
         self._exact = exactTargets
+
+    @property
+    def percent(self):
+        return self._percent
+
+    @percent.setter
+    def percent(self, percentTargets=None):
+        if not isinstance(percentTargets, int) and 1 <= percentTargets <= 100:
+            error_msg = f'Target percentage must be an integer between 1 and 100'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._percent = percentTargets
 
     @property
     def target_type(self):
