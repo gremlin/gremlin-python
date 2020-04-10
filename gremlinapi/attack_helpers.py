@@ -83,10 +83,12 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         super().__init__(*args, **kwargs)
         self._active_clients = list()
         self._active_identifiers = list()
-        self._ids = [None]
+        self._active_tags = dict()
+        self._ids = list()
         self._multiSelectTags = dict()
+        self._nativeTags = {'os-type': 'os_type', 'os-version': 'os_version'}
         self._target_all_hosts = False
-        self.target_all_hosts = kwargs.get('target_all_hosts', False)
+        self.target_all_hosts = kwargs.get('target_all_hosts', True)
         self._target_model = {
             'hosts': {  # could also just be 'all' instead of dictionary
                 'ids': ['list', 'of', 'hosts'],
@@ -123,6 +125,15 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
                 error_msg = f'Target identifier "{_identifier}" not found in active clients'
                 log.warning(error_msg)
                 raise GremlinIdentifierError(error_msg)
+        self.target_all_hosts = False
+
+    @property
+    def tags(self):
+        return self._multiSelectTags
+
+    @tags.setter
+    def tags(self, tags=None):
+        pass
 
     @property
     def target_all_hosts(self):
@@ -141,6 +152,27 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
             for _client in self._active_clients:
                 self._active_identifiers.append(_client['identifier'])
 
+    def _filter_active_tags(self):
+        if not len(self._active_tags) > 0:
+            self._load_active_clients()
+            for _client in self._active_clients:
+                for _tag in self._nativeTags:
+                    if not self._active_tags.get(_tag):
+                        self._active_tags[_tag] = list()
+                    if _client.get(_tag) not in self._active_tags[_tag]:
+                        self._active_tags[_tag].append(_client.get(_tag))
+                for _tag in _client.get('tags'):
+                    if not self._active_tags.get(_tag):
+                        self._active_tags[_tag] = list()
+                    _tag_value = _client['tags'].get(_tag)
+                    if isinstance(_tag_value, str):
+                        if _tag_value not in self._active_tags[_tag]:
+                            self._active_tags[_tag].append(_tag_value)
+                    elif isinstance(_tag_value, list):
+                        for _inner_tag_value in _client['tags'].get(_tag):
+                            if _inner_tag_value not in self._active_tags[_tag]:
+                                self._active_tags[_tag].append(_inner_tag_value)
+
     def _load_active_clients(self):
         if not len(self._active_clients) > 0:
             self._active_clients = clients.list_active_clients()
@@ -152,12 +184,18 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
             return True
         return False
 
+    def _valid_tag(self, tag=None):
+        if not self._active_tags:
+            self._filter_active_tags()
+
     def __repr__(self):
         model = json.loads(super().__repr__())
         if self.target_all_hosts:
             model['hosts'] = 'all'
         else:
-            model['hosts'] = dict()
+            model['hosts'] = {
+                'ids': self.ids
+            }
         return json.dumps(model)
 
 
