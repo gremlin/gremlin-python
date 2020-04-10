@@ -143,13 +143,41 @@ class GremlinTargetHelper:
         }
 
 class GremlinTargetHosts(GremlinTargetHelper):
-    def __init__(self):
-        super.__init__()
+    def __init__(self, *args, **kwargs):
+        super.__init__(*args, **kwargs)
+        self._target_model = {
+            'type': 'Random',  # Random or Exact
+            'hosts': {  # could also just be 'all' instead of dictionary
+                'ids': ['list', 'of', 'hosts'],
+                'multiSelectTags': {  # Exclusive of ids
+                    'os-type': ['Linux'],
+                    'zone': ['us-east-1a'],
+                    'region': ['us-east-1'],
+                    'local-hostname': ['list', 'of', 'internal', 'hostnames'],
+                    'local-ip': ['list', 'of', 'ip addresses'],
+                    'public-hostname': ['list', 'of', 'external', 'hostname'],
+                    'any-tag': ['any', 'list', 'of', 'values']
+                }
+            },
+            'percent': 100,  # Integer, only used with type: random
+            'exact': 1  # Exclusive to percent, used to target X hosts
+        }
 
 
 class GremlinTargetContainers(GremlinTargetHelper):
-    def __init__(self):
-        super.__init__()
+    def __init__(self, *args, **kwargs):
+        super.__init__(*args, **kwargs)
+        self._target_model = {
+            'type': 'Random',  # Random or Exact
+            'containers': {  # could also just be 'all'
+                'ids': ['list', 'of', 'container', 'ids'],
+                'multiSelectLabels': {
+                    'any-label': ['any', 'list', 'of', 'values']
+                }
+            },
+            'percent': 100,  # Integer, only used with type: random
+            'exact': 1  # Exclusive to percent, used to target X hosts
+        }
 
 
 class GremlinAttackHelper:
