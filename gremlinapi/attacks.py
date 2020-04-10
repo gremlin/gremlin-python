@@ -115,8 +115,9 @@ class GremlinAPIAttacks(GremlinAPI):
         return body
 
 
-class GremlinTargetHelper:
+class GremlinAttackTargetHelper:
     def __init__(self, *args, **kwargs):
+        self._allowed_target_types = {'exact': 'Exact', 'random': 'Random'}
         self._target_type = kwargs.get('targetType', 'Random')  # Validate Random or Exact
         self._target_model = {
             'type': 'Random',  # Random or Exact
@@ -142,7 +143,20 @@ class GremlinTargetHelper:
             'exact': 1  # Exclusive to percent, used to target X hosts
         }
 
-class GremlinTargetHosts(GremlinTargetHelper):
+    @property
+    def target_type(self):
+        return self._target_type
+
+    @target_type.setter
+    def target_type(self, targetType=None):
+        if not isinstance(targetType, str) or not self._allowed_target_types.get(targetType.lower(), None):
+            error_msg = f'target_type needs to be one of {str(self._allowed_target_types.keys())[1:-2]}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._target_type = self._allowed_target_types.get(targetType.lower(), None)
+
+
+class GremlinTargetHosts(GremlinAttackTargetHelper):
     def __init__(self, *args, **kwargs):
         super.__init__(*args, **kwargs)
         self._target_model = {
@@ -164,7 +178,7 @@ class GremlinTargetHosts(GremlinTargetHelper):
         }
 
 
-class GremlinTargetContainers(GremlinTargetHelper):
+class GremlinTargetContainers(GremlinAttackTargetHelper):
     def __init__(self, *args, **kwargs):
         super.__init__(*args, **kwargs)
         self._target_model = {
@@ -180,24 +194,78 @@ class GremlinTargetContainers(GremlinTargetHelper):
         }
 
 
-class GremlinAttackHelper:
+class GremlinAttackCommandHelper:
     def __init__(self, *args, **kwargs):
         self._target_type = kwargs.get('targetType', 'Random')  # Validate Random or Exact
+        self._command_model = {
+            'type': 'command-type',  # 'packet_loss'
+            'commandType': 'Command Type',  # 'Packet Loss'
+            'args': [
+                '-l', '60'
+            ],
+            'providers': []
+        }
+
+    @classmethod
+    def length(cls, *args, **kwargs):
+        pass
 
 
-class GremlinResourceAttackHelper(GremlinAttackHelper):
+class GremlinResourceAttackHelper(GremlinAttackCommandHelper):
     def __init__(self):
         super.__init__()
 
 
-class GremlinStateAttackHelper(GremlinAttackHelper):
+class GremlinStateAttackHelper(GremlinAttackCommandHelper):
     def __init__(self):
         super.__init__()
 
 
-class GremlinNetworkAttackHelper(GremlinAttackHelper):
+class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
     def __init__(self):
         super.__init__()
+
+    @classmethod
+    def blacklist_host(cls, *args, **kwargs):
+        pass
+
+    @classmethod
+    def egress_ports(cls, *args, **kwargs):
+        pass
+
+    @classmethod
+    def protocol(cls, *args, **kwargs):
+        # -P [TCP, UDP, ICMP]
+        pass
+
+    @classmethod
+    def providers(cls, *args, **kwargs):
+        pass
+
+    @classmethod
+    def source_ports(cls, *args, **kwargs):
+        pass
+
+    @classmethod
+    def tags(cls, *args, **kwargs):
+        model = {
+            'trafficImpactMapping': {
+                'multiSelectTags': {
+                   'tagName': ['list', 'tag', 'values']
+                }
+            }
+        }
+        pass
+
+    @classmethod
+    def whitelist_host(cls, *args, **kwargs):
+        pass
+
+
+
+
+
+
 
 
 
@@ -254,3 +322,9 @@ class GremlinLatencyAttack(GremlinNetworkAttackHelper):
 class GremlinPacketLossAttack(GremlinNetworkAttackHelper):
     def __init__(self):
         pass
+
+    @classmethod
+    def corrupt(cls, *args, **kwargs):
+        # args: [ '-c' ]
+        pass
+
