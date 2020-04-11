@@ -366,7 +366,40 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
 class GremlinAttackCommandHelper(object):
     def __init__(self, *args, **kwargs):
         self._length = 60
+        self._commandType = str()
+        self._shortType = str()
+        self._typeMap = {
+            'cpu': 'CPU',
+            'memory': 'Memory',
+            'disk': 'Disk',
+            'io': 'IO',
+            'process_killer': 'Process Killer',
+            'shutdown': 'Shutdown',
+            'time_travel': 'Time Travel',
+            'blackhole': 'Blackhole',
+            'dns': 'DNS',
+            'latency': 'Latency',
+            'packet_loss': 'Packet Loss'
+        }
         self.length = kwargs.get('length', 60)
+
+    @property
+    def commandType(self):
+        return self._commandType
+
+    @commandType.setter
+    def commandType(self, commandType=None):
+        if not isinstance(commandType, str):
+            error_msg = f'commandType expects a string, received {type(commandType)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        try:
+            self._shortType = list(self._typeMap.keys())[list(self._typeMap.values()).index(commandType)]
+        except ValueError:
+            error_msg = f'commandType needs to be one of: {str(self._typeMap.values())[1:-2]}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._commandType = commandType
 
     @property
     def length(self):
@@ -380,8 +413,27 @@ class GremlinAttackCommandHelper(object):
             raise GremlinParameterError(error_msg)
         self._length = length
 
+    @property
+    def shortType(self):
+        return self._shortType
+
+    @shortType.setter
+    def shortType(self, shortType=None):
+        if not isInstance(shortType, str):
+            error_msg = f'type_ expects a string, received {type(shortType)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        if not shortType.lower() in self._typeMap:
+            error_msg = f'invalid attack type, expected one of {str(self._typeMap.keys())[1:-2]}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._commandType = self._typeMap[shortType]
+        self._shortType = shortType
+
     def __repr__(self):
         model = {
+            'type': self.shortType,
+            'commandType': self.commandType,
             'args': [
                 '-l', self.length
             ]
@@ -473,8 +525,11 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
 class GremlinCPUAttack(GremlinResourceAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._type = 'cpu'
-        self._commandType = 'CPU'
+        self.shortType = 'cpu'
+        self._capacity = 100  # ['-p', int]
+        self._cores = 1  # ['-c', int]
+        self._all_cores = False  # ['-a']
+
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -484,8 +539,7 @@ class GremlinCPUAttack(GremlinResourceAttackHelper):
 class GremlinMemoryAttack(GremlinResourceAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._type = 'memory'
-        self._commandType = 'Memory'
+        self.shortType = 'memory'
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -495,8 +549,7 @@ class GremlinMemoryAttack(GremlinResourceAttackHelper):
 class GremlinDiskSpaceAttack(GremlinResourceAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._type = 'disk'
-        self._commandType = 'Disk'
+        self.shortType = 'disk'
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -506,8 +559,7 @@ class GremlinDiskSpaceAttack(GremlinResourceAttackHelper):
 class GremlinDiskIOAttack(GremlinResourceAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._type = 'io'
-        self._commandType = 'IO'
+        self.shortType = 'io'
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -517,8 +569,7 @@ class GremlinDiskIOAttack(GremlinResourceAttackHelper):
 class GremlinShutdownAttack(GremlinStateAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._type = 'shutdown'
-        self._commandType = 'Shutdown'
+        self.shortType = 'shutdown'
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -528,8 +579,7 @@ class GremlinShutdownAttack(GremlinStateAttackHelper):
 class GremlinProcessKillerAttack(GremlinStateAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._type = 'process_killer'
-        self._commandType = 'Process Killer'
+        self.shortType = 'process_killer'
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -538,8 +588,7 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
 class GremlinTimeTravelAttack(GremlinStateAttackHelper):
     def __init__(self, *arge, **kwargs):
         super().__init__(*args, **kwargs)
-        self._type = 'time_travel'
-        self._commandType = 'Time Travel'
+        self.shortType = 'time_travel'
         self._offset = 86400
         self._blockNTP = False
 
@@ -563,8 +612,7 @@ class GremlinTimeTravelAttack(GremlinStateAttackHelper):
 class GremlinBlackholeAttack(GremlinNetworkAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._type = 'blackhole'
-        self._commandType = 'Blackhole'
+        self.shortType = 'blackhole'
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -574,8 +622,7 @@ class GremlinBlackholeAttack(GremlinNetworkAttackHelper):
 class GremlinDNSAttack(GremlinNetworkAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._type = 'dns'
-        self._commandType = 'DNS'
+        self.shortType = 'dns'
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -585,8 +632,7 @@ class GremlinDNSAttack(GremlinNetworkAttackHelper):
 class GremlinLatencyAttack(GremlinNetworkAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._type = 'latency'
-        self._commandType = 'Latency'
+        self.shortType = 'latency'
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -596,8 +642,7 @@ class GremlinLatencyAttack(GremlinNetworkAttackHelper):
 class GremlinPacketLossAttack(GremlinNetworkAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._type = 'packet_loss'
-        self._commandType = 'PacketLoss'
+        self.shortType = 'packet_loss'
 
     @property
     def corrupt(self):
