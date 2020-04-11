@@ -419,7 +419,7 @@ class GremlinAttackCommandHelper(object):
 
     @shortType.setter
     def shortType(self, shortType=None):
-        if not isInstance(shortType, str):
+        if not isinstance(shortType, str):
             error_msg = f'type_ expects a string, received {type(shortType)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
@@ -526,13 +526,57 @@ class GremlinCPUAttack(GremlinResourceAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shortType = 'cpu'
+        self._all_cores = False  # ['-a']
         self._capacity = 100  # ['-p', int]
         self._cores = 1  # ['-c', int]
-        self._all_cores = False  # ['-a']
+        self.all_cores = kwargs.get('all_cores', False)
+        self.capacity = kwargs.get('capacity', 100)
+        self.cores = kwargs.get('cores', 1)
+
+    @property
+    def all_cores(self):
+        return self._all_cores
+
+    @all_cores.setter
+    def all_cores(self, allCores=None):
+        if not isinstance(allCores, bool):
+            error_msg = f'all_cores expects a bool, received {type(allCores)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._all_cores = allCores
+
+    @property
+    def capacity(self):
+        return self._capacity
+
+    @capacity.setter
+    def capacity(self, capacity=None):
+        if not (isinstance(capacity, int) and 1 <= capacity <= 100):
+            error_msg = f'Capacity expects an integer between 1 and 100'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._capacity = capacity
+
+    @property
+    def cores(self):
+        return self._cores
+
+    @cores.setter
+    def cores(self, cores=None):
+        if not (isinstance(cores, int) and cores >= 1):
+            error_msg = f'Cores expects a positive integer'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._cores = cores
 
 
     def __repr__(self):
         model = json.loads(super().__repr__())
+        model['args'].extend(['-p', self.capacity])
+        if self.all_cores:
+            model['args'].append('-a')
+        else:
+            model['args'].extend(['-c', self.cores])
         return json.dumps(model)
 
 
