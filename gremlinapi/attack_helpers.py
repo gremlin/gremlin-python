@@ -89,20 +89,6 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         self._nativeTags = {'os-type': 'os_type', 'os-version': 'os_version'}
         self._target_all_hosts = False
         self.target_all_hosts = kwargs.get('target_all_hosts', True)
-        self._target_model = {
-            'hosts': {  # could also just be 'all' instead of dictionary
-                'ids': ['list', 'of', 'hosts'],
-                'multiSelectTags': {  # Exclusive of ids
-                    'os-type': ['Linux'],
-                    'zone': ['us-east-1a'],
-                    'region': ['us-east-1'],
-                    'local-hostname': ['list', 'of', 'internal', 'hostnames'],
-                    'local-ip': ['list', 'of', 'ip addresses'],
-                    'public-hostname': ['list', 'of', 'external', 'hostname'],
-                    'any-tag': ['any', 'list', 'of', 'values']
-                }
-            }
-        }
 
     @property
     def ids(self):
@@ -125,6 +111,7 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
                 error_msg = f'Target identifier "{_identifier}" not found in active clients'
                 log.warning(error_msg)
                 raise GremlinIdentifierError(error_msg)
+        self._multiSelectTags = {}
         self.target_all_hosts = False
 
     @property
@@ -133,7 +120,12 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
 
     @tags.setter
     def tags(self, tags=None):
-        pass
+        if isinstance(tags, dict):
+            for _tag in tags:
+                if self._valid_tag_pair(_tag, tags[_tag]):
+                    self._multiSelectTags[_tag] = tags[_tag]
+        self._ids = []
+        self.target_all_hosts = False
 
     @property
     def target_all_hosts(self):
@@ -184,18 +176,26 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
             return True
         return False
 
-    def _valid_tag(self, tag=None):
+    def _valid_tag_pair(self, tagKey=None, tagValue=None):
         if not self._active_tags:
             self._filter_active_tags()
+        if tagValue in self._active_tags.get(tagKey, []):
+            return True
+        return False
 
     def __repr__(self):
         model = json.loads(super().__repr__())
         if self.target_all_hosts:
             model['hosts'] = 'all'
         else:
-            model['hosts'] = {
-                'ids': self.ids
-            }
+            if len(self.ids) > 0:
+                model['hosts'] = {
+                    'ids': self.ids
+                }
+            elif len(self.tags) > 0:
+                model['hosts'] = {
+                    'multiSelectTags': self.tags
+                }
         return json.dumps(model)
 
 
