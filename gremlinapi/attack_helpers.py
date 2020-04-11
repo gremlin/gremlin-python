@@ -10,7 +10,6 @@ from gremlinapi.exceptions import (
     GremlinParameterError
 )
 
-from gremlinapi.attacks import GremlinAPIAttacks as attacks
 from gremlinapi.clients import GremlinAPIClients as clients
 from gremlinapi.containers import GremlinAPIContainers as containers
 
@@ -64,7 +63,7 @@ class GremlinAttackTargetHelper(object):
         self._percent = None
         self._allowed_target_types = {'exact': 'Exact', 'random': 'Random'}
         self.exact = kwargs.get('exact', 1)
-        self.percent = kwargs.get('percent', 1)
+        self.percent = kwargs.get('percent', 10)
         self.target_type = kwargs.get('target_type', 'random')  # Validate Random or Exact
 
     def __repr__(self):
@@ -245,20 +244,12 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
         self._active_identifiers = list()
         self._active_labels = dict()
         self._ids = list()
-        self._multiSelectTags = dict()
+        self._multiSelectLabels = dict()
         #self._nativeTags = {'os-type': 'os_type', 'os-version': 'os_version'}
         self._target_all_containers = True
         self.target_all_containers = kwargs.get('target_all_containers', True)
-        self._target_model = {
-            'containers': {  # could also just be 'all'
-                'ids': ['list', 'of', 'container', 'ids'],
-                'multiSelectLabels': {
-                    'any-label': ['any', 'list', 'of', 'values']
-                }
-            },
-            'percent': 100,  # Integer, only used with type: random
-            'exact': 1  # Exclusive to percent, used to target X hosts
-        }
+        self.ids = kwargs.get('ids', list())
+        self.labels = kwargs.get('labels', dict())
 
     @property
     def ids(self):
@@ -270,32 +261,48 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
             error_msg = f'ids expects a list of strings, received {type(_ids)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        for _identifier in _ids:
-            if not isinstance(_identifier, str):
-                error_msg = f'Identifier not string; ids expect a string or list of strings'
-                log.fatal(error_msg)
-                raise GremlinParameterError(error_msg)
-            if self._valid_identifier(_identifier):
-                self._ids.append(_identifier)
-            else:
-                error_msg = f'Target identifier "{_identifier}" not found in active clients'
-                log.warning(error_msg)
-                raise GremlinIdentifierError(error_msg)
-        self._multiSelectTags = {}
-        self.target_all_containers = False
+        if len(_ids) >= 1:
+            for _identifier in _ids:
+                if not isinstance(_identifier, str):
+                    error_msg = f'Identifier not string; ids expect a string or list of strings'
+                    log.fatal(error_msg)
+                    raise GremlinParameterError(error_msg)
+                if self._valid_identifier(_identifier):
+                    self._ids.append(_identifier)
+                else:
+                    error_msg = f'Target identifier "{_identifier}" not found in active clients'
+                    log.warning(error_msg)
+                    raise GremlinIdentifierError(error_msg)
+            self._multiSelectLabels = {}
+            self.target_all_containers = False
 
     @property
     def labels(self):
-        return self._multiSelectTags
+        return self._multiSelectLabels
 
     @labels.setter
     def labels(self, _labels=None):
-        if isinstance(_labels, dict):
+        if not isinstance(_labels, dict):
+            error_msg = f'labels expects a dictionary, received {type(_labels)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        if bool(_labels):
             for _label in _labels:
-                if self._valid_label_pair(_label, _labels[_label]):
-                    self._multiSelectTags[_label] = _labels[_label]
-        self._ids = []
-        self.target_all_containers = False
+                if isinstance(_labels[_label], str):
+                    if self._valid_label_pair(_label, _labels[_label]):
+                        if isinstance(self._multiSelectLabels.get(_label, None), list):
+                            self._multiSelectLabels[_label].append(_labels[_label])
+                        else:
+                            self._multiSelectLabels[_label] = [_labels[_label]]
+                elif isinstance(_labels[_label], list()):
+                    if not isinstance(self._multiSelectLabels[_label]):
+                        self._multiSelectLabels[_label] = list()
+                    for _value in _labels[_label]:
+                        if self._valid_label_pair(_label, _value):
+                            self._multiSelectLabels[_label].append(_value)
+
+            self._ids = []
+            self.target_all_containers = False
 
     @property
     def target_all_containers(self):
@@ -359,7 +366,7 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
                 }
             elif len(self.labels) > 0:
                 model['containers'] = {
-                    'multiSelectTags': self.labels
+                    'multiSelectLabels': self.labels
                 }
         return json.dumps(model)
 
@@ -435,7 +442,7 @@ class GremlinAttackCommandHelper(object):
             'type': self.shortType,
             'commandType': self.commandType,
             'args': [
-                '-l', self.length
+                '-l', str(self.length)
             ]
         }
         return json.dumps(model)
@@ -572,11 +579,11 @@ class GremlinCPUAttack(GremlinResourceAttackHelper):
 
     def __repr__(self):
         model = json.loads(super().__repr__())
-        model['args'].extend(['-p', self.capacity])
+        model['args'].extend(['-p', str(self.capacity)])
         if self.all_cores:
             model['args'].append('-a')
         else:
-            model['args'].extend(['-c', self.cores])
+            model['args'].extend(['-c', str(self.cores)])
         return json.dumps(model)
 
 

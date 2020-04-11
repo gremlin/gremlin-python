@@ -10,6 +10,19 @@
 
 ##### CPU
 
+This will target 10% of all container
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetContainers, GremlinCPUAttack
+
+attacks.create_attack(
+    body=GremlinAttackHelper(
+        target=GremlinTargetContainers(type='Random', labels={'owner': 'kyle'}, percent=100),
+        command=GremlinCPUAttack(all_cores=True, capacity=100)
+    )
+)
+```
+
 ##### Memory
 
 ##### Disk IO
