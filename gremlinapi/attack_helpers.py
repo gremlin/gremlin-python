@@ -202,6 +202,14 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
 class GremlinTargetContainers(GremlinAttackTargetHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._active_containers = list()
+        self._active_identifiers = list()
+        self._active_labels = dict()
+        self._ids = list()
+        self._multiSelectTags = dict()
+        #self._nativeTags = {'os-type': 'os_type', 'os-version': 'os_version'}
+        self._target_all_containers = True
+        self.target_all_containers = kwargs.get('target_all_containers', True)
         self._target_model = {
             'containers': {  # could also just be 'all'
                 'ids': ['list', 'of', 'container', 'ids'],
@@ -213,6 +221,108 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
             'exact': 1  # Exclusive to percent, used to target X hosts
         }
 
+    @property
+    def ids(self):
+        return self._ids
+
+    @ids.setter
+    def ids(self, identifiers=None):
+        if not isinstance(identifiers, list):
+            error_msg = f'ids expects a list of strings, received {type(identifiers)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        for _identifier in identifiers:
+            if not isinstance(_identifier, str):
+                error_msg = f'Identifier not string; ids expect a string or list of strings'
+                log.fatal(error_msg)
+                raise GremlinParameterError(error_msg)
+            if self._valid_identifier(_identifier):
+                self._ids.append(_identifier)
+            else:
+                error_msg = f'Target identifier "{_identifier}" not found in active clients'
+                log.warning(error_msg)
+                raise GremlinIdentifierError(error_msg)
+        self._multiSelectTags = {}
+        self.target_all_containers = False
+
+    @property
+    def labels(self):
+        return self._multiSelectTags
+
+    @labels.setter
+    def labels(self, labels=None):
+        if isinstance(labels, dict):
+            for _label in labels:
+                if self._valid_label_pair(_label, labels[_label]):
+                    self._multiSelectTags[_label] = labels[_label]
+        self._ids = []
+        self.target_all_containers = False
+
+    @property
+    def target_all_containers(self):
+        return self._target_all_containers
+
+    @target_all_containers.setter
+    def target_all_containers(self, targetAllContainers=False):
+        if targetAllContainers != False:
+            self._target_all_containers = True
+        else:
+            self._target_all_containers = False
+
+    def _filter_active_identifiers(self):
+        if not len(self._active_identifiers) > 0:
+            self._load_active_containers()
+            for _container in self._active_containers:
+                self._active_identifiers.append(_container['identifier'])
+
+    def _filter_active_labels(self):
+        if not len(self._active_labels) > 0:
+            self._load_active_containers()
+            for _container in self._active_containers:
+                for _label in _container.get('container_labels'):
+                    if not self._active_labels.get(_label):
+                        self._active_labels[_label] = list()
+                    _label_value = _container['container_labels'].get(_label)
+                    if isinstance(_label_value, str):
+                        if _label_value not in self._active_labels[_label]:
+                            self._active_labels[_label].append(_label_value)
+                    elif isinstance(_label_value, list):
+                        for _inner_label_value in _container['container_labels'].get(_label):
+                            if _inner_label_value not in self._active_labels[_label]:
+                                self._active_labels[_label].append(_inner_label_value)
+
+    def _load_active_containers(self):
+        if not len(self._active_containers) > 0:
+            self._active_containers = containers.list_containers()
+
+    def _valid_identifier(self, identifier=None):
+        if not self._active_identifiers:
+            self._filter_active_identifiers()
+        if identifier in self._active_identifiers:
+            return True
+        return False
+
+    def _valid_label_pair(self, labelKey=None, labelValue=None):
+        if not self._active_labels:
+            self._filter_active_labels()
+        if labelValue in self._active_labels.get(labelKey, []):
+            return True
+        return False
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        if self.target_all_containers:
+            model['containers'] = 'all'
+        else:
+            if len(self.ids) > 0:
+                model['containers'] = {
+                    'ids': self.ids
+                }
+            elif len(self.labels) > 0:
+                model['containers'] = {
+                    'multiSelectTags': self.labels
+                }
+        return json.dumps(model)
 
 class GremlinAttackCommandHelper(object):
     def __init__(self, *args, **kwargs):
