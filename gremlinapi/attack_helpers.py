@@ -30,24 +30,24 @@ class GremlinAttackHelper(object):
         return self._command
 
     @command.setter
-    def command(self, command=None):
-        if not issubclass(type(command), GremlinAttackCommandHelper):
+    def command(self, _command=None):
+        if not issubclass(type(_command), GremlinAttackCommandHelper):
             error_msg = f'Command needs to be a child class of {type(GremlinAttackCommandHelper)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._command = command
+        self._command = _command
 
     @property
     def target(self):
         return self._target
 
     @target.setter
-    def target(self, target=None):
-        if not issubclass(type(target), GremlinAttackTargetHelper):
+    def target(self, _target=None):
+        if not issubclass(type(_target), GremlinAttackTargetHelper):
             error_msg = f'Command needs to be a child class of {type(GremlinAttackTargetHelper)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._target = target
+        self._target = _target
 
     def __repr__(self):
         model = {
@@ -85,36 +85,36 @@ class GremlinAttackTargetHelper(object):
         return self._exact
 
     @exact.setter
-    def exact(self, exactTargets=None):
-        if not isinstance(exactTargets, int) and exactTargets > 0:
+    def exact(self, _exact=None):
+        if not isinstance(_exact, int) and _exact > 0:
             error_msg = f'Exact number of targets must be an integer greater than 0'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._exact = exactTargets
+        self._exact = _exact
 
     @property
     def percent(self):
         return self._percent
 
     @percent.setter
-    def percent(self, percentTargets=None):
-        if not isinstance(percentTargets, int) and 1 <= percentTargets <= 100:
+    def percent(self, _percentTargets=None):
+        if not isinstance(_percentTargets, int) and 1 <= _percentTargets <= 100:
             error_msg = f'Target percentage must be an integer between 1 and 100'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._percent = percentTargets
+        self._percent = _percentTargets
 
     @property
     def target_type(self):
         return self._target_type
 
     @target_type.setter
-    def target_type(self, targetType=None):
-        if not isinstance(targetType, str) or not self._allowed_target_types.get(targetType.lower(), None):
+    def target_type(self, _target_type=None):
+        if not isinstance(_target_type, str) or not self._allowed_target_types.get(_target_type.lower(), None):
             error_msg = f'target_type needs to be one of {str(self._allowed_target_types.keys())[1:-2]}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._target_type = self._allowed_target_types.get(targetType.lower(), None)
+        self._target_type = self._allowed_target_types.get(_target_type.lower(), None)
 
 
 class GremlinTargetHosts(GremlinAttackTargetHelper):
@@ -134,12 +134,12 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         return self._ids
 
     @ids.setter
-    def ids(self, identifiers=None):
-        if not isinstance(identifiers, list):
-            error_msg = f'ids expects a list of strings, received {type(identifiers)}'
+    def ids(self, _ids=None):
+        if not isinstance(_ids, list):
+            error_msg = f'ids expects a list of strings, received {type(_ids)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        for _identifier in identifiers:
+        for _identifier in _ids:
             if not isinstance(_identifier, str):
                 error_msg = f'Identifier not string; ids expect a string or list of strings'
                 log.fatal(error_msg)
@@ -158,11 +158,11 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         return self._multiSelectTags
 
     @tags.setter
-    def tags(self, tags=None):
-        if isinstance(tags, dict):
-            for _tag in tags:
-                if self._valid_tag_pair(_tag, tags[_tag]):
-                    self._multiSelectTags[_tag] = tags[_tag]
+    def tags(self, _tags=None):
+        if isinstance(_tags, dict):
+            for _tag in _tags:
+                if self._valid_tag_pair(_tag, _tags[_tag]):
+                    self._multiSelectTags[_tag] = _tags[_tag]
         self._ids = []
         self.target_all_hosts = False
 
@@ -171,8 +171,8 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         return self._target_all_hosts
 
     @target_all_hosts.setter
-    def target_all_hosts(self, targetAllHosts=False):
-        if targetAllHosts != False:
+    def target_all_hosts(self, _target_all_hosts=False):
+        if _target_all_hosts != False:
             self._target_all_hosts = True
         else:
             self._target_all_hosts = False
@@ -265,12 +265,12 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
         return self._ids
 
     @ids.setter
-    def ids(self, identifiers=None):
-        if not isinstance(identifiers, list):
-            error_msg = f'ids expects a list of strings, received {type(identifiers)}'
+    def ids(self, _ids=None):
+        if not isinstance(_ids, list):
+            error_msg = f'ids expects a list of strings, received {type(_ids)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        for _identifier in identifiers:
+        for _identifier in _ids:
             if not isinstance(_identifier, str):
                 error_msg = f'Identifier not string; ids expect a string or list of strings'
                 log.fatal(error_msg)
@@ -289,11 +289,11 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
         return self._multiSelectTags
 
     @labels.setter
-    def labels(self, labels=None):
-        if isinstance(labels, dict):
-            for _label in labels:
-                if self._valid_label_pair(_label, labels[_label]):
-                    self._multiSelectTags[_label] = labels[_label]
+    def labels(self, _labels=None):
+        if isinstance(_labels, dict):
+            for _label in _labels:
+                if self._valid_label_pair(_label, _labels[_label]):
+                    self._multiSelectTags[_label] = _labels[_label]
         self._ids = []
         self.target_all_containers = False
 
@@ -302,8 +302,8 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
         return self._target_all_containers
 
     @target_all_containers.setter
-    def target_all_containers(self, targetAllContainers=False):
-        if targetAllContainers != False:
+    def target_all_containers(self, _target_all_containers=False):
+        if _target_all_containers != False:
             self._target_all_containers = True
         else:
             self._target_all_containers = False
@@ -388,47 +388,47 @@ class GremlinAttackCommandHelper(object):
         return self._commandType
 
     @commandType.setter
-    def commandType(self, commandType=None):
-        if not isinstance(commandType, str):
-            error_msg = f'commandType expects a string, received {type(commandType)}'
+    def commandType(self, _commandType=None):
+        if not isinstance(_commandType, str):
+            error_msg = f'commandType expects a string, received {type(_commandType)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
         try:
-            self._shortType = list(self._typeMap.keys())[list(self._typeMap.values()).index(commandType)]
+            self._shortType = list(self._typeMap.keys())[list(self._typeMap.values()).index(_commandType)]
         except ValueError:
             error_msg = f'commandType needs to be one of: {str(self._typeMap.values())[1:-2]}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._commandType = commandType
+        self._commandType = _commandType
 
     @property
     def length(self):
         return self._length
 
     @length.setter
-    def length(self, length):
-        if not (isinstance(length, int) and 60 <= length <= 31449600):  # Roughly 1 year in seconds
+    def length(self, _length):
+        if not (isinstance(_length, int) and 60 <= _length <= 31449600):  # Roughly 1 year in seconds
             error_msg = f'Attack length needs to be an integer between 60 and 31449600'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._length = length
+        self._length = _length
 
     @property
     def shortType(self):
         return self._shortType
 
     @shortType.setter
-    def shortType(self, shortType=None):
-        if not isinstance(shortType, str):
-            error_msg = f'type_ expects a string, received {type(shortType)}'
+    def shortType(self, _shortType=None):
+        if not isinstance(_shortType, str):
+            error_msg = f'type_ expects a string, received {type(_shortType)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        if not shortType.lower() in self._typeMap:
+        if not _shortType.lower() in self._typeMap:
             error_msg = f'invalid attack type, expected one of {str(self._typeMap.keys())[1:-2]}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._commandType = self._typeMap[shortType]
-        self._shortType = shortType
+        self._commandType = self._typeMap[_shortType]
+        self._shortType = _shortType
 
     def __repr__(self):
         model = {
@@ -478,7 +478,7 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
         return self._egress_ports
 
     @egress_ports.setter
-    def egress_ports(self, egressPorts=None):
+    def egress_ports(self, _egress_ports=None):
         pass
 
     @property
@@ -487,12 +487,12 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
         return self._protocol
 
     @protocol.setter
-    def protocol(self, protocol=None):
-        if not (isinstance(protocol, str) and protocol.upper() in self._allowed_protocols):
+    def protocol(self, _protocol=None):
+        if not (isinstance(_protocol, str) and _protocol.upper() in self._allowed_protocols):
             error_msg = f'Protocol must be a string and one of {str(self._allowed_protocols)[1:-2]}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._protocol = protocol.upper()
+        self._protocol = _protocol.upper()
 
     @property
     def providers(self):
@@ -507,7 +507,7 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
         return self._tags
 
     @tags.setter
-    def tags(self, tags=None):
+    def tags(self, _tags=None):
         model = {
             'trafficImpactMapping': {
                 'multiSelectTags': {
@@ -538,36 +538,36 @@ class GremlinCPUAttack(GremlinResourceAttackHelper):
         return self._all_cores
 
     @all_cores.setter
-    def all_cores(self, allCores=None):
-        if not isinstance(allCores, bool):
-            error_msg = f'all_cores expects a bool, received {type(allCores)}'
+    def all_cores(self, _all_cores=None):
+        if not isinstance(_all_cores, bool):
+            error_msg = f'all_cores expects a bool, received {type(_all_cores)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._all_cores = allCores
+        self._all_cores = _all_cores
 
     @property
     def capacity(self):
         return self._capacity
 
     @capacity.setter
-    def capacity(self, capacity=None):
-        if not (isinstance(capacity, int) and 1 <= capacity <= 100):
+    def capacity(self, _capacity=None):
+        if not (isinstance(_capacity, int) and 1 <= _capacity <= 100):
             error_msg = f'Capacity expects an integer between 1 and 100'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._capacity = capacity
+        self._capacity = _capacity
 
     @property
     def cores(self):
         return self._cores
 
     @cores.setter
-    def cores(self, cores=None):
-        if not (isinstance(cores, int) and cores >= 1):
+    def cores(self, _cores=None):
+        if not (isinstance(_cores, int) and _cores >= 1):
             error_msg = f'Cores expects a positive integer'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._cores = cores
+        self._cores = _cores
 
 
     def __repr__(self):
@@ -584,9 +584,56 @@ class GremlinMemoryAttack(GremlinResourceAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shortType = 'memory'
+        self._allowedAmountTypes = ['MB', 'GB', '%']
+        self._amount = '100'
+        self._amountType = 'MB'
+        self.amount = kwargs.get('amount', 100)
+        self.amountType = kwargs.get('amountType', 'MB')
+
+    @property
+    def amount(self):
+        return self._amount
+
+    @amount.setter
+    def amount(self, _amount=None):
+        if not (isinstance(_amount, int) and _amount >= 1):
+            error_msg = f'amount expects a positive integer, received {type(_amount)}'
+            log.fata(error_msg)
+            raise GremlinParameterError(error_msg)
+        if self.amountType == '%' and not 1 <= _amount <= 100:
+            error_msg = f'amount must be an integer between 1 and 100 when amountType is set to %'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._amount = _amount
+
+    @property
+    def amountType(self):
+        return self._amountType
+
+    @amountType.setter
+    def amountType(self, _amountType=None):
+        if not (isinstance(_amountType, str) and _amountType.upper() in self._allowedAmountTypes):
+            error_msg = f'amountType expects a string with a value belonging to {str(self._allowedAmountTypes)[1:-2]}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        if _amountType == '%' and not 1 <= self.amount <= 100:
+            error_msg = f'amountType cannot be set to % while amount is not between 1 and 100'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._amountType = _amountType.upper()
 
     def __repr__(self):
         model = json.loads(super().__repr__())
+        if self.amountType == 'MB':
+            model['args'].extend(['-m', self.amount])
+        elif self.amountType == 'GB':
+            model['args'].extend(['-g', self.amount])
+        elif self.amountType == '%':
+            model['args'].extend(['-p', self.amount])
+        else:
+            error_msg = f'Fatal error, data model may be corrupted, amountType: {self._amountType} is not valid'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
         return json.dumps(model)
 
 
