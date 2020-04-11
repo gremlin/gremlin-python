@@ -18,6 +18,45 @@ from gremlinapi.containers import GremlinAPIContainers as containers
 log = logging.getLogger('GremlinAPI.client')
 
 
+class GremlinAttackHelper(object):
+    def __init__(self, *args, **kwargs):
+        self._command = None
+        self._target = None
+        self.command = kwargs.get('command', GremlinCPUAttack())
+        self.target = kwargs.get('target', GremlinTargetHosts())
+
+    @property
+    def command(self):
+        return self._command
+
+    @command.setter
+    def command(self, command=None):
+        if not issubclass(type(command), GremlinAttackCommandHelper):
+            error_msg = f'Command needs to be a child class of {type(GremlinAttackCommandHelper)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._command = command
+
+    @property
+    def target(self):
+        return self._target
+
+    @target.setter
+    def target(self, target=None):
+        if not issubclass(type(target), GremlinAttackTargetHelper):
+            error_msg = f'Command needs to be a child class of {type(GremlinAttackTargetHelper)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._target = target
+
+    def __repr__(self):
+        model = {
+            'target': json.loads(str(self.target)),
+            'command': json.loads(str(self.command))
+        }
+        return json.dumps(model)
+
+
 class GremlinAttackTargetHelper(object):
     def __init__(self, *args, **kwargs):
         self._target_type = None
@@ -326,58 +365,97 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
 
 class GremlinAttackCommandHelper(object):
     def __init__(self, *args, **kwargs):
-        self._target_type = kwargs.get('targetType', 'Random')  # Validate Random or Exact
-        self._command_model = {
-            'type': 'command-type',  # 'packet_loss'
-            'commandType': 'Command Type',  # 'Packet Loss'
-            'args': [
-                '-l', '60'
-            ],
-            'providers': []
-        }
+        self._length = 60
+        self.length = kwargs.get('length', 60)
 
-    @classmethod
-    def length(cls, *args, **kwargs):
-        pass
+    @property
+    def length(self):
+        return self._length
+
+    @length.setter
+    def length(self, length):
+        if not (isinstance(length, int) and 60 <= length <= 31449600):  # Roughly 1 year in seconds
+            error_msg = f'Attack length needs to be an integer between 60 and 31449600'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._length = length
+
+    def __repr__(self):
+        model = {
+            'args': [
+                '-l', self.length
+            ]
+        }
+        return json.dumps(model)
 
 
 class GremlinResourceAttackHelper(GremlinAttackCommandHelper):
-    def __init__(self, *arge, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        return json.dumps(model)
 
 
 class GremlinStateAttackHelper(GremlinAttackCommandHelper):
-    def __init__(self, *arge, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        return json.dumps(model)
 
 
 class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
-    def __init__(self, *arge, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._allowed_protocols = ['ICMP', 'TCP', 'UDP']
+        self._ips = list()
+        self._hostnames = ['^api.gremlin.com']
+        self._devices = list()
+        self._egress_ports = list()
+        self._ingress_ports = list()
+        self._protocol = str()
+        self._providers = list()
+        self._tags = list()
 
-    @classmethod
-    def blacklist_host(cls, *args, **kwargs):
+
+    @property
+    def egress_ports(self):
+        return self._egress_ports
+
+    @egress_ports.setter
+    def egress_ports(self, egressPorts=None):
         pass
 
-    @classmethod
-    def egress_ports(cls, *args, **kwargs):
-        pass
-
-    @classmethod
-    def protocol(cls, *args, **kwargs):
+    @property
+    def protocol(self):
         # -P [TCP, UDP, ICMP]
+        return self._protocol
+
+    @protocol.setter
+    def protocol(self, protocol=None):
+        if not (isinstance(protocol, str) and protocol.upper() in self._allowed_protocols):
+            error_msg = f'Protocol must be a string and one of {str(self._allowed_protocols)[1:-2]}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._protocol = protocol.upper()
+
+    @property
+    def providers(self):
+        return self._providers
+
+    @property
+    def source_ports(self):
         pass
 
-    @classmethod
-    def providers(cls, *args, **kwargs):
-        pass
+    @property
+    def tags(self):
+        return self._tags
 
-    @classmethod
-    def source_ports(cls, *args, **kwargs):
-        pass
-
-    @classmethod
-    def tags(cls, *args, **kwargs):
+    @tags.setter
+    def tags(self, tags=None):
         model = {
             'trafficImpactMapping': {
                 'multiSelectTags': {
@@ -387,67 +465,146 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
         }
         pass
 
-    @classmethod
-    def whitelist_host(cls, *args, **kwargs):
-        pass
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        return json.dumps(model)
 
 
 class GremlinCPUAttack(GremlinResourceAttackHelper):
-    def __init__(self, *arge, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._type = 'cpu'
+        self._commandType = 'CPU'
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        return json.dumps(model)
 
 
 class GremlinMemoryAttack(GremlinResourceAttackHelper):
-    def __init__(self, *arge, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._type = 'memory'
+        self._commandType = 'Memory'
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        return json.dumps(model)
 
 
 class GremlinDiskSpaceAttack(GremlinResourceAttackHelper):
-    def __init__(self, *arge, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._type = 'disk'
+        self._commandType = 'Disk'
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        return json.dumps(model)
 
 
 class GremlinDiskIOAttack(GremlinResourceAttackHelper):
-    def __init__(self, *arge, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._type = 'io'
+        self._commandType = 'IO'
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        return json.dumps(model)
 
 
 class GremlinShutdownAttack(GremlinStateAttackHelper):
-    def __init__(self, *arge, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._type = 'shutdown'
+        self._commandType = 'Shutdown'
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        return json.dumps(model)
 
 
 class GremlinProcessKillerAttack(GremlinStateAttackHelper):
-    def __init__(self, *arge, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._type = 'process_killer'
+        self._commandType = 'Process Killer'
 
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        return json.dumps(model)
 
 class GremlinTimeTravelAttack(GremlinStateAttackHelper):
     def __init__(self, *arge, **kwargs):
         super().__init__(*args, **kwargs)
+        self._type = 'time_travel'
+        self._commandType = 'Time Travel'
+        self._offset = 86400
+        self._blockNTP = False
+
+    @property
+    def offset(self):
+        return self._offset
+
+    @offset.setter
+    def offset(self, offset=None):
+        if not isinstance(offset, int):
+            error_msg = f'Offset needs to be an integer, received {type(offset)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._offset = offset
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        return json.dumps(model)
 
 
 class GremlinBlackholeAttack(GremlinNetworkAttackHelper):
-    def __init__(self, *arge, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._type = 'blackhole'
+        self._commandType = 'Blackhole'
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        return json.dumps(model)
 
 
 class GremlinDNSAttack(GremlinNetworkAttackHelper):
-    def __init__(self, *arge, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._type = 'dns'
+        self._commandType = 'DNS'
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        return json.dumps(model)
 
 
 class GremlinLatencyAttack(GremlinNetworkAttackHelper):
-    def __init__(self, *arge, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._type = 'latency'
+        self._commandType = 'Latency'
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        return json.dumps(model)
 
 
 class GremlinPacketLossAttack(GremlinNetworkAttackHelper):
-    def __init__(self, *arge, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._type = 'packet_loss'
+        self._commandType = 'PacketLoss'
 
-    @classmethod
-    def corrupt(cls, *args, **kwargs):
+    @property
+    def corrupt(self):
         # args: [ '-c' ]
         pass
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        return json.dumps(model)
 
