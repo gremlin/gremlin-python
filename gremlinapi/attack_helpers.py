@@ -1092,7 +1092,7 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
         return json.dumps(model)
 
 class GremlinTimeTravelAttack(GremlinStateAttackHelper):
-    def __init__(self, *arge, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shortType = 'time_travel'
         self._block_ntp = False
@@ -1126,7 +1126,7 @@ class GremlinTimeTravelAttack(GremlinStateAttackHelper):
 
     def __repr__(self):
         model = json.loads(super().__repr__())
-        model['args'].extend(['-o', self.offset])
+        model['args'].extend(['-o', str(self.offset)])
         if self.block_ntp:
             model['args'].append('-n')
         return json.dumps(model)

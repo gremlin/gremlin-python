@@ -132,9 +132,31 @@ attacks.create_attack(
 
 ##### Time Travel
 
+Time travel a single random host one year into the future, disabling NTP
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetHosts, GremlinTimeTravelAttack
+
+attacks.create_attack(
+    body=GremlinAttackHelper(
+        target=GremlinTargetHosts(type='Random', target_all_hosts=True, exact=1),
+        command=GremlinTimeTravelAttack(offset=365*3600*24, block_ntp=True)))
+```
+
 #### Network Attacks
 
 ##### Blackhole
+
+Blackhole all traffic for exactly one random host
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetHosts, GremlinBlackholeAttack
+
+attacks.create_attack(
+    body=GremlinAttackHelper(
+        target=GremlinTargetHosts(type='Random', target_all_hosts=True, exact=1),
+        command=GremlinBlackholeAttack()))
+```
 
 ##### DNS
 
