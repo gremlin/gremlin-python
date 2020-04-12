@@ -413,7 +413,7 @@ class GremlinAttackCommandHelper(object):
         return self._length
 
     @length.setter
-    def length(self, _length):
+    def length(self, _length=None):
         if not (isinstance(_length, int) and 60 <= _length <= 31449600):  # Roughly 1 year in seconds
             error_msg = f'Attack length needs to be an integer between 60 and 31449600'
             log.fatal(error_msg)
@@ -461,7 +461,7 @@ class GremlinResourceAttackHelper(GremlinAttackCommandHelper):
         return self._blocksize
 
     @blocksize.setter
-    def blocksize(self, _blocksize):
+    def blocksize(self, _blocksize=None):
         if not (isinstance(_blocksize, int) and _blocksize >= 1):
             error_msg = f'blocksize requires a positive integer'
             log.fatal(error_msg)
@@ -485,7 +485,7 @@ class GremlinResourceAttackHelper(GremlinAttackCommandHelper):
         return self._percent
 
     @percent.setter
-    def percent(self, _percent):
+    def percent(self, _percent=None):
         if not (isinstance(_percent, int) and 1 <= _percent <= 100):
             error_msg = f'percent is required to be an int between 1 and 100'
             log.fatal(error_msg)
@@ -497,7 +497,7 @@ class GremlinResourceAttackHelper(GremlinAttackCommandHelper):
         return self._workers
 
     @workers.setter
-    def workers(self, _workers):
+    def workers(self, _workers=None):
         if not (isinstance(_workers, int) and _workers >= 1):
             error_msg = 'workers requires a positive integer'
             log.fatal(error_msg)
@@ -588,9 +588,9 @@ class GremlinCPUAttack(GremlinResourceAttackHelper):
         self._all_cores = False  # ['-a']
         self._capacity = 100  # ['-p', int]
         self._cores = 1  # ['-c', int]
-        self.all_cores = kwargs.get('all_cores', False)
-        self.capacity = kwargs.get('capacity', 100)
-        self.cores = kwargs.get('cores', 1)
+        self.all_cores = kwargs.get('all_cores', False)  # -a
+        self.capacity = kwargs.get('capacity', 100)      # -p, int
+        self.cores = kwargs.get('cores', 1)              # -c, int
 
     @property
     def all_cores(self):
@@ -646,8 +646,8 @@ class GremlinMemoryAttack(GremlinResourceAttackHelper):
         self._allowedAmountTypes = ['MB', 'GB', '%']
         self._amount = '75'
         self._amountType = '%'
-        self.amount = kwargs.get('amount', 100)
-        self.amountType = kwargs.get('amountType', '%')
+        self.amount = kwargs.get('amount', 100)          # ['-g' || '-m' || '-p'], int
+        self.amountType = kwargs.get('amountType', '%')  # ['-g' || '-m' || '-p']
 
     @property
     def amount(self):
@@ -703,7 +703,7 @@ class GremlinDiskSpaceAttack(GremlinResourceAttackHelper):
         self.blocksize = kwargs.get('blocksize', 4)
         self.directory = kwargs.get('directory', '/tmp')
         self.percent = kwargs.get('percent', 100)
-        self.workers = kwargs.get('worker', 1)
+        self.workers = kwargs.get('workers', 1)
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -721,18 +721,18 @@ class GremlinDiskIOAttack(GremlinResourceAttackHelper):
         self._allowed_modes = ['r', 'rw', 'w']
         self._blockcount = 1
         self._mode = 'rw'
-        self.blockcount = kwargs.get('blockcount', 1)
-        self.blocksize = kwargs.get('blocksize', 4)
-        self.directory = kwargs.get('directory', '/tmp')
-        self.mode = kwargs.get('mode', 'rw')
-        self.workers = kwargs.get('worker', 1)
+        self.blockcount = kwargs.get('blockcount', 1)     # -c, int
+        self.blocksize = kwargs.get('blocksize', 4)       # -s, int
+        self.directory = kwargs.get('directory', '/tmp')  # -d, str
+        self.mode = kwargs.get('mode', 'rw')              # -m, str
+        self.workers = kwargs.get('worker', 1)            # -w, int
 
     @property
     def blockcount(self):
         return self._blockcount
 
     @blockcount.setter
-    def blockcount(self, _blockcount):
+    def blockcount(self, _blockcount=None):
         if not (isinstance(_blockcount, int) and _blockcount >= 1):
             error_msg = f'blockcount requires a positive integer'
             log.debug(error_msg)
@@ -744,7 +744,7 @@ class GremlinDiskIOAttack(GremlinResourceAttackHelper):
         return self._mode
 
     @mode.setter
-    def mode(self, _mode):
+    def mode(self, _mode=None):
         if not (isinstance(_mode, str) and _mode.lower() in self._allowed_modes):
             error_msg = f'mode needs to be one of {str(self._allowed_modes)[1:-2]}'
             log.fatal(error_msg)
@@ -768,15 +768,15 @@ class GremlinShutdownAttack(GremlinStateAttackHelper):
         self.shortType = 'shutdown'
         self._delay = 1
         self._reboot = False
-        self.delay = kwargs.get('delay', 1)
-        self.reboot = kwargs.get('reboot', False)
+        self.delay = kwargs.get('delay', 1)        # -d, int
+        self.reboot = kwargs.get('reboot', False)  # -r
 
     @property
     def delay(self):
         return self._delay
 
     @delay.setter
-    def delay(self, _delay):
+    def delay(self, _delay=None):
         if not (isinstance(_delay, int) and _delay >= 1):
             error_msg = f'delay expects a positive {type(int)}'
             log.fatal(error_msg)
@@ -788,7 +788,7 @@ class GremlinShutdownAttack(GremlinStateAttackHelper):
         return self._reboot
 
     @reboot.setter
-    def reboot(self, _reboot):
+    def reboot(self, _reboot=None):
         if not isinstance(_reboot, bool):
             error_msg = f'reboot expects a {type(bool)}'
             log.fatal(error_msg)

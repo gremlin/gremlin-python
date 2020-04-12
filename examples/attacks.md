@@ -28,9 +28,40 @@ from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetHosts, G
 attacks.create_attack(body=GremlinAttackHelper(target=GremlinTargetHosts(), command=GremlinMemoryAttack()))
 ```
 
+##### Disk Space
+
+Long format example targeting 3 hosts with a disk fill attack
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetHosts, GremlinDiskSpaceAttack
+
+atk_targets = GremlinTargetHosts(
+    type='Exact',
+    ids=[
+        '10.189.7.34',
+        '10.42.42.42',
+        '192.168.33.3'
+    ]
+)
+
+atk_command = GremlinDiskSpaceAttack(
+    blocksize=8,
+    directory='/tmp',
+    percent=100,
+    workers=4
+)
+
+atk_helper = GremlinAttackHelper(
+    target=atk_targets,
+    command=atk_command
+)
+
+attacks.create_attack(body=atk_helper)
+```
+
 ##### Disk IO
 
-##### Disk Space
+
 
 #### Stateful Attacks
 
