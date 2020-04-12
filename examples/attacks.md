@@ -160,6 +160,17 @@ attacks.create_attack(
 
 ##### DNS
 
+Block lookups to [Google's DNS service](https://developers.google.com/speed/public-dns) for one lucky host
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetHosts, GremlinDNSAttack
+
+attacks.create_attack(
+    body=GremlinAttackHelper(
+        target=GremlinTargetHosts(type='Random', target_all_hosts=True, exact=1),
+        command=GremlinDNSAttack(ips=['8.8.8.8', '8.8.4.4'])))
+```
+
 ##### Latency
 
 This will launch a 100ms latency attack, limited to ICMP traffic, against a single random container
@@ -192,14 +203,38 @@ body = {
             '-h', '^api.gremlin.com',
             '-m', '100',
             '-P', 'ICMP'
-        ],
-        'providers': []
+        ]
     }
 }
 attack_guid = attacks.create_attack(body=body, teamId=config.team_id)
 ```
 
+This will also launch a 100ms latency attack, limited to ICMP traffic, against a single random container
+with the ECS container-name `swissknife`, using the built in helper vs. providing your own json
+
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetContainers, GremlinLatencyAttack
+
+attacks.create_attack(
+    body=GremlinAttackHelper(
+        target=GremlinTargetContainers(type='Random', target_all_hosts=True,
+            percent=100, labels={'com.amazonaws.ecs.container-name': 'swissknife'}),
+        command=GremlinLatencyAttack(length=300, protocol='ICMP', delay=100)))
+```
+
 ##### Packet Loss
+
+This will use the packet corruption feature of packet loss to disrupt 10% of the traffic on 10% of the containers
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetContainers, GremlinPacketLossAttack
+
+attacks.create_attack(
+    body=GremlinAttackHelper(
+        target=GremlinTargetContainers(type='Random', target_all_containers=True, percent=10),
+        command=GremlinPacketLossAttack(corrupt=True, percent=10)))
+```
 
 ## List Attacks
 

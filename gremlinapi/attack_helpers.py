@@ -71,25 +71,12 @@ class GremlinAttackHelper(object):
 class GremlinAttackTargetHelper(object):
     def __init__(self, *args, **kwargs):
         self._target_type = None
-        self._exact = None
-        self._percent = None
+        self._exact = 0
+        self._percent = 10
         self._allowed_target_types = {'exact': 'Exact', 'random': 'Random'}
-        self.exact = kwargs.get('exact', 1)
-        self.percent = kwargs.get('percent', 10)
+        self.exact = kwargs.get('exact', self._exact)
+        self.percent = kwargs.get('percent', self._percent)
         self.target_type = kwargs.get('target_type', 'random')  # Validate Random or Exact
-
-    def __repr__(self):
-        model = dict()
-        model['type'] = self.target_type
-        if self.target_type == 'Exact':
-            model['exact'] = self.exact
-        elif self.target_type == 'Random':
-            model['percent'] = self.percent
-        else:
-            error_msg = f'Type not correctly set, needs to be one of {str(self._allowed_target_types.keys())[1:-2]}'
-            log.error(error_msg)
-            raise GremlinParameterError(error_msg)
-        return json.dumps(model)
 
     @property
     def exact(self):
@@ -97,23 +84,31 @@ class GremlinAttackTargetHelper(object):
 
     @exact.setter
     def exact(self, _exact=None):
-        if not isinstance(_exact, int) and _exact > 0:
+        if not _exact:
+            self._exact = 0
+        elif isinstance(_exact, int) and _exact > 0:
+            self._exact = _exact
+            self._percent = 0
+        else:
             error_msg = f'Exact number of targets must be an integer greater than 0'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._exact = _exact
 
     @property
     def percent(self):
         return self._percent
 
     @percent.setter
-    def percent(self, _percentTargets=None):
-        if not isinstance(_percentTargets, int) and 1 <= _percentTargets <= 100:
+    def percent(self, _percent=None):
+        if not _percent:
+            self._percent = 0
+        elif isinstance(_percent, int) and 1 <= _percent <= 100:
+            self._percent = _percent
+            self._exact = 0
+        else:
             error_msg = f'Target percentage must be an integer between 1 and 100'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._percent = _percentTargets
 
     @property
     def target_type(self):
@@ -126,6 +121,19 @@ class GremlinAttackTargetHelper(object):
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
         self._target_type = self._allowed_target_types.get(_target_type.lower(), None)
+
+    def __repr__(self):
+        model = dict()
+        model['type'] = self.target_type
+        if self.exact >= 0 and not self.percent:
+            model['exact'] = str(self.exact)
+        elif self.target_type == 'Random':
+            model['percent'] = self.percent
+        else:
+            error_msg = f'Type not correctly set, needs to be one of {str(self._allowed_target_types.keys())[1:-2]}'
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+        return json.dumps(model)
 
 
 class GremlinTargetHosts(GremlinAttackTargetHelper):
@@ -381,6 +389,7 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
                     'multiSelectLabels': self.labels
                 }
         return json.dumps(model)
+
 
 class GremlinAttackCommandHelper(object):
     def __init__(self, *args, **kwargs):
@@ -1186,7 +1195,7 @@ class GremlinLatencyAttack(GremlinNetworkAttackHelper):
 
     def __repr__(self):
         model = json.loads(super().__repr__())
-        model['args'].extend(['-m', self.delay])
+        model['args'].extend(['-m', str(self.delay)])
         if len(self.egress_ports) > 0:
             model['args'].extend(['-p', ','.join(self.egress_ports)])
         if len(self.hostnames) > 0:
