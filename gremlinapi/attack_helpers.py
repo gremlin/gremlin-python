@@ -451,6 +451,58 @@ class GremlinAttackCommandHelper(object):
 class GremlinResourceAttackHelper(GremlinAttackCommandHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._blocksize = 4
+        self._directory = '/tmp'
+        self._percent = 100
+        self._workers = 1
+
+    @property
+    def blocksize(self):
+        return self._blocksize
+
+    @blocksize.setter
+    def blocksize(self, _blocksize):
+        if not (isinstance(_blocksize, int) and _blocksize >= 1):
+            error_msg = f'blocksize requires a positive integer'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._blocksize = _blocksize
+
+    @property
+    def directory(self):
+        return self._directory
+
+    @directory.setter
+    def directory(self, _directory=None):
+        if not isinstance(_directory, str):
+            error_msg = f'directory requires a string, received {type(_directory)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._directory = _directory
+
+    @property
+    def percent(self):
+        return self._percent
+
+    @percent.setter
+    def percent(self, _percent):
+        if not (isinstance(_percent, int) and 1 <= _percent <= 100):
+            error_msg = f'percent is required to be an int between 1 and 100'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._percent = _percent
+
+    @property
+    def workers(self):
+        return self._workers
+
+    @workers.setter
+    def workers(self, _workers):
+        if not (isinstance(_workers, int) and _workers >= 1):
+            error_msg = 'workers requires a positive integer'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._workers = _workers
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -648,58 +700,10 @@ class GremlinDiskSpaceAttack(GremlinResourceAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shortType = 'disk'
-        self._blocksize = 4
-        self._directory = '/tmp'
-        self._percent = 100
-        self._workers = 1
-
-    @property
-    def blocksize(self):
-        return self._blocksize
-
-    @blocksize.setter
-    def blocksize(self, _blocksize):
-        if not (isinstance(_blocksize, int) and _blocksize >= 1):
-            error_msg = f'blocksize requires a positive integer'
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        self._blocksize = _blocksize
-
-    @property
-    def directory(self):
-        return self._directory
-
-    @directory.setter
-    def directory(self, _directory=None):
-        if not isinstance(_directory, str):
-            error_msg = f'directory requires a string, received {type(_directory)}'
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        self._directory = _directory
-
-    @property
-    def percent(self):
-        return self._percent
-
-    @percent.setter
-    def percent(self, _percent):
-        if not (isinstance(_percent, int) and 1 <= _percent <= 100):
-            error_msg = f'percent is required to be an int between 1 and 100'
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        self._percent = _percent
-
-    @property
-    def workers(self):
-        return self._workers
-
-    @workers.setter
-    def workers(self, _workers):
-        if not (isinstance(_workers, int) and _workers >= 1):
-            error_msg = 'workers requires a positive integer'
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        self._workers = _workers
+        self.blocksize = kwargs.get('blocksize', 4)
+        self.directory = kwargs.get('directory', '/tmp')
+        self.percent = kwargs.get('percent', 100)
+        self.workser = kwargs.get('worker', 1)
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -714,9 +718,41 @@ class GremlinDiskIOAttack(GremlinResourceAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shortType = 'io'
+        self._allowed_modes = ['r', 'rw', 'w']
+        self._blockcount = 1
+        self._mode = 'rw'
+
+    @property
+    def blockcount(self):
+        return self._blockcount
+
+    @blockcount.setter
+    def blockcount(self, _blockcount):
+        if not (isinstance(_blockcount, int) and _blockcount >= 1):
+            error_msg = f'blockcount requires a positive integer'
+            log.debug(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._blockcount = _blockcount
+
+    @property
+    def mode(self):
+        return self._mode
+
+    @mode.setter
+    def mode(self, _mode):
+        if not (isinstance(_mode, str) and _mode.lower() in self._allowed_modes):
+            error_msg = f'mode needs to be one of {str(self._allowed_modes)[1:-2]}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._mode = _mode.lower()
 
     def __repr__(self):
         model = json.loads(super().__repr__())
+        model['args'].extend(['-c', str(self.blockcount)])
+        model['args'].extend(['-d', self.directory])
+        model['args'].extend(['-m', self.mode])
+        model['args'].extend(['-s', str(self.blocksize)])
+        model['args'].extend(['-w', str(self.workers)])
         return json.dumps(model)
 
 
