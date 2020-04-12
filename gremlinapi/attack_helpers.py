@@ -931,8 +931,22 @@ class GremlinTimeTravelAttack(GremlinStateAttackHelper):
     def __init__(self, *arge, **kwargs):
         super().__init__(*args, **kwargs)
         self.shortType = 'time_travel'
+        self._block_ntp = False
         self._offset = 86400
-        self._blockNTP = False
+        self.block_ntp = kwargs.get('block_ntp', False)  # -n
+        self.offset = kwargs.get('offset', 86400)        # -o, int
+
+    @property
+    def block_ntp(self):
+        return self._block_ntp
+
+    @block_ntp.setter
+    def block_ntp(self, _block_ntp=None):
+        if not isinstance(_block_ntp, bool):
+            error_msg = f'block_ntp expects type {type(bool)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._block_ntp = _block_ntp
 
     @property
     def offset(self):
@@ -948,6 +962,9 @@ class GremlinTimeTravelAttack(GremlinStateAttackHelper):
 
     def __repr__(self):
         model = json.loads(super().__repr__())
+        model['args'].extend(['-o', self.offset])
+        if self.block_ntp:
+            model['args'].append('-n')
         return json.dumps(model)
 
 
