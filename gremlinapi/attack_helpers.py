@@ -998,7 +998,7 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
 
     @property
     def full_match(self):
-        return self._exact
+        return self._full_match
 
     @full_match.setter
     def full_match(self, _full_match=None):
