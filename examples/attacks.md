@@ -61,11 +61,61 @@ attacks.create_attack(body=atk_helper)
 
 ##### Disk IO
 
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetHosts, GremlinDiskIOAttack
 
+atk_targets = GremlinTargetHosts(
+    type='Exact',
+    ids=[
+        '10.189.7.34',
+        '10.42.42.42',
+        '192.168.33.3'
+    ]
+)
+
+atk_command = GremlinDiskIOAttack(
+    blockcount=8,
+    blocksize=8,
+    directory='/tmp',
+    mode='rw',
+    workers=8
+)
+
+atk_helper = GremlinAttackHelper(
+    target=atk_targets,
+    command=atk_command
+)
+
+attacks.create_attack(body=atk_helper)
+```
 
 #### Stateful Attacks
 
 ##### Shutdown
+
+Wait one minutes, then shutdown 10% of containers tagged with app=webserver
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetContainers, GremlinShutdownAttack
+
+attacks.create_attack(
+    body=GremlinAttackHelper(
+        target=GremlinTargetContainers(type='Random', labels={'app': 'webapp'}, percent=10),
+        command=GremlinShutdownAttack(delay=1)))
+```
+
+
+Wait one minutes, then reboot 10% of hosts tagged with function=k8worker
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetHosts, GremlinShutdownAttack
+
+attacks.create_attack(
+    body=GremlinAttackHelper(
+        target=GremlinTargetHosts(type='Random', tags={'function': 'k8worker'}, percent=10),
+        command=GremlinShutdownAttack(delay=1, reboot=True)))
+```
 
 ##### Process Killer
 

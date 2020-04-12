@@ -6,6 +6,7 @@ import json
 import logging
 
 from gremlinapi.exceptions import (
+    GremlinCommandTargetError,
     GremlinIdentifierError,
     GremlinParameterError
 )
@@ -34,6 +35,11 @@ class GremlinAttackHelper(object):
             error_msg = f'Command needs to be a child class of {type(GremlinAttackCommandHelper)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
+        if issubclass(type(_command), GremlinTimeTravelAttack) and \
+                issubclass(type(self.target), GremlinTargetContainers):
+            error_msg = f'TimeTravel cannot target containers'
+            log.fatal(error_msg)
+            raise GremlinCommandTargetError(error_msg)
         self._command = _command
 
     @property
@@ -46,6 +52,11 @@ class GremlinAttackHelper(object):
             error_msg = f'Command needs to be a child class of {type(GremlinAttackTargetHelper)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
+        if issubclass(type(_target), GremlinTargetContainers) and \
+                issubclass(type(self.command), GremlinTimeTravelAttack):
+            error_msg = f'TimeTravel cannot target containers'
+            log.fatal(error_msg)
+            raise GremlinCommandTargetError(error_msg)
         self._target = _target
 
     def __repr__(self):
