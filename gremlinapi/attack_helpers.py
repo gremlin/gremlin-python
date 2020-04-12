@@ -807,20 +807,27 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shortType = 'process_killer'
-        self._exact = False  # -e
-        self._full_match = False  # -f
-        self._group = str()  # -g
-        self._interval = 1  # -i
-        self._kill_children = False  # -c
-        self._process = str()  # -p
-        self._user = str()  # -u
+        self._exact = False
+        self._full_match = False
+        self._group = str()
+        self._interval = 1
+        self._kill_children = False
+        self._process = str()
+        self._user = str()
+        self.exact = kwargs.get('exact', False)                  # -e
+        self.full_match = kwargs.get('full_match', False)        # -f
+        self.group = kwargs.get('group', str())                  # -g, str
+        self.interval = kwargs.get('interval', 1)                # -i, int
+        self.kill_children = kwargs.get('kill_children', False)  # -c
+        self.process = kwargs.get('process', str())              # -p, str
+        self.user = kwargs.get('user', str())                    # -p, str
 
     @property
     def exact(self):
         return self._exact
 
     @exact.setter
-    def exact(self, _exact):
+    def exact(self, _exact=None):
         if not isinstance(_exact, bool):
             error_msg = f'exact expects type {type(bool)}'
             log.fatal(error_msg)
@@ -832,7 +839,7 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
         return self._exact
 
     @exact.setter
-    def full_match(self, _full_match):
+    def full_match(self, _full_match=None):
         if not isinstance(_full_match, bool):
             error_msg = f'exact expects type {type(bool)}'
             log.fatal(error_msg)
@@ -844,7 +851,7 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
         return self._group
 
     @group.setter
-    def group(self, _group):
+    def group(self, _group=None):
         if not isinstance(_group, str):
             error_msg = f'group expects type {type(str)}'
             log.fatal(error_msg)
@@ -856,15 +863,68 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
         return self._interval
 
     @interval.setter
-    def interval(self, _interval):
+    def interval(self, _interval=None):
         if not (isinstance(_interval, int) and _interval >= 1):
             error_msg = f'group expects positive integer of type {type(int)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
         self._interval = _interval
 
+    @property
+    def kill_children(self):
+        return self._kill_children
+
+    @kill_children.setter
+    def kill_children(self, _kill_children=None):
+        if not isinstance(_kill_children, bool):
+            error_msg = f'kill_children expects {type(bool)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._kill_children = _kill_children
+
+    @property
+    def process(self):
+        return self._process
+
+    @process.setter
+    def process(self, _process=None):
+        if not isinstance(_process, str):
+            error_msg = f'process expects {type(str)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._process = _process
+
+    @property
+    def user(self):
+        return self._user
+
+    @user.setter
+    def user(self, _user=None):
+        if not isinstance(_user, str):
+            error_msg = f'user expects {type(str)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._user = _user
+
     def __repr__(self):
         model = json.loads(super().__repr__())
+        model['args'].extend(['-i', self.interval])
+        if self.group:
+            model['args'].extend(['-g', self.group])
+        if self.process:
+            model['args'].extend(['-p', self.process])
+        else:
+            error_msg = f'process is required to a be a non-empty string'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        if self.user:
+            model['args'].extend(['-u', self.user])
+        if self.exact:
+            model['args'].append('-e')
+        if self.full_match:
+            model['args'].append('-f')
+        if self.kill_children:
+            model['args'].append('-c')
         return json.dumps(model)
 
 class GremlinTimeTravelAttack(GremlinStateAttackHelper):
