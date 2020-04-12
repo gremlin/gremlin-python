@@ -23,3 +23,26 @@ class GremlinScenarioHelper(object):
         self._description = str()
         self._hypothesis = str()
         self._steps = []
+
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, _description=None):
+        self._description = _description
+
+    @property
+    def hypothesis(self):
+        return self._hypothesis
+
+    @description.setter
+    def hypothesis(self, _hypothesis=None):
+        self._hypothesis = _hypothesis
+
+    def __repr__(self):
+        model = {
+            'description': self.description,
+            'hypothesis': self._hypothesis
+        }
+        return json.dumps(model)
