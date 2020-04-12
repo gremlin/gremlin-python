@@ -4,6 +4,7 @@
 
 import json
 import logging
+import re
 
 from gremlinapi.exceptions import (
     GremlinCommandTargetError,
@@ -13,7 +14,7 @@ from gremlinapi.exceptions import (
 
 from gremlinapi.clients import GremlinAPIClients as clients
 from gremlinapi.containers import GremlinAPIContainers as containers
-
+from gremlinapi.providers import GremlinAPIProviders as providers
 
 log = logging.getLogger('GremlinAPI.client')
 
@@ -535,13 +536,74 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
         self._allowed_protocols = ['ICMP', 'TCP', 'UDP']
         self._ips = list()
         self._hostnames = ['^api.gremlin.com']
-        self._devices = list()
-        self._egress_ports = list()
+        self._device = None
+        self._egress_ports = ['^53']
         self._ingress_ports = list()
-        self._protocol = str()
+        self._port_regex = '([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])'
+        self._port_validator = re.compile(f'^\^?{self._port_regex}(-{self._port_regex})?$')
+        self._protocol = None
         self._providers = list()
+        self._providers_filter = None
+        self._source_ports = None
         self._tags = list()
+        self._tags_filter = None
 
+    def _filter_providers(self):
+        _providers = providers.list_providers()
+        for _provider in _providers:
+            self._providers_filter.extend(getattr(providers, f'list_{_provider}_services')())
+
+    def _port_maker(self, _ports=None):
+        port_list = list()
+        if not _ports:
+            pass
+        elif isinstance(_ports, int) or isinstance(_ports, str):
+            if self._validate_port_or_range(str(_ports)):
+                port_list = [str(_ports)]
+        elif isinstance(_ports, list):
+            for _port in _ports:
+                if self._validate_port_or_range(str(_port)):
+                    port_list.append(str(_port))
+        else:
+            error_msg = f'_port_maker expects a {type(str)} or {type(int)} or a {type(list)} of the previous types'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        return port_list
+
+    def _validate_hostname(self, _hostname=None):
+        return True
+
+    def _validate_ip(self, _ip=None):
+        return True
+
+    def _validate_port_or_range(self, _port_or_range):
+        if not self._port_validator.match(_port_or_range):
+            error_msg = f'{_port_or_range} is not a valid port or port range'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        return True
+
+    def _validate_provider(self, _provider=None):
+        if not len(self._providers_filter) > 0:
+            self._filter_providers()
+        if _provider in self._providers_filter:
+            return True
+        return False
+
+    @property
+    def device(self):
+        return self._device
+
+    @device.setter
+    def device(self, _device=None):
+        if not _device:
+            self._device = None
+            return
+        elif not isinstance(_device, str):
+            error_msg = f'device expects type {type(str)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._device = _device
 
     @property
     def egress_ports(self):
@@ -549,16 +611,74 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
 
     @egress_ports.setter
     def egress_ports(self, _egress_ports=None):
-        pass
+        self._egress_ports = self._port_maker(_egress_ports)
+
+    @property
+    def ingress_ports(self):
+        return self._ingress_ports
+
+    @ingress_ports.setter
+    def ingress_ports(self, _ingress_ports=None):
+        self._ingress_ports = self._port_maker(_ingress_ports)
+
+    @property
+    def ips(self):
+        return self._ips
+
+    @ips.setter
+    def ips(self, _ips=None):
+        if not _ips:
+            pass
+        elif isinstance(_ips, str):
+            if self._validate_ip(_ips):
+                pass
+            self._ips = [_ips]
+        elif isinstance(_ips, list):
+            for _ip in _ips:
+                if self._validate_ip(_ip):
+                    pass
+            self._ips = _ips
+        else:
+            error_msg = f'valid ip addresses required'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+
+    @property
+    def hostnames(self):
+        return self._hostnames
+
+    @hostnames.setter
+    def hostnames(self, _hostnames=None):
+        if not _hostnames:
+            pass
+        elif isinstance(_hostnames, str):
+            if not self._validate_hostname(_hostnames):
+                error_msg = f'valid hostnames required'
+                log.fatal(error_msg)
+                raise GremlinParameterError(error_msg)
+            self._hostnames = [_hostnames]
+        elif isinstance(_hostnames, list):
+            for _hostname in _hostnames:
+                if not self._validate_hostname(_hostname):
+                    error_msg = f'valid hostnames required'
+                    log.fatal(error_msg)
+                    raise GremlinParameterError(error_msg)
+                self._hostnames = _hostname
+        else:
+            error_msg = f'hostnames requires a {type(str)} or {type(list)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
 
     @property
     def protocol(self):
-        # -P [TCP, UDP, ICMP]
         return self._protocol
 
     @protocol.setter
     def protocol(self, _protocol=None):
-        if not (isinstance(_protocol, str) and _protocol.upper() in self._allowed_protocols):
+        if not _protocol:
+            self._protocol = None
+            return
+        elif not (isinstance(_protocol, str) and _protocol.upper() in self._allowed_protocols):
             error_msg = f'Protocol must be a string and one of {str(self._allowed_protocols)[1:-2]}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
@@ -568,9 +688,30 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
     def providers(self):
         return self._providers
 
+    @providers.setter
+    def providers(self, _providers=None):
+        if not _providers:
+            pass
+        elif isinstance(_providers, str):
+            if self._validate_provider(_providers):
+                self._providers = [_providers]
+        elif isinstance(_providers, list):
+            self._providers = list()
+            for _provider in _providers:
+                if self._validate_provider(_provider):
+                    self._providers.append(_provider)
+        else:
+            error_msg = f'providers expect a {type(str)} or {type(list)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+
     @property
     def source_ports(self):
-        pass
+        return self._source_ports
+
+    @source_ports.setter
+    def source_ports(self, _source_ports=None):
+        self._source_ports = self._port_maker(_source_ports)
 
     @property
     def tags(self):
@@ -578,17 +719,16 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
 
     @tags.setter
     def tags(self, _tags=None):
-        model = {
-            'trafficImpactMapping': {
-                'multiSelectTags': {
-                    'tagName': ['list', 'tag', 'values']
-                }
-            }
-        }
         pass
 
     def __repr__(self):
         model = json.loads(super().__repr__())
+        if self.providers and len(self.providers) > 0:
+            model['providers'] = self.providers
+        if self.tags and len(self.tags) > 0:
+            model['trafficImpactMapping'] = {
+                'multiSelectTags': self.tags
+            }
         return json.dumps(model)
 
 
@@ -983,9 +1123,29 @@ class GremlinBlackholeAttack(GremlinNetworkAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shortType = 'blackhole'
+        self.device = kwargs.get('device', None)                      # -d, str
+        self.egress_ports = kwargs.get('egress_ports', ['^53'])       # -p, str
+        self.hostnames = kwargs.get('hostnames', '^api.gremlin.com')  # -h, str
+        self.ingress_ports = kwargs.get('ingress_ports', None)        # -n, str
+        self.ips = kwargs.get('ips', None)                            # -i, str
+        self.protocol = kwargs.get('protocol', None)                  # -P, str
+        self.providers = kwargs.get('providers', None)                # providers block
+        self.tags = kwargs.get('tags', None)                          # tags block
 
     def __repr__(self):
         model = json.loads(super().__repr__())
+        if self.device:
+            model['args'].extend(['-d', self.device])
+        if len(self.egress_ports) > 0:
+            model['args'].extend(['-p', ','.join(self.egress_ports)])
+        if len(self.hostnames) > 0:
+            model['args'].extend(['-h', ','.join(self.hostnames)])
+        if len(self.ingress_ports) > 0:
+            model['args'].extend(['-n', ','.join(self.ingress_ports)])
+        if len(self.ips) > 0:
+            model['args'].extend(['-i', ','.join(self.ips)])
+        if self.protocol:
+            model['args'].extend(['-P', self.protocol])
         return json.dumps(model)
 
 
