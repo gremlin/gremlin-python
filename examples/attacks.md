@@ -119,6 +119,17 @@ attacks.create_attack(
 
 ##### Process Killer
 
+Kill httpd process using full-match posix regular expression on 10 percent of hosts tagged with role=webserver
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetHosts, GremlinProcessKillerAttack
+
+attacks.create_attack(
+    body=GremlinAttackHelper(
+        target=GremlinTargetHosts(type='Random', tags={'role': 'webserver'}, percent=10),
+        command=GremlinProcessKillerAttack(process='httpd', full_match=True)))
+```
+
 ##### Time Travel
 
 #### Network Attacks

@@ -1000,13 +1000,15 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
     def full_match(self):
         return self._exact
 
-    @exact.setter
+    @full_match.setter
     def full_match(self, _full_match=None):
-        if not isinstance(_full_match, bool):
+        if not _full_match:
+            self._full_match = False
+        elif not isinstance(_full_match, bool):
             error_msg = f'exact expects type {type(bool)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._full_match = _full_match
+        self._full_match = True
 
     @property
     def group(self):
@@ -1070,7 +1072,7 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
 
     def __repr__(self):
         model = json.loads(super().__repr__())
-        model['args'].extend(['-i', self.interval])
+        model['args'].extend(['-i', str(self.interval)])
         if self.group:
             model['args'].extend(['-g', self.group])
         if self.process:
