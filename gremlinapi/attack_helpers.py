@@ -703,7 +703,7 @@ class GremlinDiskSpaceAttack(GremlinResourceAttackHelper):
         self.blocksize = kwargs.get('blocksize', 4)
         self.directory = kwargs.get('directory', '/tmp')
         self.percent = kwargs.get('percent', 100)
-        self.workser = kwargs.get('worker', 1)
+        self.workers = kwargs.get('worker', 1)
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -721,6 +721,11 @@ class GremlinDiskIOAttack(GremlinResourceAttackHelper):
         self._allowed_modes = ['r', 'rw', 'w']
         self._blockcount = 1
         self._mode = 'rw'
+        self.blockcount = kwargs.get('blockcount', 1)
+        self.blocksize = kwargs.get('blocksize', 4)
+        self.directory = kwargs.get('directory', '/tmp')
+        self.mode = kwargs.get('mode', 'rw')
+        self.workers = kwargs.get('worker', 1)
 
     @property
     def blockcount(self):
@@ -746,6 +751,7 @@ class GremlinDiskIOAttack(GremlinResourceAttackHelper):
             raise GremlinParameterError(error_msg)
         self._mode = _mode.lower()
 
+
     def __repr__(self):
         model = json.loads(super().__repr__())
         model['args'].extend(['-c', str(self.blockcount)])
@@ -760,9 +766,40 @@ class GremlinShutdownAttack(GremlinStateAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shortType = 'shutdown'
+        self._delay = 1
+        self._reboot = False
+        self.delay = kwargs.get('delay', 1)
+        self.reboot = kwargs.get('reboot', False)
+
+    @property
+    def delay(self):
+        return self._delay
+
+    @delay.setter
+    def delay(self, _delay):
+        if not (isinstance(_delay, int) and _delay >= 1):
+            error_msg = f'delay expects a positive {type(int)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError (error_msg)
+        self._delay = _delay
+
+    @property
+    def reboot(self):
+        return self._reboot
+
+    @reboot.setter
+    def reboot(self, _reboot):
+        if not isinstance(_reboot, bool):
+            error_msg = f'reboot expects a {type(bool)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._reboot = _reboot
 
     def __repr__(self):
         model = json.loads(super().__repr__())
+        model['args'].extend(['-d', str(self.delay)])
+        if self.reboot:
+            model['args'].append('-r')
         return json.dumps(model)
 
 
