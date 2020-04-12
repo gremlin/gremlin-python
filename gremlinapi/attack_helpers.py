@@ -807,6 +807,61 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shortType = 'process_killer'
+        self._exact = False  # -e
+        self._full_match = False  # -f
+        self._group = str()  # -g
+        self._interval = 1  # -i
+        self._kill_children = False  # -c
+        self._process = str()  # -p
+        self._user = str()  # -u
+
+    @property
+    def exact(self):
+        return self._exact
+
+    @exact.setter
+    def exact(self, _exact):
+        if not isinstance(_exact, bool):
+            error_msg = f'exact expects type {type(bool)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._exact = _exact
+
+    @property
+    def full_match(self):
+        return self._exact
+
+    @exact.setter
+    def full_match(self, _full_match):
+        if not isinstance(_full_match, bool):
+            error_msg = f'exact expects type {type(bool)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._full_match = _full_match
+
+    @property
+    def group(self):
+        return self._group
+
+    @group.setter
+    def group(self, _group):
+        if not isinstance(_group, str):
+            error_msg = f'group expects type {type(str)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._group = _group
+
+    @property
+    def interval(self):
+        return self._interval
+
+    @interval.setter
+    def interval(self, _interval):
+        if not (isinstance(_interval, int) and _interval >= 1):
+            error_msg = f'group expects positive integer of type {type(int)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._interval = _interval
 
     def __repr__(self):
         model = json.loads(super().__repr__())
