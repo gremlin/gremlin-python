@@ -28,7 +28,7 @@ class GremlinAPI(object):
 
     @classmethod
     def _optional_team_endpoint(cls, endpoint, **kwargs):
-        team_id = cls._warn_if_not_param('teamId', **kwargs)
+        team_id = cls._info_if_not_param('teamId', **kwargs)
         if not team_id and type(config.team_id) is str:
             team_id = config.team_id
         if team_id:
@@ -51,7 +51,7 @@ class GremlinAPI(object):
 
     @classmethod
     def _error_if_not_email(cls, **kwargs):
-        email = cls._warn_if_not_param('email', **kwargs)
+        email = cls._info_if_not_param('email', **kwargs)
         if not email:
             error_msg = f'email address not passed: {kwargs}'
             log.fatal(error_msg)
@@ -61,11 +61,20 @@ class GremlinAPI(object):
 
     @classmethod
     def _error_if_not_param(cls, parameter_name, **kwargs):
-        param = cls._warn_if_not_param(parameter_name, **kwargs)
+        param = cls._info_if_not_param(parameter_name, **kwargs)
         if not param:
             error_msg = f'{parameter_name} not supplied: {kwargs}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
+        return param
+
+    @classmethod
+    def _info_if_not_param(cls, parameter_name, default=None, **kwargs):
+        param = kwargs.get(parameter_name, None)
+        if not param:
+            error_msg = f'{parameter_name} not found in arguments: {kwargs}'
+            log.info(error_msg)
+            param = default
         return param
 
     @classmethod
@@ -79,7 +88,7 @@ class GremlinAPI(object):
 
     @classmethod
     def _warn_if_not_json_body(cls, **kwargs):
-        body = cls._warn_if_not_param('body', **kwargs)
+        body = cls._info_if_not_param('body', **kwargs)
         if not body:
             error_msg = f'JSON Body not supplied: {kwargs}'
             log.warning(error_msg)
@@ -88,7 +97,7 @@ class GremlinAPI(object):
 
     @classmethod
     def _warn_if_not_param(cls, parameter_name, default=None, **kwargs):
-        param = kwargs.get(parameter_name, None)
+        param = cls._info_if_not_param(parameter_name, **kwargs)
         if not param:
             error_msg = f'{parameter_name} not found in arguments: {kwargs}'
             log.warning(error_msg)

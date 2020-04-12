@@ -88,8 +88,8 @@ class GremlinAPIScenarios(GremlinAPI):
         method = 'GET'
         guid = cls._error_if_not_param('guid', **kwargs)
         timeset = ''
-        start = cls._warn_if_not_param('startDate', **kwargs)
-        end = cls._warn_if_not_param('endDate', **kwargs)
+        start = cls._info_if_not_param('startDate', **kwargs)
+        end = cls._info_if_not_param('endDate', **kwargs)
         if start:
             timeset += f'startDate={start}&'
         if end:

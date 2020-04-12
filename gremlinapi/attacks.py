@@ -29,8 +29,8 @@ class GremlinAPIAttacks(GremlinAPI):
             error_msg = f'endpoint not passed correctly: {args} :: {kwargs}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        source = cls._warn_if_not_param('source', **kwargs)
-        page_size = cls._warn_if_not_param('pageSize', **kwargs)
+        source = cls._info_if_not_param('source', **kwargs)
+        page_size = cls._info_if_not_param('pageSize', **kwargs)
         if source or page_size:
             endpoint += '/?'
             if source and (source.lower() == 'adhoc' or source.lower() == 'scenario'):
