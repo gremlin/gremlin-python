@@ -547,6 +547,11 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
         self._source_ports = None
         self._tags = list()
         self._tags_filter = None
+        self.device = kwargs.get('device', None)        # -d, str
+        self.ips = kwargs.get('ips', None)              # -i, str
+        self.protocol = kwargs.get('protocol', None)    # -P, str
+        self.providers = kwargs.get('providers', None)  # providers block
+        self.tags = kwargs.get('tags', None)            # tags block
 
     def _filter_providers(self):
         _providers = providers.list_providers()
@@ -723,6 +728,12 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
 
     def __repr__(self):
         model = json.loads(super().__repr__())
+        if self.device:
+            model['args'].extend(['-d', self.device])
+        if len(self.ips) > 0:
+            model['args'].extend(['-i', ','.join(self.ips)])
+        if self.protocol:
+            model['args'].extend(['-P', self.protocol])
         if self.providers and len(self.providers) > 0:
             model['providers'] = self.providers
         if self.tags and len(self.tags) > 0:
@@ -1123,29 +1134,18 @@ class GremlinBlackholeAttack(GremlinNetworkAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shortType = 'blackhole'
-        self.device = kwargs.get('device', None)                      # -d, str
         self.egress_ports = kwargs.get('egress_ports', ['^53'])       # -p, str
         self.hostnames = kwargs.get('hostnames', '^api.gremlin.com')  # -h, str
         self.ingress_ports = kwargs.get('ingress_ports', None)        # -n, str
-        self.ips = kwargs.get('ips', None)                            # -i, str
-        self.protocol = kwargs.get('protocol', None)                  # -P, str
-        self.providers = kwargs.get('providers', None)                # providers block
-        self.tags = kwargs.get('tags', None)                          # tags block
 
     def __repr__(self):
         model = json.loads(super().__repr__())
-        if self.device:
-            model['args'].extend(['-d', self.device])
         if len(self.egress_ports) > 0:
             model['args'].extend(['-p', ','.join(self.egress_ports)])
         if len(self.hostnames) > 0:
             model['args'].extend(['-h', ','.join(self.hostnames)])
         if len(self.ingress_ports) > 0:
             model['args'].extend(['-n', ','.join(self.ingress_ports)])
-        if len(self.ips) > 0:
-            model['args'].extend(['-i', ','.join(self.ips)])
-        if self.protocol:
-            model['args'].extend(['-P', self.protocol])
         return json.dumps(model)
 
 
@@ -1153,6 +1153,7 @@ class GremlinDNSAttack(GremlinNetworkAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shortType = 'dns'
+        self._allowed_protocols = ['TCP', 'UDP']
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -1163,9 +1164,33 @@ class GremlinLatencyAttack(GremlinNetworkAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shortType = 'latency'
+        self._delay = 100
+        self.delay = kwargs.get('delay', 100)                         # -m, int
+        self.egress_ports = kwargs.get('egress_ports', ['^53'])       # -p, str
+        self.hostnames = kwargs.get('hostnames', '^api.gremlin.com')  # -h, str
+        self.source_ports = kwargs.get('source_ports', None)          # -s, str
+
+    @property
+    def delay(self):
+        return self._delay
+
+    @delay.setter
+    def delay(self, _delay=None):
+        if not (isinstance(_delay, int) and _delay >= 1):
+            error_msg = f'delay expects a positive integer type {type(int)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._delay = _delay
 
     def __repr__(self):
         model = json.loads(super().__repr__())
+        model['args'].extend(['-m', self.delay])
+        if len(self.egress_ports) > 0:
+            model['args'].extend(['-p', ','.join(self.egress_ports)])
+        if len(self.hostnames) > 0:
+            model['args'].extend(['-h', ','.join(self.hostnames)])
+        if len(self.source_ports) > 0:
+            model['args'].extend(['-s', ','.join(self.source_ports)])
         return json.dumps(model)
 
 
@@ -1173,13 +1198,52 @@ class GremlinPacketLossAttack(GremlinNetworkAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shortType = 'packet_loss'
+        self._corrupt = False
+        self._percent = 1
+        self.corrupt = kwargs.get('corrupt', False)                   # -c
+        self.egress_ports = kwargs.get('egress_ports', ['^53'])       # -p, str
+        self.hostnames = kwargs.get('hostnames', '^api.gremlin.com')  # -h, str
+        self.percent = kwargs.get('percent', 1)                       # -r, int
+        self.source_ports = kwargs.get('source_ports', None)          # -s, str
 
     @property
     def corrupt(self):
-        # args: [ '-c' ]
-        pass
+        return self._corrupt
+
+    @corrupt.setter
+    def corrupt(self, _corrupt=None):
+        if not _corrupt:
+            self._corrupt = False
+            return
+        if not isinstance(_corrupt, bool):
+            error_msg = f'corrupt expects type {type(bool)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._corrupt = _corrupt
+
+    @property
+    def percent(self):
+        return self._percent
+
+    @percent.setter
+    def percent(self, _percent=None):
+        if not (isinstance(_percent, int) and 1 <= _percent <= 100):
+            error_msg = f'percent expects positive integer type {type(int)} between 1 and 100'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._percent = _percent
+
 
     def __repr__(self):
         model = json.loads(super().__repr__())
+        model['args'].extend(['-r', str(self.percent)])
+        if len(self.egress_ports) > 0:
+            model['args'].extend(['-p', ','.join(self.egress_ports)])
+        if len(self.hostnames) > 0:
+            model['args'].extend(['-h', ','.join(self.hostnames)])
+        if len(self.source_ports) > 0:
+            model['args'].extend(['-s', ','.join(self.source_ports)])
+        if self.corrupt:
+            model['args'].append('-c')
         return json.dumps(model)
 
