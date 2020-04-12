@@ -648,9 +648,65 @@ class GremlinDiskSpaceAttack(GremlinResourceAttackHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shortType = 'disk'
+        self._blocksize = 4
+        self._directory = '/tmp'
+        self._percent = 100
+        self._workers = 1
+
+    @property
+    def blocksize(self):
+        return self._blocksize
+
+    @blocksize.setter
+    def blocksize(self, _blocksize):
+        if not (isinstance(_blocksize, int) and _blocksize >= 1):
+            error_msg = f'blocksize requires a positive integer'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._blocksize = _blocksize
+
+    @property
+    def directory(self):
+        return self._directory
+
+    @directory.setter
+    def directory(self, _directory=None):
+        if not isinstance(_directory, str):
+            error_msg = f'directory requires a string, received {type(_directory)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._directory = _directory
+
+    @property
+    def percent(self):
+        return self._percent
+
+    @percent.setter
+    def percent(self, _percent):
+        if not (isinstance(_percent, int) and 1 <= _percent <= 100):
+            error_msg = f'percent is required to be an int between 1 and 100'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._percent = _percent
+
+    @property
+    def workers(self):
+        return self._workers
+
+    @workers.setter
+    def workers(self, _workers):
+        if not (isinstance(_workers, int) and _workers >= 1):
+            error_msg = 'workers requires a positive integer'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._workers = _workers
 
     def __repr__(self):
         model = json.loads(super().__repr__())
+        model['args'].expand(['-d', str(self.directory)])
+        model['args'].expand(['-w', str(self.workers)])
+        model['args'].expand(['-b', str(self.blocksize)])
+        model['args'].expand(['-p', str(self.percent)])
         return json.dumps(model)
 
 

@@ -1,10 +1,8 @@
 # Attacks
 
-! Attack object helper planned and coming soon
-
 ## Create Attacks
 
-### Attack Examples
+Creating attacks with the 
 
 #### Resource Attacks
 
