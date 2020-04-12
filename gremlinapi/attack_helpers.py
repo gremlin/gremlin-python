@@ -592,10 +592,10 @@ class GremlinMemoryAttack(GremlinResourceAttackHelper):
         super().__init__(*args, **kwargs)
         self.shortType = 'memory'
         self._allowedAmountTypes = ['MB', 'GB', '%']
-        self._amount = '100'
-        self._amountType = 'MB'
+        self._amount = '75'
+        self._amountType = '%'
         self.amount = kwargs.get('amount', 100)
-        self.amountType = kwargs.get('amountType', 'MB')
+        self.amountType = kwargs.get('amountType', '%')
 
     @property
     def amount(self):
@@ -632,11 +632,11 @@ class GremlinMemoryAttack(GremlinResourceAttackHelper):
     def __repr__(self):
         model = json.loads(super().__repr__())
         if self.amountType == 'MB':
-            model['args'].extend(['-m', self.amount])
+            model['args'].extend(['-m', str(self.amount)])
         elif self.amountType == 'GB':
-            model['args'].extend(['-g', self.amount])
+            model['args'].extend(['-g', str(self.amount)])
         elif self.amountType == '%':
-            model['args'].extend(['-p', self.amount])
+            model['args'].extend(['-p', str(self.amount)])
         else:
             error_msg = f'Fatal error, data model may be corrupted, amountType: {self._amountType} is not valid'
             log.fatal(error_msg)

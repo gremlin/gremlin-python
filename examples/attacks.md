@@ -10,7 +10,7 @@
 
 ##### CPU
 
-This will target 10% of all container
+This will target 100% of all containers with the container label of `owner: 'kyle'` for five minute
 ```python
 from gremlinapi.attacks import GremlinAPIAttacks as attacks
 from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetContainers, GremlinCPUAttack
@@ -18,12 +18,17 @@ from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetContaine
 attacks.create_attack(
     body=GremlinAttackHelper(
         target=GremlinTargetContainers(type='Random', labels={'owner': 'kyle'}, percent=100),
-        command=GremlinCPUAttack(all_cores=True, capacity=100)
-    )
-)
+        command=GremlinCPUAttack(length=300, all_cores=True, capacity=100)))
 ```
 
 ##### Memory
+
+This will target 10% of all hosts with a memory attack of 75% Memory per host for one minute
+```python
+from gremlinapi.attacks import GremlinAPIAttacks as attacks
+from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetHosts, GremlinMemoryAttack
+attacks.create_attack(body=GremlinAttackHelper(target=GremlinTargetHosts(), command=GremlinMemoryAttack()))
+```
 
 ##### Disk IO
 
