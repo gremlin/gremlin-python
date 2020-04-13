@@ -1165,6 +1165,7 @@ class GremlinDNSAttack(GremlinNetworkAttackHelper):
         super().__init__(*args, **kwargs)
         self.shortType = 'dns'
         self._allowed_protocols = ['TCP', 'UDP']
+        self.protocol = kwargs.get('protocol', None)
 
     def __repr__(self):
         model = json.loads(super().__repr__())
