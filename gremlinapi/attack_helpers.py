@@ -922,7 +922,6 @@ class GremlinDiskIOAttack(GremlinResourceAttackHelper):
             raise GremlinParameterError(error_msg)
         self._mode = _mode.lower()
 
-
     def __repr__(self):
         model = json.loads(super().__repr__())
         model['args'].extend(['-c', str(self.blockcount)])
@@ -1073,11 +1072,14 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
 
     @user.setter
     def user(self, _user=None):
-        if not isinstance(_user, str):
+        if not _user:
+            self._user = None
+        elif isinstance(_user, str):
+            self._user = _user
+        else:
             error_msg = f'user expects {type(str)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._user = _user
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -1099,6 +1101,7 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
         if self.kill_children:
             model['args'].append('-c')
         return json.dumps(model)
+
 
 class GremlinTimeTravelAttack(GremlinStateAttackHelper):
     def __init__(self, *args, **kwargs):

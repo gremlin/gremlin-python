@@ -19,10 +19,12 @@ from gremlinapi.providers import GremlinAPIProviders as providers
 log = logging.getLogger('GremlinAPI.client')
 
 class GremlinScenarioHelper(object):
-    def __init__(self, *args, **args):
+    def __init__(self, *args, **kwargs):
         self._description = str()
         self._hypothesis = str()
         self._steps = []
+        self.description = kwargs.get('description', None)
+        self.hypothesis = kwargs.get('hypothesis', None)
 
     @property
     def description(self):
