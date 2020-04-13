@@ -15,7 +15,7 @@ from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetContaine
 
 attacks.create_attack(
     body=GremlinAttackHelper(
-        target=GremlinTargetContainers(type='Random', labels={'owner': 'kyle'}, percent=100),
+        target=GremlinTargetContainers(strategy_type='Random', labels={'owner': 'kyle'}, percent=100),
         command=GremlinCPUAttack(length=300, all_cores=True, capacity=100)))
 ```
 
@@ -101,7 +101,7 @@ from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetContaine
 
 attacks.create_attack(
     body=GremlinAttackHelper(
-        target=GremlinTargetContainers(type='Random', labels={'app': 'webapp'}, percent=10),
+        target=GremlinTargetContainers(strategy_type='Random', labels={'app': 'webapp'}, percent=10),
         command=GremlinShutdownAttack(delay=1)))
 ```
 
@@ -113,7 +113,7 @@ from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetHosts, G
 
 attacks.create_attack(
     body=GremlinAttackHelper(
-        target=GremlinTargetHosts(type='Random', tags={'function': 'k8worker'}, percent=10),
+        target=GremlinTargetHosts(strategy_type='Random', tags={'function': 'k8worker'}, percent=10),
         command=GremlinShutdownAttack(delay=1, reboot=True)))
 ```
 
@@ -126,7 +126,7 @@ from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetHosts, G
 
 attacks.create_attack(
     body=GremlinAttackHelper(
-        target=GremlinTargetHosts(type='Random', tags={'role': 'webserver'}, percent=10),
+        target=GremlinTargetHosts(strategy_type='Random', tags={'role': 'webserver'}, percent=10),
         command=GremlinProcessKillerAttack(process='httpd', full_match=True)))
 ```
 
@@ -139,7 +139,7 @@ from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetHosts, G
 
 attacks.create_attack(
     body=GremlinAttackHelper(
-        target=GremlinTargetHosts(type='Random', target_all_hosts=True, exact=1),
+        target=GremlinTargetHosts(strategy_type='Random', target_all_hosts=True, exact=1),
         command=GremlinTimeTravelAttack(offset=365*3600*24, block_ntp=True)))
 ```
 
@@ -154,7 +154,7 @@ from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetHosts, G
 
 attacks.create_attack(
     body=GremlinAttackHelper(
-        target=GremlinTargetHosts(type='Random', target_all_hosts=True, exact=1),
+        target=GremlinTargetHosts(strategy_type='Random', target_all_hosts=True, exact=1),
         command=GremlinBlackholeAttack()))
 ```
 
@@ -167,7 +167,7 @@ from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetHosts, G
 
 attacks.create_attack(
     body=GremlinAttackHelper(
-        target=GremlinTargetHosts(type='Random', target_all_hosts=True, exact=1),
+        target=GremlinTargetHosts(strategy_type='Random', target_all_hosts=True, exact=1),
         command=GremlinDNSAttack(ips=['8.8.8.8', '8.8.4.4'])))
 ```
 
@@ -218,7 +218,7 @@ from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetContaine
 
 attacks.create_attack(
     body=GremlinAttackHelper(
-        target=GremlinTargetContainers(type='Random', target_all_hosts=True,
+        target=GremlinTargetContainers(strategy_type='Random', target_all_hosts=True,
             percent=100, labels={'com.amazonaws.ecs.container-name': 'swissknife'}),
         command=GremlinLatencyAttack(length=300, protocol='ICMP', delay=100)))
 ```
@@ -232,7 +232,7 @@ from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetContaine
 
 attacks.create_attack(
     body=GremlinAttackHelper(
-        target=GremlinTargetContainers(type='Random', target_all_containers=True, percent=10),
+        target=GremlinTargetContainers(strategy_type='Random', target_all_containers=True, percent=10),
         command=GremlinPacketLossAttack(corrupt=True, percent=10)))
 ```
 
