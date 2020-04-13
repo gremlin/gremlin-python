@@ -134,3 +134,4 @@ dmypy.json
 gremlin-python.iml
 
 _*.json
+_t.py

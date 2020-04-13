@@ -983,14 +983,18 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
         self._interval = 1
         self._kill_children = False
         self._process = str()
+        self._target_newest = False
+        self._target_oldest = False
         self._user = str()
-        self.exact = kwargs.get('exact', False)                  # -e
-        self.full_match = kwargs.get('full_match', False)        # -f
-        self.group = kwargs.get('group', str())                  # -g, str
-        self.interval = kwargs.get('interval', 1)                # -i, int
-        self.kill_children = kwargs.get('kill_children', False)  # -c
-        self.process = kwargs.get('process', str())              # -p, str
-        self.user = kwargs.get('user', str())                    # -p, str
+        self.exact = kwargs.get('exact', False)                   # -e
+        self.full_match = kwargs.get('full_match', False)         # -f
+        self.group = kwargs.get('group', str())                   # -g, str
+        self.interval = kwargs.get('interval', 1)                 # -i, int
+        self.kill_children = kwargs.get('kill_children', False)   # -c
+        self.process = kwargs.get('process', str())               # -p, str
+        self.target_newest = kwargs.get('target_newest', False)   # -n
+        self._target_oldest = kwargs.get('target_oldest', False)  # -o
+        self.user = kwargs.get('user', str())                     # -p, str
 
     @property
     def exact(self):
@@ -1067,6 +1071,40 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
         self._process = _process
 
     @property
+    def target_newest(self):
+        return self._target_newest
+
+    @target_newest.setter
+    def target_newest(self, _target_newest=None):
+        if isinstance(_target_newest, bool):
+            if _target_newest == True:
+                self._target_newest = True
+                self._target_oldest = False
+            else:
+                self._target_newest = False
+        else:
+            error_msg = f'target_newest expects type {type(bool)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+
+    @property
+    def target_oldest(self):
+        return self._target_oldest
+
+    @target_oldest.setter
+    def target_oldest(self, _target_oldest=None):
+        if isinstance(_target_oldest, bool):
+            if _target_oldest == True:
+                self._target_oldest = True
+                self._target_newest = False
+            else:
+                self.target_oldest = False
+        else:
+            error_msg = f'target_oldest expects type {type(bool)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+
+    @property
     def user(self):
         return self._user
 
@@ -1100,6 +1138,10 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
             model['args'].append('-f')
         if self.kill_children:
             model['args'].append('-c')
+        if self.target_newest and not self.target_oldest:
+            model['args'].append('-n')
+        if self.target_oldest and not self.target_newest:
+            model['args'].append('-o')
         return json.dumps(model)
 
 

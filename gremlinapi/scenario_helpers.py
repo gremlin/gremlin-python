@@ -19,13 +19,14 @@ from gremlinapi.providers import GremlinAPIProviders as providers
 
 log = logging.getLogger('GremlinAPI.client')
 
+
 class GremlinScenarioHelper(object):
     def __init__(self, *args, **kwargs):
         self._description = str()
         self._hypothesis = str()
         self._steps = list()
-        self.description = kwargs.get('description', None)
-        self.hypothesis = kwargs.get('hypothesis', None)
+        self.description = kwargs.get('description', self._description)
+        self.hypothesis = kwargs.get('hypothesis', self._hypothesis)
 
     def add_step(self, *args, **kwargs):
         _step = kwargs.get('step', None)
@@ -61,6 +62,7 @@ class GremlinScenarioHelper(object):
 class GremlinScenarioStep(object):
     def __init__(self, *args, **kwargs):
         self._delay = 5
+        self.delay = kwargs.get('delay', self._delay)
 
     @property
     def delay(self):
@@ -83,20 +85,40 @@ class GremlinScenarioStep(object):
 class GremlinILFIStep(object):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._command = GremlinAttackCommandHelper()
+        self._command = None
         self._target = None
+        self.command = kwargs.get('command', None)
         self.target = kwargs.get('target', None)
 
-    def add_attack(self, *args, **kwargs):
-        atk_helper = kwargs.get('attack', None)
+    def _coherce_command(self):
+        atk_model = json.loads(str(self._command))
+        _model = {
+
+        }
+        return _model
+
+    def _coherce_target(self):
+        tgt_model = json.loads(str(self._target))
+        _model = {
+
+        }
+        return _model
+
+    def _make_scenario_step(self):
+        _model = {
+            'attackType': 'ILFI',
+            'impactDefinition': self._coherce_command(),
+            'targetDefinition': self._coherce_target(),
+        }
+        return _model
 
     @property
     def command(self):
         return self._command
 
     @command.setter
-    def command(self, _command):
-        if issubclass(_command, GremlinAttackCommandHelper):
+    def command(self, _command=None):
+        if _command and issubclass(_command, GremlinAttackCommandHelper):
             self._command = _command
         else:
             error_msg = f'command expects a GremlinAttackCommandHelper {type(GremlinAttackCommandHelper)}'
@@ -109,7 +131,7 @@ class GremlinILFIStep(object):
 
     @target.setter
     def target(self, _target=None):
-        if issubclass(_target, GremlinAttackTargetHelper):
+        if _target and issubclass(_target, GremlinAttackTargetHelper):
             self._target = _target
         else:
             error_msg = f'target expects a GremlinAttackTargetHelper {type(GremlinAttackTargetHelper)}'
@@ -118,13 +140,15 @@ class GremlinILFIStep(object):
 
     def __repr__(self):
         model = json.loads(super().__repr__())
-
         return json.dumps(model)
 
 
 class GremlinALFIStep(object):
     def __init__(self, *args, **kwargs):
-        super().__init__()
+        super().__init__(*args, **kwargs)
+        error_msg = f'GremlinALFIStep NOT IMPLEMENTED'
+        log.fatal(error_msg)
+        raise NotImplemented(error_msg)
 
     def __repr__(self):
         model = json.loads(super().__repr__())
