@@ -7,6 +7,7 @@ import os
 import time
 
 from gremlinapi.alfi import GremlinALFI as alfi
+from gremlinapi.attack_helpers import *
 from gremlinapi.attacks import GremlinAPIAttacks as Attacks
 from gremlinapi.clients import GremlinAPIClients as Clients
 from gremlinapi.companies import GremlinAPICompanies as Companies
@@ -25,6 +26,7 @@ from gremlinapi.metrics import GremlinAPIMetrics as Metrics
 from gremlinapi.orgs import GremlinAPIOrgs as Orgs
 from gremlinapi.providers import GremlinAPIProviders as Providers
 from gremlinapi.reports import GremlinAPIReports as Reports, GremlinAPIReportsSecurity as SecurityReports
+from gremlinapi.scenario_helpers import *
 from gremlinapi.scenarios import (GremlinAPIScenarios as Scenarios,
                                   GremlinAPIScenariosRecommended as RecommendedScenarios)
 from gremlinapi.schedules import GremlinAPISchedules as Schedules
