@@ -411,6 +411,16 @@ class GremlinAttackCommandHelper(object):
         }
         self.length = kwargs.get('length', 60)
 
+    def scenario_output(self):
+        impactDefinition = {
+            'commandArgs': {
+                'cliArgs': [str(self.shortType)],
+                'length': self.length
+            },
+            'commandType': str(self.commandType)
+        }
+        return impactDefinition
+
     @property
     def commandType(self):
         return self._commandType
@@ -763,6 +773,16 @@ class GremlinCPUAttack(GremlinResourceAttackHelper):
         self.capacity = kwargs.get('capacity', 100)      # -p, int
         self.cores = kwargs.get('cores', 1)              # -c, int
 
+    def scenario_output(self):
+        model = json.loads(self.__repr__())
+        impactDefinition = super().scenario_output()
+        impactDefinition['commandArgs']['cliArgs'].extend(model['args'])
+        impactDefinition['commandArgs']['allCores'] = self.all_cores
+        if not self.all_cores:
+            impactDefinition['commandArgs']['cores'] = self.cores
+        impactDefinition['commandArgs']['percent'] = self.percent
+        return impactDefinition
+
     @property
     def all_cores(self):
         return self._all_cores
@@ -798,7 +818,6 @@ class GremlinCPUAttack(GremlinResourceAttackHelper):
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
         self._cores = _cores
-
 
     def __repr__(self):
         model = json.loads(super().__repr__())
