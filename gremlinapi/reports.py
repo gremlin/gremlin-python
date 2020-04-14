@@ -26,9 +26,9 @@ class GremlinAPIReports(GremlinAPI):
 
     @classmethod
     def _report_endpoint(cls, endpoint, **kwargs):
-        start = cls._warn_if_not_param('start', **kwargs)
-        end = cls._warn_if_not_param('end', **kwargs)
-        period =cls._warn_if_not_param('period', **kwargs)
+        start = cls._info_if_not_param('start', **kwargs)
+        end = cls._info_if_not_param('end', **kwargs)
+        period =cls._info_if_not_param('period', **kwargs)
         if start or end or period or team_id:
             endpoint += '/?'
             if start:
@@ -88,9 +88,9 @@ class GremlinAPIReportsSecurity(GremlinAPI):
 
     @classmethod
     def _report_endpoint(cls, endpoint, **kwargs):
-        start = cls._warn_if_not_param('start', str(date.today()), **kwargs)
-        end = cls._warn_if_not_param('end', str(date.today()), **kwargs)
-        format = cls._warn_if_not_param('format', 'JSON', **kwargs)
+        start = cls._info_if_not_param('start', str(date.today()), **kwargs)
+        end = cls._info_if_not_param('end', str(date.today()), **kwargs)
+        format = cls._info_if_not_param('format', 'JSON', **kwargs)
         endpoint += f'/?start={start}&end={end}&format={format}'
         return endpoint
 

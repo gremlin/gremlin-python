@@ -188,7 +188,7 @@ class GremlinAPIUsersAuth(GremlinAPI):
             'password': cls._error_if_not_param('password', **kwargs),
             'companyName': cls._error_if_not_param('companyName', **kwargs)
         }
-        get_company_session = cls._warn_if_not_param('getCompanySession', **kwargs)
+        get_company_session = cls._info_if_not_param('getCompanySession', **kwargs)
         payload = cls._payload(**{'data': data})
         endpoint = '/users/auth'
         if get_company_session:
@@ -206,7 +206,7 @@ class GremlinAPIUsersAuth(GremlinAPI):
             'provider': cls._error_if_not_param('provider', **kwargs),
             'companyName': cls._error_if_not_param('companyName', **kwargs)
         }
-        get_company_session = cls._warn_if_not_param('getCompanySession', **kwargs)
+        get_company_session = cls._info_if_not_param('getCompanySession', **kwargs)
         payload = cls._payload(**{'data': data})
         endpoint = '/users/auth'
         if get_company_session:
@@ -253,7 +253,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
             'token': kwargs.get('token', None),
             'companyName': kwargs.get('company', None)
         }
-        get_company_session = cls._warn_if_not_param('getCompanySession', **kwargs)
+        get_company_session = cls._info_if_not_param('getCompanySession', **kwargs)
         payload = cls._payload(**{'data': data})
         endpoint = '/users/auth/mfa/auth'
         if get_company_session:

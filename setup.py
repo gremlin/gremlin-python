@@ -10,7 +10,7 @@ __version__ = get_version()
 
 
 def getRequires():
-    deps = ['python_http_client>=3.2.1']
+    deps = ['requests>=2.22.0', 'urllib3>=1.25.8']
     return deps
 
 

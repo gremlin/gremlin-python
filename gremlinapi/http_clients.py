@@ -98,7 +98,9 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
         elif 'body' in kwargs:
             if "Content-Type" not in kwargs["headers"]:
                 kwargs["headers"]["Content-Type"] = "application/json"
-            data = json.dumps(kwargs.pop("body"))
+            data = kwargs.pop('body')
+            if not isinstance(data, str):
+                data = json.dumps(data)
 
         kwargs['proxies'] = cls.proxies()
 

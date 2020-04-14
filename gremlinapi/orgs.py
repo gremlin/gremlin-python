@@ -86,7 +86,7 @@ class GremlinAPIOrgs(GremlinAPI):
         method = 'POST'
         endpoint = cls._optional_team_endpoint('/orgs/auth/secret/reset', **kwargs)
         data = dict()
-        identifier = cls._warn_if_not_param('identifier', **kwargs)
+        identifier = cls._info_if_not_param('identifier', **kwargs)
         if identifier:
             data['identifier'] = identifier
         payload = cls._payload(**{'headers': https_client.header(), 'data': data})

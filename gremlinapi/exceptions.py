@@ -23,9 +23,17 @@ class GremlinAuthError(GremlinAPIException):
     def __init__(self, message):
         super(GremlinAuthError, self).__init__(message)
 
+class GremlinIdentifierError(GremlinAPIException):
+    def __init__(self, message):
+        super(GremlinIdentifierError, self).__init__(message)
+
 class GremlinParameterError(GremlinAPIException):
     def __init__(self, message):
         super(GremlinParameterError, self).__init__(message)
+
+class GremlinCommandTargetError(GremlinAPIException):
+    def __init__(self, message):
+        super(GremlinCommandTargetError, self).__init__(message)
 
 class ProxyError(GremlinAPIException):
     def __init__(self, uri, method, **kwargs):

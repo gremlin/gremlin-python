@@ -70,9 +70,9 @@ class GremlinAPICompanies(GremlinAPI):
         method = 'POST'
         identifier = cls._error_if_not_param('identifier', **kwargs)
         data = {
-            'forceMfa': cls._warn_if_not_param('forceMfa', **kwargs),
-            'mfaProviders': cls._warn_if_not_param('mfaProviders', **kwargs),
-            'defaultMfaProvider': cls._warn_if_not_param('defaultMfaProvider', **kwargs)
+            'forceMfa': cls._info_if_not_param('forceMfa', **kwargs),
+            'mfaProviders': cls._info_if_not_param('mfaProviders', **kwargs),
+            'defaultMfaProvider': cls._info_if_not_param('defaultMfaProvider', **kwargs)
         }
         data = {k: v for k, v in data.items() if v is not None}
         endpoint = f'/companies/{identifier}/mfaPrefs'
@@ -85,7 +85,7 @@ class GremlinAPICompanies(GremlinAPI):
     def update_company_prefs(cls, https_client=get_gremlin_httpclient(), **kwargs):
         method = 'POST'
         identifier = cls._error_if_not_param('identifier', **kwargs)
-        data = {'domain': cls._warn_if_not_param('domain', **kwargs)}
+        data = {'domain': cls._info_if_not_param('domain', **kwargs)}
         data = {k: v for k, v in data.items() if v is not None}
         endpoint = f'/companies/{identifier}/prefs'
         payload = cls._payload(**{'headers': https_client.header(), 'data': data})
@@ -100,11 +100,11 @@ class GremlinAPICompanies(GremlinAPI):
         method = 'POST'
         identifier = cls._error_if_not_param('identifier', **kwargs)
         data = {
-            'enabled': cls._warn_if_not_param('enabled', **kwargs),
-            'entityId': cls._warn_if_not_param('entityId', **kwargs),
-            'idpUrl': cls._warn_if_not_param('idpUrl', **kwargs),
-            'certificate': cls._warn_if_not_param('certificate', **kwargs),
-            'forced': cls._warn_if_not_param('forced', **kwargs)
+            'enabled': cls._info_if_not_param('enabled', **kwargs),
+            'entityId': cls._info_if_not_param('entityId', **kwargs),
+            'idpUrl': cls._info_if_not_param('idpUrl', **kwargs),
+            'certificate': cls._info_if_not_param('certificate', **kwargs),
+            'forced': cls._info_if_not_param('forced', **kwargs)
         }
         data = {k: v for k, v in data.items() if v is not None}
         endpoint = f'/companies/{identifier}/saml/props'
