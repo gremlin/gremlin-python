@@ -15,12 +15,22 @@ from gremlinapi.exceptions import (
 
 from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.http_clients import get_gremlin_httpclient
+from gremlinapi.scenario_helpers import GremlinScenarioHelper
 
 
 log = logging.getLogger('GremlinAPI.client')
 
 
 class GremlinAPIScenarios(GremlinAPI):
+    @classmethod
+    def _error_if_not_scenario_body(cls, **kwargs):
+        body = cls._error_if_not_param('body', **kwargs)
+        if issubclass(type(body), GremlinScenarioHelper):
+            return str(body)
+        else:
+            error_msg = f'Body present but not of type {type(GremlinScenarioHelper)}'
+            log.warning(error_msg)
+        return body
 
     @classmethod
     @register_cli_action('list_scenarios', ('',), ('teamId',))
@@ -35,7 +45,7 @@ class GremlinAPIScenarios(GremlinAPI):
     @register_cli_action('create_scenario', ('body',), ('teamId',))
     def create_scenario(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
-        data = cls._error_if_not_json_body(**kwargs)
+        data = cls._error_if_not_scenario_body(**kwargs)
         endpoint = cls._optional_team_endpoint('/scenarios', **kwargs)
         payload = cls._payload(**{'headers': https_client.header(), 'body': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
@@ -104,7 +114,7 @@ class GremlinAPIScenarios(GremlinAPI):
     def run_scenario(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
         guid = cls._error_if_not_param('guid', **kwargs)
-        data = cls._warn_if_not_json_body(**kwargs)
+        data = cls._warn_if_not_json_body(**kwargs, default=dict())
         endpoint = cls._optional_team_endpoint(f'/scenarios/{guid}/runs', **kwargs)
         payload = cls._payload(**{'headers': https_client.header(), 'body': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
