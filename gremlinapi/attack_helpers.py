@@ -638,6 +638,9 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
             raise GremlinParameterError(error_msg)
         return port_list
 
+    def _valid_tag_pair(self, tagKey=None, tagValue=None):
+        return True
+
     def _validate_hostname(self, _hostname=None):
         return True
 
@@ -787,7 +790,12 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
 
     @tags.setter
     def tags(self, _tags=None):
-        pass
+        if isinstance(_tags, dict):
+            for _tag in _tags:
+                if self._valid_tag_pair(_tag, _tags[_tag]):
+                    self._multiSelectTags[_tag] = _tags[_tag]
+        self._ids = []
+        self.target_all_hosts = False
 
     def __repr__(self):
         model = json.loads(super().__repr__())
