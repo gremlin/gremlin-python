@@ -120,7 +120,11 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
                 body = resp.json()
             except ValueError:
                 # No JSON in response
-                body = str(resp.content, resp.encoding)
+                try:
+                    body = str(resp.content, resp.encoding)
+                except TypeError:
+                    # Response must be empty, return something nice
+                    body = 'Success'
 
         return resp, body
 
