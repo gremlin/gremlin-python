@@ -3,8 +3,8 @@
 
 #### Create API Key
 
-Since your creating an API keys, it's likely you don't have an existing one use. Using environment variables is an easy
-way to provide authentication to the library.
+Since you're creating an API key, it's likely you don't have an existing one to use.
+Using environment variables is an easy way to provide authentication to the library.
 ```bash
 #!/bin/bash
 export GREMLIN_USER=my-gremlin-username
