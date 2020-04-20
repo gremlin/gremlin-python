@@ -7,6 +7,7 @@ import os
 import time
 
 from gremlinapi.alfi import GremlinALFI as alfi
+from gremlinapi.apikeys import GremlinAPIapikeys as apikeys
 from gremlinapi.attack_helpers import *
 from gremlinapi.attacks import GremlinAPIAttacks as Attacks
 from gremlinapi.clients import GremlinAPIClients as Clients

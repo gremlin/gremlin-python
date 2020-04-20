@@ -4,6 +4,8 @@ See individual .md files
 
 [ALFI](alfi.md)
 
+[API Keys](apikeys.md)
+
 [Attacks](attacks.md)
 
 [Clients](clients.md)
