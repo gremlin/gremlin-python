@@ -82,8 +82,16 @@ class GremlinAttackTargetHelper(object):
         model = json.loads(self.__repr__())
         _target_definition = {
             'strategyType': self.strategy_type,
-            'strategy': {'percentage': model['percent']}
+            'strategy': dict()
         }
+        if model.get('percent', None):
+            _target_definition['strategy'] = {'percentage': model['percent']}
+        elif model.get('exact', None):
+            _target_definition['strategy'] = {'count': model['exact']}
+        else:
+            error_msg = 'Targeting was not properly defined'
+            log.fatal(error_msg)
+            raise GremlinCommandTargetError(error_msg)
         if type(model.get('containers')) == dict and model.get('containers').get('multiSelectLabels'):
             _target_definition['strategy']['multiSelectLabels'] = model['containers']['multiSelectLabels']
         if type(model.get('hosts')) == dict and model.get('hosts').get('multiSelectLabels'):
