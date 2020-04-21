@@ -1,5 +1,7 @@
 # gremlin-python
 
+![](Gremlin_Python_Icon.png?raw=true)
+
 ## Installation
 
 ### Global Package Install
