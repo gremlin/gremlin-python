@@ -84,9 +84,9 @@ class GremlinAttackTargetHelper(object):
             'strategyType': self.strategy_type,
             'strategy': {'percentage': model['percent']}
         }
-        if model.get('containers', dict()).get('multiSelectLabels'):
+        if type(model.get('containers')) == dict and model.get('containers').get('multiSelectLabels'):
             _target_definition['strategy']['multiSelectLabels'] = model['containers']['multiSelectLabels']
-        if model.get('hosts', dict()).get('multiSelectLabels'):
+        if type(model.get('hosts')) == dict and model.get('hosts').get('multiSelectLabels'):
             _target_definition['strategy']['multiSelectLabels'] = model['hosts']['multiSelectLabels']
         return _target_definition
 
