@@ -1,6 +1,9 @@
 name: Publish to PyPi-Test
 
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - master
 
 jobs:
   build-n-publish:
