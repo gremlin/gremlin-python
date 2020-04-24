@@ -1,24 +1,21 @@
 # gremlin-python
 
-![](Gremlin_Python_Icon.png?raw=true)
+![](https://github.com/gremlin/gremlin-python/raw/master/Gremlin_Python_Icon.png?raw=true)
 
 ## Installation
 
-### Global Package Install
+### PyPi
 
-If on a mac, ensure you have xcrun installed
-```shell
-xcode-select --install
+```bash
+pip install gremlinapi
 ```
 
-Setup Gremlin
-```shell
+### Install from source
+
+```bash
+git clone git@github.com:gremlin/gremlin-python.git
+cd gremlin-python
 python3 setup.py install
-```
-
-Enter the python interpreter
-```shell
-python3
 ```
 
 ### Use Packaged Docker runtime

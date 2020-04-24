@@ -28,6 +28,7 @@ setup(
     license='Apache 2.0',
     description='Gremlin library for Python',
     long_description=readme,
+    long_description_content_type="text/markdown",
     install_requires=getRequires(),
     python_requires='>=3.6',
     entry_points={"console_scripts": ["pgremlin = gremlinapi.cli:main"]},
