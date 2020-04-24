@@ -6,14 +6,14 @@ jobs:
   build-n-publish:
     name: Build and publish Python
     runs-on: ${{ matrix.os }}
-      strategy:
-        max-parallel: 1
-        matrix:
-          python-version:
-            - 3.8
-            - 3.7
-          os:
-            - ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        python-version:
+          - 3.8
+          - 3.7
+        os:
+          - ubuntu-latest
     steps:
       - uses: actions/checkout@master
       - name: Setup Python
