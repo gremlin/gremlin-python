@@ -13,12 +13,12 @@ LABEL org.label-schema.build-date=$BUILD_DATE
 LABEL org.label-schema.name=$IMAGE_NAME
 LABEL org.label-schema.version=$BUILD_VERSION
 
-RUN apk add --no-cache --update \
-		ca-certificates git bash openssh go tar gzip python3 openssl curl make
+RUN apk add --no-cache --update  bash ca-certificates curl gcc git go gzip \
+    libffi-dev make musl-dev openssh openssl openssl-dev python3 python3-dev tar
 
 RUN python3 -m ensurepip  && \
     rm -r /usr/lib/python*/ensurepip && \
-    pip3 install --upgrade pip setuptools && \
+    pip3 install --upgrade pip setuptools twine wheel && \
     if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
     if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
     rm -r /root/.cache

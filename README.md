@@ -1,6 +1,6 @@
 # gremlin-python
 
-![](Gremlin_Python_Icon.png?raw=true)
+![](https://github.com/gremlin/gremlin-python/raw/master/Gremlin_Python_Icon.png?raw=true)
 
 ## Installation
 

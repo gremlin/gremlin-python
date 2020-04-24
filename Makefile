@@ -10,6 +10,17 @@ all: docker-build
 install:
 	python3 setup.py install
 
+package:
+	python3 setup.py sdist bdist_wheel
+
+pypi-test: export TWINE_PASSWORD=$(PYPI_TEST)
+pypi-test: package
+	python3 -m twine upload --non-interactive --config-file ${HOME}/.pypirc --repository testpypi dist/*
+
+pypi-prod: export TWINE_PASSWORD=$(PYPI_PROD)
+pypi-prod: package
+	python3 -m twine upload --non-interactive --config-file ${HOME}/.pypirc dist/*
+
 docker-build:
 	docker build --no-cache=true \
 	             --build-arg BUILD_DATE=$(BUILD_DATE) \
