@@ -14,6 +14,7 @@ from gremlinapi.exceptions import (
 )
 
 from gremlinapi.config import GremlinAPIConfig
+from gremlinapi.util import get_version
 
 try:
     import requests
@@ -56,6 +57,7 @@ class GremlinAPIHttpClient(object):
             error_msg = f'Missing API Key or Bearer Token, none supplied: {api_key}, {bearer_token}'
             log.fatal(error_msg)
             raise HTTPBadHeader(error_msg)
+        header['X-Gremlin-Agent'] = f'GremlinPythonSDK/{get_version()}'
         return header
 
     @classmethod
