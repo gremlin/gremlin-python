@@ -103,8 +103,10 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
             data = kwargs.pop('body')
             if not isinstance(data, str):
                 data = json.dumps(data)
+            log.debug(f'body: {data}')
 
         kwargs['proxies'] = cls.proxies()
+        log.debug(f'httpd client kwargs: {kwargs}')
 
         if data:
             resp = client(uri, data=data, **kwargs)

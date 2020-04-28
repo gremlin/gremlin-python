@@ -1042,7 +1042,7 @@ class GremlinShutdownAttack(GremlinStateAttackHelper):
 
     def __repr__(self):
         model = json.loads(super().__repr__())
-        model['args'].extend(['-d', str(self.delay)])
+        model['args'] = ['-d', str(self.delay)]
         if self.reboot:
             model['args'].append('-r')
         return json.dumps(model)
