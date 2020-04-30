@@ -971,7 +971,7 @@ class GremlinDiskIOAttack(GremlinResourceAttackHelper):
         self.blocksize = kwargs.get('blocksize', 4)       # -s, int
         self.directory = kwargs.get('directory', '/tmp')  # -d, str
         self.mode = kwargs.get('mode', 'rw')              # -m, str
-        self.workers = kwargs.get('worker', 1)            # -w, int
+        self.workers = kwargs.get('workers', 1)            # -w, int
 
     @property
     def blockcount(self):
