@@ -74,7 +74,7 @@ class GremlinScenarioHelper(object):
     def hypothesis(self):
         return self._hypothesis
 
-    @description.setter
+    @hypothesis.setter
     def hypothesis(self, _hypothesis=None):
         self._hypothesis = _hypothesis
 

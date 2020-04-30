@@ -497,8 +497,8 @@ class GremlinAttackCommandHelper(object):
 
     @length.setter
     def length(self, _length=None):
-        if not (isinstance(_length, int) and 60 <= _length <= 31449600):  # Roughly 1 year in seconds
-            error_msg = f'Attack length needs to be an integer between 60 and 31449600'
+        if not (isinstance(_length, int) and 1 <= _length <= 31449600):  # Roughly 1 year in seconds
+            error_msg = f'Attack length needs to be an integer between 1 and 31449600'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
         self._length = _length
