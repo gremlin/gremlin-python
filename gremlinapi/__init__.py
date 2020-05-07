@@ -52,6 +52,10 @@ class SecretsFilter(logging.Filter):
             record.msg = re.sub(rf"\s{GremlinAPIConfig.bearer_token}[\'\s]?",
                                 ' ...'+GremlinAPIConfig.bearer_token[-4:],
                                 record.msg)
+        if len(GremlinAPIConfig.password) >= 1:
+            record.msg = re.sub(rf"\s{GremlinAPIConfig.password}[\'\s]?",
+                                ' [PASSWORD REDACTED]',
+                                record.msg)
         return record
 
 logging_levels = {
