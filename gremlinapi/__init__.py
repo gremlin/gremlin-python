@@ -42,7 +42,17 @@ __version__ = get_version()
 
 
 # Logging Configuration
-logging.getLogger('GremlinAPI.client').addHandler(logging.StreamHandler())
+class SecretsFilter(logging.Filter):
+    def filter(self, record):
+        if len(GremlinAPIConfig.api_key) >= 1:
+            record.msg = re.sub(rf"\s{GremlinAPIConfig.api_key}[\'\s]?",
+                                ' ...'+GremlinAPIConfig.api_key[-4:],
+                                record.msg)
+        if len(GremlinAPIConfig.bearer_token) >= 1:
+            record.msg = re.sub(rf"\s{GremlinAPIConfig.bearer_token}[\'\s]?",
+                                ' ...'+GremlinAPIConfig.bearer_token[-4:],
+                                record.msg)
+        return record
 
 logging_levels = {
     'CRITICAL': logging.CRITICAL,
@@ -53,6 +63,11 @@ logging_levels = {
 }
 
 log = logging.getLogger('GremlinAPI.client')
+log_handler = logging.StreamHandler()
+log_formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+log_handler.setFormatter(log_formatter)
+log.addFilter(SecretsFilter())
+log.addHandler(log_handler)
 log.setLevel(logging_levels.get(os.getenv('GREMLIN_PYTHON_API_LOG_LEVEL', 'WARNING'), logging.WARNING))
 
 # API Settings
