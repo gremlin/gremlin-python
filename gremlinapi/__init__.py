@@ -44,15 +44,16 @@ __version__ = get_version()
 # Logging Configuration
 class SecretsFilter(logging.Filter):
     def filter(self, record):
-        if len(GremlinAPIConfig.api_key) >= 1:
+        secret_length = 5
+        if len(GremlinAPIConfig.api_key) >= secret_length:
             record.msg = re.sub(rf"\s{GremlinAPIConfig.api_key}[\'\s]?",
                                 ' ...'+GremlinAPIConfig.api_key[-4:],
                                 record.msg)
-        if len(GremlinAPIConfig.bearer_token) >= 1:
+        if len(GremlinAPIConfig.bearer_token) >= secret_length:
             record.msg = re.sub(rf"\s{GremlinAPIConfig.bearer_token}[\'\s]?",
                                 ' ...'+GremlinAPIConfig.bearer_token[-4:],
                                 record.msg)
-        if len(GremlinAPIConfig.password) >= 1:
+        if len(GremlinAPIConfig.password) >= secret_length:
             record.msg = re.sub(rf"\s{GremlinAPIConfig.password}[\'\s]?",
                                 ' [PASSWORD REDACTED]',
                                 record.msg)
