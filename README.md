@@ -7,7 +7,7 @@
 ### PyPi
 
 ```bash
-pip install gremlinapi
+pip3 install gremlinapi
 ```
 
 ### Install from source
