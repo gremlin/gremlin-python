@@ -10,7 +10,7 @@ This is an unoffical PythonSDK currently in alpha testing.
 ### PyPi
 
 ```bash
-pip install gremlinapi
+pip3 install gremlinapi
 ```
 
 ### Install from source
