@@ -2,12 +2,15 @@
 
 ![](https://github.com/gremlin/gremlin-python/raw/master/Gremlin_Python_Icon.png?raw=true)
 
+## Project Status
+This is an unoffical PythonSDK currently in alpha testing. 
+
 ## Installation
 
 ### PyPi
 
 ```bash
-pip install gremlinapi
+pip3 install gremlinapi
 ```
 
 ### Install from source
@@ -529,5 +532,5 @@ pprint.pprint(scenarios_list)
 
 ## Support
 
-Support for this library is provided by the Gremlin and Chaos Engineering community.
+Support for this library is provided by the Chaos Engineering community.
 [Join us on slack!](https://www.gremlin.com/slack/)
