@@ -69,7 +69,7 @@ logging_levels = {
 
 log = logging.getLogger('GremlinAPI.client')
 log_handler = logging.StreamHandler()
-log_formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+log_formatter = logging.Formatter('%(asctime)s %(start)-12s %(levelname)-8s %(message)s')
 log_handler.setFormatter(log_formatter)
 log.addFilter(SecretsFilter())
 log.addHandler(log_handler)
