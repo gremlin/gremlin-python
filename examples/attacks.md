@@ -188,7 +188,7 @@ body = {
         'type': 'Random',
         'containers': {
             'multiSelectLabels': {
-                "com.amazonaws.ecs.container-start": [
+                "com.amazonaws.ecs.container-name": [
                     "swissknife"
                 ]
             }
