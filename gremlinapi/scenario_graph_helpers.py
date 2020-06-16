@@ -206,6 +206,7 @@ class GremlinScenarioALFINode(GremlinScenarioAttackNode):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.attack_type = "ALFI"
+        raise NotImplementedError('ALFI Scenarios NOT IMPLEMENTED')
 
 
 class GremlinScenarioDelayNode(GremlinScenarioNode):
