@@ -105,7 +105,7 @@ class GremlinScenarioHelper(object):
         model = {
             'description': self.description,
             'hypothesis': self.hypothesis,
-            'start': self.name,
+            'name': self.name,
             'steps': self.steps
         }
         return json.dumps(model)

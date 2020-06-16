@@ -19,89 +19,68 @@ from gremlinapi.providers import GremlinAPIProviders as providers
 
 log = logging.getLogger('GremlinAPI.client')
 
-
 class GremlinScenarioGraphHelper(object):
     def __init__(self, *args, **kwargs):
         self._description = str()
         self._hypothesis = str()
         self._name = str()
+        self._nodes = GremlinNodeGraph()
         self._start = str()
         self.description = kwargs.get('description', None)
         self.hypothesis = kwargs.get('hypothesis', None)
         self.name = kwargs.get('start', None)
 
-    def add_node(self, new_node=None):
-        if not isinstance(new_node, GremlinScenarioNode):
-            error_msg = f'add_node expects node to be a GremlinScenarioNode: {type(GremlinScenarioNode)}'
+    def add_node(self, _node=None):
+        if not issubclass(type(_node), GremlinScenarioNode):
+            error_msg = f'add_node expects GremlinScenarioNode (or None), received {type(_node)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        if self.start is None:
-            new_node.next = new_node
-            new_node.previous = new_node
-            self.start = new_node
-        else:
-            self.add_node_after(self.start.previous, new_node)
-
-    def add_node_after(self, ref_node=None, new_node=None):
-        if not isinstance(new_node, GremlinScenarioNode):
-            error_msg = f'add_node expects node to be a GremlinScenarioNode: {type(GremlinScenarioNode)}'
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        new_node.previous = ref_node
-        new_node.next = ref_node.next
-        new_node.next.previous = new_node
-        ref_node.next = new_node
-
-    def add_node_before(self, ref_node=None, new_node=None):
-        self.add_node_after(ref_node.previous, new_node)
+        self._nodes.append(_node)
 
     @property
     def description(self):
         return self._description
 
     @description.setter
-    def description(self, description=None):
-        if not isinstance(description, str):
-            error_msg = f'Description expects string {type(str())}, received {type(description)}'
+    def description(self, _description=None):
+        if not isinstance(_description, str):
+            error_msg = f'Description expects string {type(str())}, received {type(_description)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._description = description
+        self._description = _description
 
     @property
     def hypothesis(self):
         return self._hypothesis
 
     @hypothesis.setter
-    def hypothesis(self, hypothesis=None):
-        if not isinstance(hypothesis, str):
-            error_msg = f'Hypothesis expects string {type(str())}, received {type(hypothesis)}'
+    def hypothesis(self, _hypothesis=None):
+        if not isinstance(_hypothesis, str):
+            error_msg = f'Hypothesis expects string {type(str())}, received {type(_hypothesis)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._hypothesis = hypothesis
+        self._hypothesis = _hypothesis
 
     @property
     def name(self):
         return self._name
 
     @name.setter
-    def name(self, name=None):
-        if not isinstance(name, str):
-            error_msg = f'Name expects string {type(str())}, received {type(name)}'
+    def name(self, _name=None):
+        if not isinstance(_name, str):
+            error_msg = f'Name expects string {type(str())}, received {type(_name)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._name = name
+        self._name = _name
 
-    @property
-    def start(self):
-        return self._start
-
-    @start.setter
-    def start(self, start=None):
-        if not (isinstance(start, GremlinScenarioNode) or start is None):
-            error_msg = f'Start expects GremlinScenarioNode (or None), received {type(start)}'
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        self._name = start
+    def __repr__(self):
+        model = {
+            'description': self.description,
+            'hypothesis': self.hypothesis,
+            'name': self.name,
+            'graph': {'nodes': self._nodes}
+        }
+        return json.dumps(model)
 
 
 class GremlinScenarioNode(object):
@@ -113,8 +92,13 @@ class GremlinScenarioNode(object):
         self._next = None
         self._node_type = str()
         self.id = str(uuid.uuid4())
+        self.name = kwargs.get('name', None)
 
-    def add_edge(self, new_node=None):
+    def add_edge(self, _node=None):
+        if not issubclass(type(_node), GremlinScenarioNode):
+            error_msg = f'add_edge expects a GremlinScenarioNode, received {type(_node)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
         self._edges.append(new_node)
 
     @property
@@ -122,60 +106,77 @@ class GremlinScenarioNode(object):
         return self._id
 
     @id.setter
-    def id(self, id=None):
-        if not isinstance(id, str):
-            error_msg = f''
+    def id(self, _id=None):
+        if not isinstance(_id, str):
+            error_msg = f'id expects a string {type(str)}, received {type(str)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._id = id
-
-    @property
-    def previous(self):
-        return self._previous
-
-    @previous.setter
-    def previous(self, new_node=None):
-        if not (isinstance(new_node, GremlinScenarioNode) or new_node is None):
-            error_msg = f'previous expects GremlinScenarioNode (or None), received {type(new_node)}'
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        self._previous = new_node
-
-    @property
-    def next(self):
-        return self._next
+        self._id = _id
 
     @property
     def name(self):
         return self._name
 
     @name.setter
-    def name(self, name=None):
-        if not isinstance(name, str):
-            error_msg = f'name expects type string {type(str)}, received {type(name)}'
+    def name(self, _name=None):
+        if not isinstance(_name, str):
+            error_msg = f'name expects type string {type(str)}, received {type(_name)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._name = name
+        self._name = _name
+
+    @property
+    def next(self):
+        return self._next
 
     @next.setter
-    def next(self, new_node):
-        if not (isinstance(new_node, GremlinScenarioNode) or new_node is None):
-            error_msg = f'next expects GremlinScenarioNode (or None), received {type(new_node)}'
+    def next(self, _node=None):
+        if not issubclass(type(_node), GremlinScenarioNode):
+            error_msg = f'next expects a GremlinScenarioNode, received {type(_node)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._previous = new_node
+        self._next = _node
 
     @property
     def node_type(self):
         return self._node_type
 
     @node_type.setter
-    def node_type(self, node_type=None):
-        if not isinstance(node_type, str):
-            error_msg = f'node_type expects string {type(str)}, received {type(node_type)}'
+    def node_type(self, _node_type=None):
+        if not isinstance(_node_type, str):
+            error_msg = f'node_type expects string {type(str)}, received {type(_node_type)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._node_type = node_type
+        self._node_type = _node_type
+
+    @property
+    def previous(self):
+        return self._next
+
+    @previous.setter
+    def previous(self, _node=None):
+        if not issubclass(type(_node), GremlinScenarioNode):
+            error_msg = f'previous expects a GremlinScenarioNode, received {type(_node)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._previous = _node
+
+    @property
+    def uuid(self):
+        if not self.name:
+            error_msg = f'Node Name is required to build a scenario node, please set a node name'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        return f'{self.name}-{self.id}'
+
+    def __repr__(self):
+        model = {
+            f'{self.uuid}': {
+                'type': self.node_type,
+                'next': self.next.uuid
+            }
+        }
+        return json.dumps(model)
 
 
 class GremlinScenarioAttackNode(GremlinScenarioNode):
@@ -188,18 +189,60 @@ class GremlinScenarioAttackNode(GremlinScenarioNode):
         return self._attack_type
 
     @attack_type.setter
-    def attack_type(self, attack_type=None):
-        if not isinstance(attack_type, str):
-            error_msg = f'attack_type expects string {type(str)}, received {type(attack_type)}'
+    def attack_type(self, _attack_type=None):
+        if not isinstance(_attack_type, str):
+            error_msg = f'attack_type expects string {type(str)}, received {type(_attack_type)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._attack_type = attack_type
+        self._attack_type = _attack_type
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        model[self.uuid]['attackType'] = self.attack_type
+        return json.dumps(model)
 
 
 class GremlinScenarioILFINode(GremlinScenarioAttackNode):
     def __init__(self, *args, **kwargs):
+        if not kwargs.get('name', None) and kwargs.get('command', None):
+            kwargs['name'] = kwargs.get('command').short_type
         super().__init__(*args, **kwargs)
+        self._command = None
+        self._target = None
         self.attack_type = "ILFI"
+        self.command = kwargs.get('command', self._command)
+        self.target = kwargs.get('target', self._target)
+
+
+    @property
+    def command(self):
+        return self._command
+
+    @command.setter
+    def command(self, _command=None):
+        if not issubclass(type(_command), GremlinAttackCommandHelper):
+            error_msg = f'impact_definition expects a GremlinAttackCommandHelper, received {type(_command)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._command = _command
+
+    @property
+    def target(self):
+        return self._target
+
+    @target.setter
+    def target(self, _target=None):
+        if not issubclass(type(_target), GremlinAttackTargetHelper):
+            error_msg = f'target_definition expects a GremlinAttackTargetHelper, received {type(_target)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._target = _target
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        model[self.uuid]['impactDefinition'] = self.command.impact_definition()
+        model[self.uuid]['targetDefinition'] = self.target.target_definition()
+        return json.dumps(model)
 
 
 class GremlinScenarioALFINode(GremlinScenarioAttackNode):
@@ -211,12 +254,165 @@ class GremlinScenarioALFINode(GremlinScenarioAttackNode):
 
 class GremlinScenarioDelayNode(GremlinScenarioNode):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        if not kwargs.get('name', None):
+            kwargs['name'] = 'delay'
+        self._duration = int()
+        self._duration = kwargs.get('duration', None)
         self.node_type = "wait"
+        super().__init__(*args, **kwargs)
+
+    @property
+    def duration(self):
+        return self._duration
+
+    @duration.setter
+    def duration(self, _duration=None):
+        if not isinstance(_duration, int):
+            error_msg = f'duration expects int type {type(int)}, received {type(_duration)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._duration = _duration
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        model[self.uuid]['duration'] = self.duration
+        return json.dumps(model)
 
 
 class GremlinScenarioStatusCheckNode(GremlinScenarioNode):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        if not kwargs.get('name', None):
+            kwargs['name'] = 'status-check'
         self.node_type = "status-check"
+        self._description = str()
+        self._endpoint_url = str()
+        self._endpoint_headers = None
+        self._evaluation_ok_status_codes = list()
+        self._evaluation_ok_latency_max = int()
+        self._evaluation_response_body_evaluation = None
+        self.description = kwargs.get('description', None)
+        self.endpoint_url = kwargs.get('endpoint_url', None)
+        self.endpoint_headers = kwargs.get('endpoint_headers', None)
+        self.evaluation_ok_status_codes = kwargs.get('evaluation_ok_status_codes', ["200-203"])
+        self.evaluation_ok_latency_max = kwargs.get('evaluation_ok_latency_max', 500)
+        super().__init__(*args, **kwargs)
 
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, _description=None):
+        if not isinstance(_description, str):
+            error_msg = f'description expects string, received {type(_description)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._description = _description
+
+    @property
+    def endpoint_headers(self):
+        return self._endpoint_headers
+
+    @endpoint_headers.setter
+    def endpoint_headers(self, _headers=None):
+        self._endpoint_headers = _headers
+
+    @property
+    def endpoint_url(self):
+        return self._endpoint_url
+
+    @endpoint_url.setter
+    def endpoint_url(self, _url=None):
+        if not isinstance(_url, str):
+            error_msg = f'url expects a valid url string, received {type(_url)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._endpoint_url = _url
+
+    @property
+    def evaluation_ok_status_codes(self):
+        return self._evaluation_ok_status_codes
+
+    @evaluation_ok_status_codes.setter
+    def evaluation_ok_status_codes(self, _status_codes=None):
+        if not isinstance(_status_codes, list):
+            error_msg = f'evaluation_ok_status_codes expects a list of integers or strings, received {type(_status_codes)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._evaluation_ok_status_codes = _status_codes
+
+    @property
+    def evaluation_ok_latency_max(self):
+        return self._evaluation_ok_latency_max
+
+    @evaluation_ok_latency_max.setter
+    def evaluation_ok_latency_max(self, _latency=None):
+        if not isinstance(_latency, int):
+            error_msg = f'evaluation_ok_latency_max expects an int, received {type(_latency)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._evaluation_ok_latency_max = _latency
+
+    def __repr__(self):
+        model = json.loads(super().__repr__())
+        return json.dumps(model)
+
+
+class GremlinNodeGraph(object):
+    def __init__(self):
+        self._head = None
+
+    def append(self, new_node=None):
+        if not issubclass(type(new_node), GremlinScenarioNode):
+            error_msg = f'add_node expects node to be a subclass of GremlinScenarioNode, received {type(new_node)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        if self.head is None:
+            new_node.next = new_node
+            new_node.previous = new_node
+            self.head = new_node
+        else:
+            self.insert_after(self.head.previous, new_node)
+
+    def insert_after(self, ref_node=None, new_node=None):
+        if not issubclass(type(new_node), GremlinScenarioNode):
+            error_msg = f'add_node expects node to be a subclass of GremlinScenarioNode, received {type(new_node)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        new_node.previous = ref_node
+        new_node.next = ref_node.next
+        new_node.next.previous = new_node
+        ref_node.next = new_node
+
+    def insert_before(self, ref_node=None, new_node=None):
+        self.insert_after(ref_node.previous, new_node)
+
+    def next(self):
+        self.head = self.head.next
+
+    def previous(self):
+        self.head = self.head.previous
+
+    def push(self, new_node=None):
+        if not issubclass(type(new_node), GremlinScenarioNode):
+            error_msg = f'push expects node to be a subclass of GremlinScenarioNode, received {type(new_node)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self.append(new_node)
+        self.head = new_node
+
+    @property
+    def head(self):
+        return self._head
+
+    @head.setter
+    def head(self, node=None):
+        if not (issubclass(type(node), GremlinScenarioNode) or node is None):
+            error_msg = f'head expects GremlinScenarioNode (or None), received {type(node)}'
+            log.fatal(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._head = node
+
+    @property
+    def node(self):
+        return self.head or None

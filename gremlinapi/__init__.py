@@ -4,6 +4,7 @@
 
 import logging
 import os
+import re
 import time
 
 from gremlinapi.alfi import GremlinALFI as alfi
@@ -114,9 +115,11 @@ GremlinAPIConfig.max_bearer_interval = _max_bearer_interval
 GremlinAPIConfig.http_proxy = _http_proxy
 GremlinAPIConfig.https_proxy = _https_proxy
 
+
 def _response_to_bearer(auth_response):
     log.debug(auth_response[0]['header'])
     return auth_response[0]['header']
+
 
 def login(email=GremlinAPIConfig.user, password=GremlinAPIConfig.password,
           company_name=GremlinAPIConfig.company_name, token=GremlinAPIConfig.user_mfa_token_value):
