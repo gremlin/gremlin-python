@@ -74,16 +74,21 @@ class GremlinScenarioGraphHelper(object):
             raise GremlinParameterError(error_msg)
         self._name = _name
 
-    def __repr__(self):
+    def repr_model(self):
         model = {
             'description': self.description,
             'hypothesis': self.hypothesis,
-            'name': self.name,
-            'graph': {
+            'name': self.name
+        }
+        if self._nodes.head is not None:
+            model['graph'] = {
                 'start': self._nodes.head.uuid,
                 'nodes': {node.uuid: data for node, data in self._nodes.nodes_data_linear()}
             }
-        }
+        return model
+
+    def __repr__(self):
+        model = self.repr_model()
         return json.dumps(model)
 
 
@@ -107,12 +112,7 @@ class GremlinScenarioNode(object):
 
     @property
     def data(self):
-        model = {
-            'type': self.node_type,
-            'id': self.uuid,
-            'next': self.next.uuid
-        }
-        return model
+        return self.repr_model()
 
     @property
     def id(self):
@@ -182,8 +182,16 @@ class GremlinScenarioNode(object):
             raise GremlinParameterError(error_msg)
         return f'{self.name}-{self.id}'
 
+    def repr_model(self):
+        model = {
+            'type': self.node_type,
+            'id': self.uuid,
+            'next': self.next.uuid
+        }
+        return model
+
     def __repr__(self):
-        return json.dumps(self.data)
+        return json.dumps(self.repr_model)
 
 
 class GremlinScenarioAttackNode(GremlinScenarioNode):
@@ -204,12 +212,6 @@ class GremlinScenarioAttackNode(GremlinScenarioNode):
             raise GremlinParameterError(error_msg)
         self._attack_type = _attack_type
 
-    @property
-    def data(self):
-        model = super().data
-        model['attackType'] = self.attack_type
-        return model
-
 
 class GremlinScenarioILFINode(GremlinScenarioAttackNode):
     def __init__(self, *args, **kwargs):
@@ -218,7 +220,7 @@ class GremlinScenarioILFINode(GremlinScenarioAttackNode):
         super().__init__(*args, **kwargs)
         self._command = None
         self._target = None
-        self.attack_type = "ILFI"
+        self.node_type = "InfraAttack"
         self.command = kwargs.get('command', self._command)
         self.target = kwargs.get('target', self._target)
 
@@ -234,11 +236,10 @@ class GremlinScenarioILFINode(GremlinScenarioAttackNode):
             raise GremlinParameterError(error_msg)
         self._command = _command
 
-    @property
-    def data(self):
-        model = super().data
-        model['impactDefinition'] = self.command.impact_definition()
-        model['targetDefinition'] = self.target.target_definition()
+    def repr_model(self):
+        model = super().repr_model()
+        model['impact_definition'] = self.command.impact_definition_graph()
+        model['target_definition'] = self.target.target_definition_graph()
         return model
 
     @property
@@ -264,15 +265,14 @@ class GremlinScenarioALFINode(GremlinScenarioAttackNode):
 class GremlinScenarioDelayNode(GremlinScenarioNode):
     def __init__(self, *args, **kwargs):
         if not kwargs.get('name', None):
-            kwargs['name'] = 'delay'
+            kwargs['name'] = 'Delay'
         super().__init__(*args, **kwargs)
         self._duration = int()
         self._duration = kwargs.get('duration', None)
         self.node_type = "wait"
 
-    @property
-    def data(self):
-        model = super().data
+    def repr_model(self):
+        model = super().repr_model()
         model['duration'] = self.duration
         return model
 
@@ -294,7 +294,7 @@ class GremlinScenarioStatusCheckNode(GremlinScenarioNode):
         if not kwargs.get('name', None):
             kwargs['name'] = 'status-check'
         super().__init__(*args, **kwargs)
-        self.node_type = "status-check"
+        self.node_type = "SynchronousStatusCheck"
         self._description = str()
         self._endpoint_url = str()
         self._endpoint_headers = None
@@ -308,9 +308,8 @@ class GremlinScenarioStatusCheckNode(GremlinScenarioNode):
         self.evaluation_ok_latency_max = kwargs.get('evaluation_ok_latency_max', 500)
         self.evaluation_response_body_evaluation = kwargs.get('evaluation_response_body_evaluation', "")
 
-    @property
-    def data(self):
-        model = super().data
+    def repr_model(self):
+        model = super().repr_model()
         model['endpointConfiguration'] = {
             'url': self.endpoint_url,
             'headers': self.endpoint_headers
@@ -320,6 +319,7 @@ class GremlinScenarioStatusCheckNode(GremlinScenarioNode):
             'okLatencyMaxMs': self.evaluation_ok_latency_max,
             'responseBodyEvaluation': self.evaluation_response_body_evaluation
         }
+        model['thirdPartyPresets'] = 'PythonSDK'
         return model
 
     @property
@@ -404,12 +404,10 @@ class _GremlinNodeGraph(object):
     def append(self, new_node=None):
         self._validate_type(new_node)
         if self.head is None:
-            log.debug('creating first node in DLL')
             new_node.next = new_node
             new_node.previous = new_node
             self.head = new_node
         else:
-            log.debug('adding after last node in DLL')
             self.insert_after(self.head.previous, new_node)
 
     def get_node(self, _index=None):
