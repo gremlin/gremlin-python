@@ -47,7 +47,7 @@ class GremlinAPIOrgs(GremlinAPI):
         method = 'POST'
         endpoint = '/orgs'
         data = {
-            'name': cls._error_if_not_param('start', **kwargs)
+            'name': cls._error_if_not_param('name', **kwargs)
         }
         payload = cls._payload(**{'headers': https_client.header(), 'data': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
