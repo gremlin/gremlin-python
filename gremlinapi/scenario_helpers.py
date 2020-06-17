@@ -28,7 +28,7 @@ class GremlinScenarioHelper(object):
         self._steps = list()
         self.description = kwargs.get('description', self._description)
         self.hypothesis = kwargs.get('hypothesis', self._hypothesis)
-        self.name = kwargs.get('start', self._name)
+        self.name = kwargs.get('name', self._name)
 
     def add_step(self, _step=None):
         if not issubclass(type(_step), GremlinScenarioStep):
@@ -87,7 +87,7 @@ class GremlinScenarioHelper(object):
         if isinstance(_name, str):
             self._name = _name
         else:
-            error_msg = f'start expects type {type(str)}'
+            error_msg = f'name expects type {type(str)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
 
