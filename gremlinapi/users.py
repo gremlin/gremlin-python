@@ -189,7 +189,7 @@ class GremlinAPIUsersAuth(GremlinAPI):
             'companyName': cls._error_if_not_param('companyName', **kwargs)
         }
         get_company_session = cls._info_if_not_param('getCompanySession', **kwargs)
-        payload = cls._payload(**{'repr_model': data})
+        payload = cls._payload(**{'data': data})
         endpoint = '/users/auth'
         if get_company_session:
             endpoint += '/?getCompanySession=true'
@@ -294,7 +294,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
             'token': cls._error_if_not_param('token', **kwargs)
         }
         endpoint = '/users/auth/mfa/disable'
-        payload = cls._payload(**{'repr_model': data})
+        payload = cls._payload(**{'data': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
@@ -320,7 +320,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
             'provider': cls._error_if_not_param('provider', **kwargs)
         }
         endpoint = '/users/auth/mfa/enable'
-        payload = cls._payload(**{'repr_model': data})
+        payload = cls._payload(**{'data': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
