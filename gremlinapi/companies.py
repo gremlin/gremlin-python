@@ -76,7 +76,7 @@ class GremlinAPICompanies(GremlinAPI):
         }
         data = {k: v for k, v in data.items() if v is not None}
         endpoint = f'/companies/{identifier}/mfaPrefs'
-        payload = cls._payload(**{'headers': https_client.header(), 'repr_model': data})
+        payload = cls._payload(**{'headers': https_client.header(), 'data': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
@@ -88,7 +88,7 @@ class GremlinAPICompanies(GremlinAPI):
         data = {'domain': cls._info_if_not_param('domain', **kwargs)}
         data = {k: v for k, v in data.items() if v is not None}
         endpoint = f'/companies/{identifier}/prefs'
-        payload = cls._payload(**{'headers': https_client.header(), 'repr_model': data})
+        payload = cls._payload(**{'headers': https_client.header(), 'data': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
@@ -108,7 +108,7 @@ class GremlinAPICompanies(GremlinAPI):
         }
         data = {k: v for k, v in data.items() if v is not None}
         endpoint = f'/companies/{identifier}/saml/props'
-        payload = cls._payload(**{'headers': https_client.header(), 'repr_model': data})
+        payload = cls._payload(**{'headers': https_client.header(), 'data': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 

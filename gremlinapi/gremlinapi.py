@@ -81,8 +81,8 @@ class GremlinAPI(object):
     def _payload(cls, **kwargs):
         headers = kwargs.get('headers', None)
         body = kwargs.get('body', None)
-        data = kwargs.get('repr_model', None)
-        payload = {'headers': headers, 'repr_model': data, 'body': body}
+        data = kwargs.get('data', None)
+        payload = {'headers': headers, 'data': data, 'body': body}
         payload = {k: v for k, v in payload.items() if v is not None}
         return payload
 

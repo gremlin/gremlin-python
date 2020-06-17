@@ -58,7 +58,7 @@ class GremlinAPIUsers(GremlinAPI):
         email = cls._error_if_not_email(**kwargs)
         role = cls._error_if_not_valid_role_statement(**kwargs)
         endpoint = cls._optional_team_endpoint(f'/users/{email}', **kwargs)
-        payload = cls._payload(**{'headers': https_client.header(), 'repr_model': role})
+        payload = cls._payload(**{'headers': https_client.header(), 'data': role})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
@@ -88,7 +88,7 @@ class GremlinAPIUsers(GremlinAPI):
         email = cls._error_if_not_email(**kwargs)
         endpoint = cls._optional_team_endpoint(f'/users/invite', **kwargs)
         data = {'email': email}
-        payload = cls._payload(**{'headers': https_client.header(), 'repr_model': data})
+        payload = cls._payload(**{'headers': https_client.header(), 'data': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
@@ -119,7 +119,7 @@ class GremlinAPIUsers(GremlinAPI):
             raise GremlinParameterError(error_msg)
         data = {'email': email, 'orgId': org_id, 'renewToken': renew_token}
         endpoint = f'/users/renew'
-        payload = cls._payload(**{'headers': https_client.header(), 'repr_model': data})
+        payload = cls._payload(**{'headers': https_client.header(), 'data': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
@@ -141,7 +141,7 @@ class GremlinAPIUsers(GremlinAPI):
             raise GremlinParameterError(error_msg)
         data = {'email': email, 'companyId': company_id, 'teamId': team_id, 'renewToken': renew_token}
         endpoint = f'/users/renew/rbac'
-        payload = cls._payload(**{'headers': https_client.header(), 'repr_model': data})
+        payload = cls._payload(**{'headers': https_client.header(), 'data': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
@@ -207,7 +207,7 @@ class GremlinAPIUsersAuth(GremlinAPI):
             'companyName': cls._error_if_not_param('companyName', **kwargs)
         }
         get_company_session = cls._info_if_not_param('getCompanySession', **kwargs)
-        payload = cls._payload(**{'repr_model': data})
+        payload = cls._payload(**{'data': data})
         endpoint = '/users/auth'
         if get_company_session:
             endpoint += '/?getCompanySession=true'
@@ -254,7 +254,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
             'companyName': kwargs.get('company', None)
         }
         get_company_session = cls._info_if_not_param('getCompanySession', **kwargs)
-        payload = cls._payload(**{'repr_model': data})
+        payload = cls._payload(**{'data': data})
         endpoint = '/users/auth/mfa/auth'
         if get_company_session:
             endpoint += '/?getCompanySession=true'
@@ -306,7 +306,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
             'email': cls._error_if_not_email(**kwargs)
         }
         endpoint = '/users/auth/mfa/forceDisable'
-        payload = cls._payload(**{'headers': https_client.header(), 'repr_model': data})
+        payload = cls._payload(**{'headers': https_client.header(), 'data': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
@@ -333,7 +333,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
             'token': cls._error_if_not_param('token', **kwargs)
         }
         endpoint = '/users/auth/mfa/validate'
-        payload = cls._payload(**{'repr_model': data})
+        payload = cls._payload(**{'data': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 

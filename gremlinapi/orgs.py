@@ -49,7 +49,7 @@ class GremlinAPIOrgs(GremlinAPI):
         data = {
             'name': cls._error_if_not_param('start', **kwargs)
         }
-        payload = cls._payload(**{'headers': https_client.header(), 'repr_model': data})
+        payload = cls._payload(**{'headers': https_client.header(), 'data': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
@@ -89,7 +89,7 @@ class GremlinAPIOrgs(GremlinAPI):
         identifier = cls._info_if_not_param('identifier', **kwargs)
         if identifier:
             data['identifier'] = identifier
-        payload = cls._payload(**{'headers': https_client.header(), 'repr_model': data})
+        payload = cls._payload(**{'headers': https_client.header(), 'data': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 

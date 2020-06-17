@@ -95,8 +95,8 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
         client = request_methods.get(method.upper())
         raw_content = kwargs.pop("raw_content", False)
         data = None
-        if 'repr_model' in kwargs:
-            data = kwargs.pop('repr_model')
+        if 'data' in kwargs:
+            data = kwargs.pop('data')
         elif 'body' in kwargs:
             if "Content-Type" not in kwargs["headers"]:
                 kwargs["headers"]["Content-Type"] = "application/json"
@@ -144,8 +144,8 @@ class GremlinAPIurllibClient(GremlinAPIHttpClient):
         form_data = None
         request_body = None
 
-        if 'repr_model' in kwargs:
-            form_data = kwargs.pop('repr_model')
+        if 'data' in kwargs:
+            form_data = kwargs.pop('data')
         elif 'body' in kwargs:
             if "Content-Type" not in kwargs["headers"]:
                 kwargs["headers"]["Content-Type"] = "application/json"
@@ -172,7 +172,7 @@ class GremlinAPIurllibClient(GremlinAPIHttpClient):
             log.debug(f'Failed response: {resp.status}\n{http_client}\n{uri}\n{kwargs}\n{resp}')
             raise HTTPError(resp)
 
-        body = json.loads(resp.repr_model)
+        body = json.loads(resp.data)
         return resp, body
 
 
