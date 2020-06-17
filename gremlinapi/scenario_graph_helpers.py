@@ -82,7 +82,7 @@ class GremlinScenarioGraphHelper(object):
         }
         if self._nodes.head is not None:
             model['graph'] = {
-                'start': self._nodes.head.uuid,
+                'start_id': self._nodes.head.uuid,
                 'nodes': {node.uuid: data for node, data in self._nodes.nodes_data_linear()}
             }
         return model
@@ -267,26 +267,26 @@ class GremlinScenarioDelayNode(GremlinScenarioNode):
         if not kwargs.get('name', None):
             kwargs['name'] = 'Delay'
         super().__init__(*args, **kwargs)
-        self._duration = int()
-        self._duration = kwargs.get('duration', None)
-        self.node_type = "wait"
+        self._delay = int()
+        self._delay = kwargs.get('delay', None)
+        self.node_type = "Delay"
 
     def repr_model(self):
         model = super().repr_model()
-        model['duration'] = self.duration
+        model['delay'] = self.delay
         return model
 
     @property
-    def duration(self):
-        return self._duration
+    def delay(self):
+        return self._delay
 
-    @duration.setter
-    def duration(self, _duration=None):
+    @delay.setter
+    def delay(self, _duration=None):
         if not isinstance(_duration, int):
-            error_msg = f'duration expects int type {type(int)}, received {type(_duration)}'
+            error_msg = f'delay expects int type {type(int)}, received {type(_duration)}'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        self._duration = _duration
+        self._delay = _duration
 
 
 class GremlinScenarioStatusCheckNode(GremlinScenarioNode):

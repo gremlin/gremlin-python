@@ -21,7 +21,7 @@ config.api_key = my_api_key
 config.team_guid = my_team_guid
 
 description = f'This is a test scenario to illustrate the usage of the new scenario graph model'
-hypothesis = f'This should create a functional scenario with multiple attack types and a status_check'
+hypothesis = f'This should create a functional scenario with multiple attack iterations and a status_check'
 
 blast_radius_steps = [50, 100]  # Percents
 latency_magnitude_steps = [100, 500, 1000]  # Latency in milliseconds
@@ -59,7 +59,7 @@ my_scenario.add_node(
         evaluation_response_body_evaluation=evaluation_response_body_evaluation))
 
 # Add a delay step between the status check and the attacks
-my_scenario.add_node(GremlinScenarioDelayNode(duration=delay_time))
+my_scenario.add_node(GremlinScenarioDelayNode(delay=delay_time))
 
 # Add latency attacks to the scenario
 for magnitude_idx, magnitude in enumerate(latency_magnitude_steps):
@@ -72,20 +72,7 @@ for magnitude_idx, magnitude in enumerate(latency_magnitude_steps):
                 target=GremlinTargetContainers(strategy_type='Random', labels={'owner': 'kyle'}, percent=blast_radius)))
         # Add a delay step between attacks, skip this if it's the last step in the loop
         if not ((magnitude_idx+1 == len(latency_magnitude_steps)) and (blast_radius_idx+1 == len(blast_radius_steps))):
-            my_scenario.add_node(GremlinScenarioDelayNode(duration=delay_time))
-
-# Add a delay step between the attack types
-my_scenario.add_node(GremlinScenarioDelayNode(duration=delay_time))
-
-# Add blackhole attacks
-for blast_radius_idx, blast_radius in enumerate(blast_radius_steps):
-    my_scenario.add_node(
-        GremlinScenarioILFINode(
-            command=GremlinBlackholeAttack(),
-            target=GremlinTargetContainers(strategy_type='Random', labels={'owner': 'kyle'}, percent=blast_radius)))
-    # Add a delay step between attacks, skip this if it's the last step in the loop
-    if not blast_radius_idx+1 == len(blast_radius_steps):
-        my_scenario.add_node(GremlinScenarioDelayNode(duration=delay_time))
+            my_scenario.add_node(GremlinScenarioDelayNode(delay=delay_time))
 
 # Let's view the json output
 print(my_scenario)
