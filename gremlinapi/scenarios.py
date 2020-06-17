@@ -16,6 +16,7 @@ from gremlinapi.exceptions import (
 from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.http_clients import get_gremlin_httpclient
 from gremlinapi.scenario_helpers import GremlinScenarioHelper
+from gremlinapi.scenario_graph_helpers import GremlinScenarioGraphHelper
 
 
 log = logging.getLogger('GremlinAPI.client')
@@ -25,7 +26,7 @@ class GremlinAPIScenarios(GremlinAPI):
     @classmethod
     def _error_if_not_scenario_body(cls, **kwargs):
         body = cls._error_if_not_param('body', **kwargs)
-        if issubclass(type(body), GremlinScenarioHelper):
+        if issubclass(type(body), GremlinScenarioHelper) or issubclass(type(body), GremlinScenarioGraphHelper):
             return str(body)
         else:
             error_msg = f'Body present but not of type {type(GremlinScenarioHelper)}'
