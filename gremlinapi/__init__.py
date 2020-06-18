@@ -117,7 +117,7 @@ GremlinAPIConfig.https_proxy = _https_proxy
 
 
 def _response_to_bearer(auth_response):
-    log.debug(auth_response[0]['header'])
+    # log.debug(auth_response[0]['header'])
     return auth_response[0]['header']
 
 
@@ -145,7 +145,7 @@ def login(email=GremlinAPIConfig.user, password=GremlinAPIConfig.password,
         else:
             log.debug(f'Non-MFA Login for {email} in company {company_name}')
             auth_response = userAuth.auth_user(email=email, password=password, companyName=company_name)
-        log.debug(auth_response)
+        # log.debug(auth_response)
         GremlinAPIConfig.bearer_token = _response_to_bearer(auth_response)
         GremlinAPIConfig.bearer_timestamp = time.monotonic()
     else:
