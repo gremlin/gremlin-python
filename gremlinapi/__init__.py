@@ -56,16 +56,16 @@ class SecretsFilter(logging.Filter):
     def filter(self, record):
         secret_length = 5
         if len(GremlinAPIConfig.api_key) >= secret_length:
-            record.msg = re.sub(rf"\s{GremlinAPIConfig.api_key}[\'\s]?",
-                                ' ...'+GremlinAPIConfig.api_key[-4:],
+            record.msg = re.sub(rf"{GremlinAPIConfig.api_key}[\'\s]?",
+                                '...'+GremlinAPIConfig.api_key[-4:],
                                 record.msg)
         if len(GremlinAPIConfig.bearer_token) >= secret_length:
-            record.msg = re.sub(rf"\s{GremlinAPIConfig.bearer_token}[\'\s]?",
-                                ' ...'+GremlinAPIConfig.bearer_token[-4:],
+            record.msg = re.sub(rf"{GremlinAPIConfig.bearer_token}[\'\s]?",
+                                '...'+GremlinAPIConfig.bearer_token[-4:],
                                 record.msg)
         if len(GremlinAPIConfig.password) >= secret_length:
-            record.msg = re.sub(rf"\s{GremlinAPIConfig.password}[\'\s]?",
-                                ' [PASSWORD REDACTED]',
+            record.msg = re.sub(rf"{GremlinAPIConfig.password}[\'\s]?",
+                                '[PASSWORD REDACTED]',
                                 record.msg)
         return record
 
@@ -123,6 +123,18 @@ def _response_to_bearer(auth_response):
 
 def login(email=GremlinAPIConfig.user, password=GremlinAPIConfig.password,
           company_name=GremlinAPIConfig.company_name, token=GremlinAPIConfig.user_mfa_token_value):
+    if GremlinAPIConfig.user != email:
+        log.debug('Received user without value being present in config, updating config to match.')
+        GremlinAPIConfig.user = email
+    if GremlinAPIConfig.password != password:
+        log.debug('Received password without value being present in config, updating config to match.')
+        GremlinAPIConfig.password = password
+    if GremlinAPIConfig.company_name != company_name:
+        log.debug('Received company name without value being present in config, updating config to match.')
+        GremlinAPIConfig.company_name = company_name
+    if token and GremlinAPIConfig.user_mfa_token_value != token:
+        log.debug('Received mfa token without value being present in config, updating config to match.')
+        GremlinAPIConfig.user_mfa_token_value = token
     if(not _bearer_token_timestamp
        or not _api_bearer_token
        or (time.monotonic() - GremlinAPIConfig.bearer_timestamp >= GremlinAPIConfig.max_bearer_interval)):

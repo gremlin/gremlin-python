@@ -5,6 +5,7 @@
 import logging
 
 from gremlinapi.cli import register_cli_action
+from gremlinapi.config import GremlinAPIConfig
 from gremlinapi.exceptions import (
     GremlinParameterError,
     GremlinAuthError,
