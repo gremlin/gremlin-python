@@ -114,8 +114,10 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
             resp = client(uri, **kwargs)
 
         if resp.status_code >= 400:
+            error_msg = f'error {resp.status_code} : {resp.reason}'
+            log.warning(error_msg)
             log.debug(f'{client}\n{uri}\n{data}\n{kwargs}')
-            raise HTTPError(resp)
+            raise HTTPError(error_msg)
 
         if raw_content:
             body = resp.content

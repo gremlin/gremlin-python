@@ -60,11 +60,15 @@ class GremlinAttackHelper(object):
             raise GremlinCommandTargetError(error_msg)
         self._target = _target
 
-    def __repr__(self):
+    def repr_model(self):
         model = {
             'target': json.loads(str(self.target)),
             'command': json.loads(str(self.command))
         }
+        return model
+
+    def __repr__(self):
+        model = self.repr_model()
         return json.dumps(model)
 
 
@@ -79,7 +83,7 @@ class GremlinAttackTargetHelper(object):
         self.strategy_type = kwargs.get('strategy_type', 'random')  # Validate Random or Exact
 
     def target_definition(self):
-        model = json.loads(self.__repr__())
+        model = self.repr_model()
         _target_definition = {
             'strategyType': self.strategy_type,
             'strategy': dict()
@@ -96,6 +100,30 @@ class GremlinAttackTargetHelper(object):
             _target_definition['strategy']['multiSelectLabels'] = model['containers']['multiSelectLabels']
         if type(model.get('hosts')) == dict and model.get('hosts').get('multiSelectLabels'):
             _target_definition['strategy']['multiSelectLabels'] = model['hosts']['multiSelectLabels']
+        return _target_definition
+
+    def target_definition_graph(self):
+        model = self.repr_model()
+        _target_definition = {
+            'strategy_type': self.strategy_type,
+            'strategy': dict()
+        }
+        if model.get('percent', None):
+            _target_definition['strategy'] = {'type': 'RandomPercent', 'percentage': model['percent']}
+        elif model.get('exact', None):
+            _target_definition['strategy'] = {'type': 'Exact', 'count': model['exact']}
+        else:
+            error_msg = 'Targeting was not properly defined'
+            log.fatal(error_msg)
+            raise GremlinCommandTargetError(error_msg)
+        if type(model.get('containers')) == dict and model.get('containers').get('multiSelectLabels'):
+            _target_definition['target_type'] = 'Container'
+            _target_definition['strategy']['attrs'] = dict()
+            _target_definition['strategy']['attrs']['multiSelectLabels'] = model['containers']['multiSelectLabels']
+        if type(model.get('hosts')) == dict and model.get('hosts').get('multiSelectLabels'):
+            _target_definition['target_type'] = 'Host'
+            _target_definition['strategy']['attrs'] = dict()
+            _target_definition['strategy']['attrs']['multiSelectLabels'] = model['hosts']['multiSelectLabels']
         return _target_definition
 
     @property
@@ -142,7 +170,7 @@ class GremlinAttackTargetHelper(object):
             raise GremlinParameterError(error_msg)
         self._strategy_type = self._allowed_strategy_types.get(_target_type.lower(), None)
 
-    def __repr__(self):
+    def repr_model(self):
         model = dict()
         model['type'] = self.strategy_type
         if self.exact >= 0 and not self.percent:
@@ -153,6 +181,10 @@ class GremlinAttackTargetHelper(object):
             error_msg = f'Type not correctly set, needs to be one of {str(self._allowed_strategy_types.keys())[1:-2]}'
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
+        return model
+
+    def __repr__(self):
+        model = self.repr_model()
         return json.dumps(model)
 
 
@@ -274,8 +306,8 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
             return True
         return False
 
-    def __repr__(self):
-        model = json.loads(super().__repr__())
+    def repr_model(self):
+        model = super().repr_model()
         if self.target_all_hosts:
             model['hosts'] = 'all'
         else:
@@ -287,7 +319,22 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
                 model['hosts'] = {
                     'multiSelectTags': self.tags
                 }
-        return json.dumps(model)
+        return model
+
+    # def __repr__(self):
+    #     model = json.loads(super().__repr__())
+    #     if self.target_all_hosts:
+    #         model['hosts'] = 'all'
+    #     else:
+    #         if len(self.ids) > 0:
+    #             model['hosts'] = {
+    #                 'ids': self.ids
+    #             }
+    #         elif len(self.tags) > 0:
+    #             model['hosts'] = {
+    #                 'multiSelectTags': self.tags
+    #             }
+    #     return json.dumps(model)
 
 
 class GremlinTargetContainers(GremlinAttackTargetHelper):
@@ -425,8 +472,8 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
             return True
         return False
 
-    def __repr__(self):
-        model = json.loads(super().__repr__())
+    def repr_model(self):
+        model = super().repr_model()
         if self.target_all_containers:
             model['containers'] = 'all'
         else:
@@ -438,7 +485,22 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
                 model['containers'] = {
                     'multiSelectLabels': self.labels
                 }
-        return json.dumps(model)
+        return model
+
+    # def __repr__(self):
+    #     model = json.loads(super().__repr__())
+    #     if self.target_all_containers:
+    #         model['containers'] = 'all'
+    #     else:
+    #         if len(self.ids) > 0:
+    #             model['containers'] = {
+    #                 'ids': self.ids
+    #             }
+    #         elif len(self.labels) > 0:
+    #             model['containers'] = {
+    #                 'multiSelectLabels': self.labels
+    #             }
+    #     return json.dumps(model)
 
 
 class GremlinAttackCommandHelper(object):
@@ -462,7 +524,7 @@ class GremlinAttackCommandHelper(object):
         self.length = kwargs.get('length', 60)
 
     def impact_definition(self):
-        model = json.loads(self.__repr__())
+        model = self.repr_model()
         _impact_definition = {
             'commandArgs': {
                 'cliArgs': [str(self.shortType)],
@@ -471,6 +533,18 @@ class GremlinAttackCommandHelper(object):
             'commandType': str(self.shortType)
         }
         _impact_definition['commandArgs']['cliArgs'].extend(model['args'])
+        return _impact_definition
+
+    def impact_definition_graph(self):
+        model = self.repr_model()
+        _impact_definition = {
+            'infra_command_args': {
+                'cli_args': [str(self.shortType)],
+                'type': str(self.shortType)
+            },
+            'infra_command_type': str(self.shortType)
+        }
+        _impact_definition['infra_command_args']['cli_args'].extend(model['args'])
         return _impact_definition
 
     @property
@@ -520,7 +594,7 @@ class GremlinAttackCommandHelper(object):
         self._commandType = self._typeMap[_shortType]
         self._shortType = _shortType
 
-    def __repr__(self):
+    def repr_model(self):
         model = {
             'type': self.shortType,
             'commandType': self.commandType,
@@ -528,6 +602,10 @@ class GremlinAttackCommandHelper(object):
                 '-l', str(self.length)
             ]
         }
+        return model
+
+    def __repr__(self):
+        model = self.repr_model()
         return json.dumps(model)
 
 
@@ -587,18 +665,10 @@ class GremlinResourceAttackHelper(GremlinAttackCommandHelper):
             raise GremlinParameterError(error_msg)
         self._workers = _workers
 
-    def __repr__(self):
-        model = json.loads(super().__repr__())
-        return json.dumps(model)
-
 
 class GremlinStateAttackHelper(GremlinAttackCommandHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-    def __repr__(self):
-        model = json.loads(super().__repr__())
-        return json.dumps(model)
 
 
 class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
@@ -805,8 +875,8 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
         self._ids = []
         self.target_all_hosts = False
 
-    def __repr__(self):
-        model = json.loads(super().__repr__())
+    def repr_model(self):
+        model = super().repr_model()
         if self.device:
             model['args'].extend(['-d', self.device])
         if len(self.ips) > 0:
@@ -819,7 +889,23 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
             model['trafficImpactMapping'] = {
                 'multiSelectTags': self.tags
             }
-        return json.dumps(model)
+        return model
+
+    # def __repr__(self):
+    #     model = json.loads(super().__repr__())
+    #     if self.device:
+    #         model['args'].extend(['-d', self.device])
+    #     if len(self.ips) > 0:
+    #         model['args'].extend(['-i', ','.join(self.ips)])
+    #     if self.protocol:
+    #         model['args'].extend(['-P', self.protocol])
+    #     if self.providers and len(self.providers) > 0:
+    #         model['providers'] = self.providers
+    #     if self.tags and len(self.tags) > 0:
+    #         model['trafficImpactMapping'] = {
+    #             'multiSelectTags': self.tags
+    #         }
+    #     return json.dumps(model)
 
 
 class GremlinCPUAttack(GremlinResourceAttackHelper):
@@ -869,14 +955,23 @@ class GremlinCPUAttack(GremlinResourceAttackHelper):
             raise GremlinParameterError(error_msg)
         self._cores = _cores
 
-    def __repr__(self):
-        model = json.loads(super().__repr__())
+    def repr_model(self):
+        model = super().repr_model()
         model['args'].extend(['-p', str(self.capacity)])
         if self.all_cores:
             model['args'].append('-a')
         else:
             model['args'].extend(['-c', str(self.cores)])
-        return json.dumps(model)
+        return model
+
+    # def __repr__(self):
+    #     model = json.loads(super().__repr__())
+    #     model['args'].extend(['-p', str(self.capacity)])
+    #     if self.all_cores:
+    #         model['args'].append('-a')
+    #     else:
+    #         model['args'].extend(['-c', str(self.cores)])
+    #     return json.dumps(model)
 
 
 class GremlinMemoryAttack(GremlinResourceAttackHelper):
@@ -927,8 +1022,8 @@ class GremlinMemoryAttack(GremlinResourceAttackHelper):
             raise GremlinParameterError(error_msg)
         self._amountType = _amountType.upper()
 
-    def __repr__(self):
-        model = json.loads(super().__repr__())
+    def repr_model(self):
+        model = super().repr_model()
         if self.amountType == 'MB':
             model['args'].extend(['-m', str(self.amount)])
         elif self.amountType == 'GB':
@@ -939,7 +1034,21 @@ class GremlinMemoryAttack(GremlinResourceAttackHelper):
             error_msg = f'Fatal error, data model may be corrupted, amountType: {self._amountType} is not valid'
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        return json.dumps(model)
+        return model
+
+    # def __repr__(self):
+    #     model = json.loads(super().__repr__())
+    #     if self.amountType == 'MB':
+    #         model['args'].extend(['-m', str(self.amount)])
+    #     elif self.amountType == 'GB':
+    #         model['args'].extend(['-g', str(self.amount)])
+    #     elif self.amountType == '%':
+    #         model['args'].extend(['-p', str(self.amount)])
+    #     else:
+    #         error_msg = f'Fatal error, repr_model model may be corrupted, amountType: {self._amountType} is not valid'
+    #         log.fatal(error_msg)
+    #         raise GremlinParameterError(error_msg)
+    #     return json.dumps(model)
 
 
 class GremlinDiskSpaceAttack(GremlinResourceAttackHelper):
@@ -951,13 +1060,21 @@ class GremlinDiskSpaceAttack(GremlinResourceAttackHelper):
         self.percent = kwargs.get('percent', 100)
         self.workers = kwargs.get('workers', 1)
 
-    def __repr__(self):
-        model = json.loads(super().__repr__())
+    def repr_model(self):
+        model = super().repr_model()
         model['args'].expand(['-d', str(self.directory)])
         model['args'].expand(['-w', str(self.workers)])
         model['args'].expand(['-b', str(self.blocksize)])
         model['args'].expand(['-p', str(self.percent)])
-        return json.dumps(model)
+        return model
+
+    # def __repr__(self):
+    #     model = json.loads(super().__repr__())
+    #     model['args'].expand(['-d', str(self.directory)])
+    #     model['args'].expand(['-w', str(self.workers)])
+    #     model['args'].expand(['-b', str(self.blocksize)])
+    #     model['args'].expand(['-p', str(self.percent)])
+    #     return json.dumps(model)
 
 
 class GremlinDiskIOAttack(GremlinResourceAttackHelper):
@@ -997,14 +1114,23 @@ class GremlinDiskIOAttack(GremlinResourceAttackHelper):
             raise GremlinParameterError(error_msg)
         self._mode = _mode.lower()
 
-    def __repr__(self):
-        model = json.loads(super().__repr__())
+    def repr_model(self):
+        model = super().repr_model()
         model['args'].extend(['-c', str(self.blockcount)])
         model['args'].extend(['-d', self.directory])
         model['args'].extend(['-m', self.mode])
         model['args'].extend(['-s', str(self.blocksize)])
         model['args'].extend(['-w', str(self.workers)])
-        return json.dumps(model)
+        return model
+
+    # def __repr__(self):
+    #     model = json.loads(super().__repr__())
+    #     model['args'].extend(['-c', str(self.blockcount)])
+    #     model['args'].extend(['-d', self.directory])
+    #     model['args'].extend(['-m', self.mode])
+    #     model['args'].extend(['-s', str(self.blocksize)])
+    #     model['args'].extend(['-w', str(self.workers)])
+    #     return json.dumps(model)
 
 
 class GremlinShutdownAttack(GremlinStateAttackHelper):
@@ -1040,12 +1166,19 @@ class GremlinShutdownAttack(GremlinStateAttackHelper):
             raise GremlinParameterError(error_msg)
         self._reboot = _reboot
 
-    def __repr__(self):
-        model = json.loads(super().__repr__())
+    def repr_model(self):
+        model = super().repr_model()
         model['args'] = ['-d', str(self.delay)]
         if self.reboot:
             model['args'].append('-r')
-        return json.dumps(model)
+        return model
+
+    # def __repr__(self):
+    #     model = json.loads(super().__repr__())
+    #     model['args'] = ['-d', str(self.delay)]
+    #     if self.reboot:
+    #         model['args'].append('-r')
+    #     return json.dumps(model)
 
 
 class GremlinProcessKillerAttack(GremlinStateAttackHelper):
@@ -1194,8 +1327,8 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
 
-    def __repr__(self):
-        model = json.loads(super().__repr__())
+    def repr_model(self):
+        model = super().repr_model()
         model['args'].extend(['-i', str(self.interval)])
         if self.group:
             model['args'].extend(['-g', self.group])
@@ -1217,7 +1350,32 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
             model['args'].append('-n')
         if self.target_oldest and not self.target_newest:
             model['args'].append('-o')
-        return json.dumps(model)
+        return model
+
+    # def __repr__(self):
+    #     model = json.loads(super().__repr__())
+    #     model['args'].extend(['-i', str(self.interval)])
+    #     if self.group:
+    #         model['args'].extend(['-g', self.group])
+    #     if self.process:
+    #         model['args'].extend(['-p', self.process])
+    #     else:
+    #         error_msg = f'process is required to a be a non-empty string'
+    #         log.fatal(error_msg)
+    #         raise GremlinParameterError(error_msg)
+    #     if self.user:
+    #         model['args'].extend(['-u', self.user])
+    #     if self.exact:
+    #         model['args'].append('-e')
+    #     if self.full_match:
+    #         model['args'].append('-f')
+    #     if self.kill_children:
+    #         model['args'].append('-c')
+    #     if self.target_newest and not self.target_oldest:
+    #         model['args'].append('-n')
+    #     if self.target_oldest and not self.target_newest:
+    #         model['args'].append('-o')
+    #     return json.dumps(model)
 
 
 class GremlinTimeTravelAttack(GremlinStateAttackHelper):
@@ -1253,12 +1411,19 @@ class GremlinTimeTravelAttack(GremlinStateAttackHelper):
             raise GremlinParameterError(error_msg)
         self._offset = offset
 
-    def __repr__(self):
-        model = json.loads(super().__repr__())
+    def repr_model(self):
+        model = super().repr_model()
         model['args'].extend(['-o', str(self.offset)])
         if self.block_ntp:
             model['args'].append('-n')
-        return json.dumps(model)
+        return model
+
+    # def __repr__(self):
+    #     model = json.loads(super().__repr__())
+    #     model['args'].extend(['-o', str(self.offset)])
+    #     if self.block_ntp:
+    #         model['args'].append('-n')
+    #     return json.dumps(model)
 
 
 class GremlinBlackholeAttack(GremlinNetworkAttackHelper):
@@ -1268,6 +1433,16 @@ class GremlinBlackholeAttack(GremlinNetworkAttackHelper):
         self.egress_ports = kwargs.get('egress_ports', ['^53'])       # -p, str
         self.hostnames = kwargs.get('hostnames', '^api.gremlin.com')  # -h, str
         self.ingress_ports = kwargs.get('ingress_ports', None)        # -n, str
+
+    def repr_model(self):
+        model = super().repr_model()
+        if len(self.egress_ports) > 0:
+            model['args'].extend(['-p', ','.join(self.egress_ports)])
+        if len(self.hostnames) > 0:
+            model['args'].extend(['-h', ','.join(self.hostnames)])
+        if len(self.ingress_ports) > 0:
+            model['args'].extend(['-n', ','.join(self.ingress_ports)])
+        return model
 
     def __repr__(self):
         model = json.loads(super().__repr__())
@@ -1287,9 +1462,13 @@ class GremlinDNSAttack(GremlinNetworkAttackHelper):
         self._allowed_protocols = ['TCP', 'UDP']
         self.protocol = kwargs.get('protocol', None)
 
-    def __repr__(self):
-        model = json.loads(super().__repr__())
-        return json.dumps(model)
+    def repr_model(self):
+        model = super().repr_model()
+        return model
+
+    # def __repr__(self):
+    #     model = json.loads(super().__repr__())
+    #     return json.dumps(model)
 
 
 class GremlinLatencyAttack(GremlinNetworkAttackHelper):
@@ -1314,8 +1493,8 @@ class GremlinLatencyAttack(GremlinNetworkAttackHelper):
             raise GremlinParameterError(error_msg)
         self._delay = _delay
 
-    def __repr__(self):
-        model = json.loads(super().__repr__())
+    def repr_model(self):
+        model = super().repr_model()
         model['args'].extend(['-m', str(self.delay)])
         if len(self.egress_ports) > 0:
             model['args'].extend(['-p', ','.join(self.egress_ports)])
@@ -1323,7 +1502,18 @@ class GremlinLatencyAttack(GremlinNetworkAttackHelper):
             model['args'].extend(['-h', ','.join(self.hostnames)])
         if len(self.source_ports) > 0:
             model['args'].extend(['-s', ','.join(self.source_ports)])
-        return json.dumps(model)
+        return model
+
+    # def __repr__(self):
+    #     model = json.loads(super().__repr__())
+    #     model['args'].extend(['-m', str(self.delay)])
+    #     if len(self.egress_ports) > 0:
+    #         model['args'].extend(['-p', ','.join(self.egress_ports)])
+    #     if len(self.hostnames) > 0:
+    #         model['args'].extend(['-h', ','.join(self.hostnames)])
+    #     if len(self.source_ports) > 0:
+    #         model['args'].extend(['-s', ','.join(self.source_ports)])
+    #     return json.dumps(model)
 
 
 class GremlinPacketLossAttack(GremlinNetworkAttackHelper):
@@ -1365,9 +1555,8 @@ class GremlinPacketLossAttack(GremlinNetworkAttackHelper):
             raise GremlinParameterError(error_msg)
         self._percent = _percent
 
-
-    def __repr__(self):
-        model = json.loads(super().__repr__())
+    def repr_model(self):
+        model = super().repr_model()
         model['args'].extend(['-r', str(self.percent)])
         if len(self.egress_ports) > 0:
             model['args'].extend(['-p', ','.join(self.egress_ports)])
@@ -1377,5 +1566,18 @@ class GremlinPacketLossAttack(GremlinNetworkAttackHelper):
             model['args'].extend(['-s', ','.join(self.source_ports)])
         if self.corrupt:
             model['args'].append('-c')
-        return json.dumps(model)
+        return model
+
+    # def __repr__(self):
+    #     model = json.loads(super().__repr__())
+    #     model['args'].extend(['-r', str(self.percent)])
+    #     if len(self.egress_ports) > 0:
+    #         model['args'].extend(['-p', ','.join(self.egress_ports)])
+    #     if len(self.hostnames) > 0:
+    #         model['args'].extend(['-h', ','.join(self.hostnames)])
+    #     if len(self.source_ports) > 0:
+    #         model['args'].extend(['-s', ','.join(self.source_ports)])
+    #     if self.corrupt:
+    #         model['args'].append('-c')
+    #     return json.dumps(model)
 

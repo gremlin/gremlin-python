@@ -219,7 +219,7 @@ from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetContaine
 attacks.create_attack(
     body=GremlinAttackHelper(
         target=GremlinTargetContainers(strategy_type='Random', target_all_hosts=True,
-            percent=100, labels={'com.amazonaws.ecs.container-name': 'swissknife'}),
+            percent=100, labels={'com.amazonaws.ecs.container-start': 'swissknife'}),
         command=GremlinLatencyAttack(length=300, protocol='ICMP', delay=100)))
 ```
 

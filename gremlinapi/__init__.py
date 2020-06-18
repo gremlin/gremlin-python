@@ -4,11 +4,17 @@
 
 import logging
 import os
+import re
 import time
 
 from gremlinapi.alfi import GremlinALFI as alfi
 from gremlinapi.apikeys import GremlinAPIapikeys as apikeys
-from gremlinapi.attack_helpers import *
+from gremlinapi.attack_helpers import (
+    GremlinAttackHelper, GremlinAttackTargetHelper, GremlinTargetHosts, GremlinTargetContainers,
+    GremlinAttackCommandHelper, GremlinResourceAttackHelper, GremlinStateAttackHelper, GremlinNetworkAttackHelper,
+    GremlinCPUAttack, GremlinMemoryAttack, GremlinDiskSpaceAttack, GremlinDiskIOAttack,
+    GremlinShutdownAttack, GremlinProcessKillerAttack, GremlinTimeTravelAttack,
+    GremlinBlackholeAttack, GremlinDNSAttack, GremlinLatencyAttack, GremlinPacketLossAttack)
 from gremlinapi.attacks import GremlinAPIAttacks as Attacks
 from gremlinapi.clients import GremlinAPIClients as Clients
 from gremlinapi.companies import GremlinAPICompanies as Companies
@@ -27,7 +33,11 @@ from gremlinapi.metrics import GremlinAPIMetrics as Metrics
 from gremlinapi.orgs import GremlinAPIOrgs as Orgs
 from gremlinapi.providers import GremlinAPIProviders as Providers
 from gremlinapi.reports import GremlinAPIReports as Reports, GremlinAPIReportsSecurity as SecurityReports
-from gremlinapi.scenario_helpers import *
+from gremlinapi.scenario_helpers import (GremlinScenarioHelper, GremlinScenarioStep, GremlinILFIStep)
+from gremlinapi.scenario_graph_helpers import (GremlinScenarioGraphHelper, GremlinScenarioNode,
+                                               GremlinScenarioAttackNode, GremlinScenarioILFINode,
+                                               GremlinScenarioALFINode, GremlinScenarioDelayNode,
+                                               GremlinScenarioStatusCheckNode)
 from gremlinapi.scenarios import (GremlinAPIScenarios as Scenarios,
                                   GremlinAPIScenariosRecommended as RecommendedScenarios)
 from gremlinapi.schedules import GremlinAPISchedules as Schedules
@@ -105,9 +115,11 @@ GremlinAPIConfig.max_bearer_interval = _max_bearer_interval
 GremlinAPIConfig.http_proxy = _http_proxy
 GremlinAPIConfig.https_proxy = _https_proxy
 
+
 def _response_to_bearer(auth_response):
     log.debug(auth_response[0]['header'])
     return auth_response[0]['header']
+
 
 def login(email=GremlinAPIConfig.user, password=GremlinAPIConfig.password,
           company_name=GremlinAPIConfig.company_name, token=GremlinAPIConfig.user_mfa_token_value):
