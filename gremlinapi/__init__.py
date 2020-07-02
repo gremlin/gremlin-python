@@ -114,6 +114,7 @@ GremlinAPIConfig.bearer_timestamp = _bearer_token_timestamp
 GremlinAPIConfig.max_bearer_interval = _max_bearer_interval
 GremlinAPIConfig.http_proxy = _http_proxy
 GremlinAPIConfig.https_proxy = _https_proxy
+GremlinAPIConfig.team_id = _api_team_id
 
 
 def _response_to_bearer(auth_response):
