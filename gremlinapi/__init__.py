@@ -33,6 +33,7 @@ from gremlinapi.metrics import GremlinAPIMetrics as Metrics
 from gremlinapi.orgs import GremlinAPIOrgs as Orgs
 from gremlinapi.providers import GremlinAPIProviders as Providers
 from gremlinapi.reports import GremlinAPIReports as Reports, GremlinAPIReportsSecurity as SecurityReports
+from gremlinapi.saml import GremlinAPISaml
 from gremlinapi.scenario_helpers import (GremlinScenarioHelper, GremlinScenarioStep, GremlinILFIStep)
 from gremlinapi.scenario_graph_helpers import (GremlinScenarioGraphHelper, GremlinScenarioNode,
                                                GremlinScenarioAttackNode, GremlinScenarioILFINode,
@@ -150,3 +151,8 @@ def login(email=GremlinAPIConfig.user, password=GremlinAPIConfig.password,
         GremlinAPIConfig.bearer_timestamp = time.monotonic()
     else:
         return GremlinAPIConfig.bearer_token
+
+def saml_login(email=GremlinAPIConfig.user, saml_assertion=None):
+    if GremlinAPIConfig.user != email:
+        log.debug('Received user without value being present in config, updating config to match.')
+        GremlinAPIConfig.user = email
