@@ -123,4 +123,3 @@ class GremlinAPI(object):
             log.warning(error_msg)
             param = default
         return param
-

@@ -152,7 +152,32 @@ def login(email=GremlinAPIConfig.user, password=GremlinAPIConfig.password,
     else:
         return GremlinAPIConfig.bearer_token
 
-def saml_login(email=GremlinAPIConfig.user, saml_assertion=None):
+def saml_login(email=GremlinAPIConfig.user, saml_assertion=None, relay_state=None):
+    """
+    Use SAML to perform an API login and return a bearer token
+
+    :param email: email address of the user/service account
+    :param saml_assertion:
+    :param relay_state:
+    :return:
+    """
     if GremlinAPIConfig.user != email:
         log.debug('Received user without value being present in config, updating config to match.')
         GremlinAPIConfig.user = email
+    if not saml_assertion and relay_state:
+        error_msg = f'Expecting a SAML assertion and relay state, received none'
+        log.fatal(error_msg)
+        raise GremlinParameterError(error_msg)
+    acs_response = GremlinAPISaml.acs(SAMLResponse=saml_assertion, RelayState=relay_state)
+    try:
+        # redirect = re.search('window\.location="(.+?)"', acs_response).group(1)
+        saml_session_code = re.search('SamlSessionCode=(.+?)&', acs_response).group(1)
+    except AttributeError:
+        error_msg = 'SAML Response did not provide a valid saml session code'
+        log.fatal(error_msg)
+        raise GremlinAuthError(error_msg)
+    saml_sessions = GremlinAPISaml.sessions(code=saml_session_code)
+    GremlinAPIConfig.bearer_token = saml_sessions['header']
+    return GremlinAPIConfig.bearer_token
+
+

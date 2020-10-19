@@ -26,7 +26,7 @@ class GremlinAPISaml(GremlinAPI):
     @classmethod
     def acs(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
-        endpoint = '/saml/acs'
+        endpoint = '/users/auth/saml/acs'
         data = {
             'SAMLResponse': cls._error_if_not_param('SAMLResponse', **kwargs),
             'RelayState': cls._error_if_not_param('RelayState', **kwargs)
@@ -40,7 +40,7 @@ class GremlinAPISaml(GremlinAPI):
     def samllogin(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         params = ['companyName', 'destination', 'acsHandler']
         method = 'GET'
-        endpoint = cls._build_query_string_endpoint('/saml/login', params, **kwargs)
+        endpoint = cls._build_query_string_endpoint('/users/auth/saml/login', params, **kwargs)
         payload = cls._payload(**{})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
@@ -49,7 +49,7 @@ class GremlinAPISaml(GremlinAPI):
     @register_cli_action('metadata', ('',), ('',))
     def metadata(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
-        endpoint = '/saml/metadata'
+        endpoint = '/users/auth/saml/metadata'
         payload = cls._payload(**{})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
@@ -57,7 +57,10 @@ class GremlinAPISaml(GremlinAPI):
     @classmethod
     def sessions(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
-        endpoint = '/saml/sessions'
-        payload = cls._payload(**{'headers': https_client.header()})
+        endpoint = '/users/auth/saml/sessions'
+        data = {
+            'code': cls._error_if_not_param('code', **kwargs)
+        }
+        payload = cls._payload(**{'headers': https_client.header(), 'body': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
