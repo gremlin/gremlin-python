@@ -16,6 +16,8 @@ See individual .md files
 
 [Kubernetes](kubernetes.md)
 
+[SAML Authentication](saml.md)
+
 [Scenarios](scenarios.md)
 
 [Schedules](schedules.md)

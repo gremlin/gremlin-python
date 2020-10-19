@@ -21,7 +21,6 @@ log = logging.getLogger('GremlinAPI.client')
 
 
 class GremlinALFI(GremlinAPI):
-
     @classmethod
     @register_cli_action('create_alfi_experiment', ('body',), ('teamId'))
     def create_alfi_experiment(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):

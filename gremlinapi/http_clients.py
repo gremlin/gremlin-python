@@ -34,6 +34,12 @@ class GremlinAPIHttpClient(object):
         raise NotImplementedError(error_message)
 
     @classmethod
+    def base_uri(cls, uri):
+        if not uri.startswith('http') and GremlinAPIConfig.base_uri not in uri:
+            uri = f'{GremlinAPIConfig.base_uri}{uri}'
+        return uri
+
+    @classmethod
     def header(cls, *args, **kwargs):
         api_key = kwargs.get('api_key', None)
         bearer_token = kwargs.get('bearer_token', None)
@@ -56,7 +62,7 @@ class GremlinAPIHttpClient(object):
         else:
             error_msg = f'Missing API Key or Bearer Token, none supplied: {api_key}, {bearer_token}'
             log.fatal(error_msg)
-            raise HTTPBadHeader(error_msg)
+            # raise HTTPBadHeader(error_msg)
         header['X-Gremlin-Agent'] = f'gremlin-sdk-python/{get_version()}'
         return header
 
@@ -91,7 +97,8 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
             "PATCH": requests.patch,
         }
 
-        uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
+        # uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
+        uri = cls.base_uri(endpoint)
         client = request_methods.get(method.upper())
         raw_content = kwargs.pop("raw_content", False)
         data = None
