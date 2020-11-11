@@ -47,11 +47,10 @@ class GremlinAPIUsers(GremlinAPI):
     def add_user_to_team(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
         data = cls._error_if_not_json_body(**kwargs)
-        body = []
-        if not isinstance(data, list):
-            body = [data]
+        if isinstance(data, dict):
+            data = [dict(data)]
         endpoint = cls._optional_team_endpoint(f'/users', **kwargs)
-        payload = cls._payload(**{'headers': https_client.header(), 'body': body})
+        payload = cls._payload(**{'headers': https_client.header(), 'body': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
