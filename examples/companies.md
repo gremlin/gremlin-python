@@ -32,7 +32,7 @@ response = companies.invite_company_user(identifier=company_id, body=user_email_
 from gremlinapi.companies import GremlinAPICompanies as companies
 
 company_id = 'COMPANY_GUID'
-user_email_body = { 'emails': ['andjohn+1@gremlin.com', 'andjohn+2@gremlin.com'] }
+user_email_body = [{ 'emails': 'andjohn+1@gremlin.com'}, { 'email': 'andjohn+2@gremlin.com'}]
 response = companies.invite_company_user(identifier=company_id, body=user_email_body)
 ```
 

@@ -48,10 +48,11 @@ class GremlinAPICompanies(GremlinAPI):
         method = 'POST'
         identifier = cls._error_if_not_param('identifier', **kwargs)
         data = cls._error_if_not_json_body(**kwargs)
+        body = []
         if not isinstance(data, list):
-            data = list(data)
+            body = [data]
         endpoint = f'/companies/{identifier}/invites'
-        payload = cls._payload(**{'headers': https_client.header(), 'body': data})
+        payload = cls._payload(**{'headers': https_client.header(), 'body': body})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
