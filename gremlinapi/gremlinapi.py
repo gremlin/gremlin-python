@@ -91,7 +91,7 @@ class GremlinAPI(object):
     @classmethod
     def _info_if_not_param(cls, parameter_name, default=None, **kwargs):
         param = kwargs.get(parameter_name, None)
-        if not param:
+        if param is None:
             error_msg = f'{parameter_name} not found in arguments: {kwargs}'
             log.info(error_msg)
             param = default

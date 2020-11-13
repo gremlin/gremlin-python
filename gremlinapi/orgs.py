@@ -42,10 +42,11 @@ class GremlinAPIOrgs(GremlinAPI):
         return body
 
     @classmethod
-    @register_cli_action('create_org', ('name',), ('',))
+    @register_cli_action('create_org', ('name',), ('addUser',))
     def create_org(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'POST'
-        endpoint = '/orgs'
+        add_user = cls._info_if_not_param('addUser', True, **kwargs)
+        endpoint = cls._add_query_param('/orgs', 'addUser', add_user)
         data = {
             'name': cls._error_if_not_param('name', **kwargs)
         }

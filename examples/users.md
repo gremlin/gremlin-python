@@ -7,7 +7,7 @@ from gremlinapi.users import GremlinAPIUsers as users
 
 team_id = 'Team ID/UUID'
 
-user_list = users.list(teamId=team_id)
+user_list = users.list_users(teamId=team_id)
 ```
 
 ### Invite User
