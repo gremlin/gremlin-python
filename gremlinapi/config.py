@@ -5,6 +5,8 @@
 
 import logging
 
+from datetime import datetime, timezone
+
 log = logging.getLogger('GremlinAPI.client')
 
 
@@ -13,6 +15,7 @@ class GremlinAPIConfig(object):
     def __init__(self):
         self._api_key = None
         self._base_uri = None
+        self._bearer_expires = None
         self._bearer_timestamp = None
         self._bearer_token = None
         self._company_name = None
@@ -45,12 +48,24 @@ class GremlinAPIConfig(object):
         return self.base_uri
 
     @property
+    def bearer_expires(self) -> datetime:
+        return self._bearer_expires
+
+    @bearer_expires.setter
+    def bearer_expires(self, bearer_expires: datetime) -> None:
+        """
+        :param bearer_expires:
+        :return:
+        """
+        self._bearer_expires = bearer_expires
+
+    @property
     def bearer_timestamp(self):
         return self._bearer_timestamp
 
     @bearer_timestamp.setter
     def bearer_timestamp(self, bearer_timestamp):
-        self._bearer_timestamp = time.monotonic()
+        self._bearer_timestamp = bearer_timestamp
 
     @property
     def bearer_token(self):
@@ -136,3 +151,12 @@ class GremlinAPIConfig(object):
     def user_mfa_token_value(self, user_mfa_token_value):
         self._user_mfa_token_value = user_mfa_token_value
         return self.user_mfa_token_value
+
+    @classmethod
+    def is_bearer_expired(cls) -> bool:
+        """
+        Built-in to let the user check in the bearer token is expired
+        Primarily used by the login function
+        :return: bool
+        """
+        return datetime.now(timezone.utc) >= cls.bearer_expires
