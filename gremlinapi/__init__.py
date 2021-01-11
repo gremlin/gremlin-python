@@ -7,6 +7,8 @@ import os
 import re
 import time
 
+from datetime import datetime, timezone
+
 from gremlinapi.alfi import GremlinALFI as alfi
 from gremlinapi.apikeys import GremlinAPIapikeys as apikeys
 from gremlinapi.attack_helpers import (
@@ -117,9 +119,11 @@ GremlinAPIConfig.http_proxy = _http_proxy
 GremlinAPIConfig.https_proxy = _https_proxy
 
 
-def _response_to_bearer(auth_response):
+def _auth_response_to_bearer_config(auth_response):
     # log.debug(auth_response[0]['header'])
-    return auth_response[0]['header']
+    GremlinAPIConfig.bearer_token = auth_response[0]['header']
+    GremlinAPIConfig.bearer_timestamp = datetime.now(timezone.utc)
+    GremlinAPIConfig.bearer_expires = datetime.strptime(auth_response[0]['expires_at'], '%Y-%m-%dT%H:%M:%S.%f%z')
 
 
 def login(email=GremlinAPIConfig.user, password=GremlinAPIConfig.password,
@@ -136,9 +140,9 @@ def login(email=GremlinAPIConfig.user, password=GremlinAPIConfig.password,
     if token and GremlinAPIConfig.user_mfa_token_value != token:
         log.debug('Received mfa token without value being present in config, updating config to match.')
         GremlinAPIConfig.user_mfa_token_value = token
-    if(not _bearer_token_timestamp
-       or not _api_bearer_token
-       or (time.monotonic() - GremlinAPIConfig.bearer_timestamp >= GremlinAPIConfig.max_bearer_interval)):
+    if(not GremlinAPIConfig.bearer_timestamp
+       or not GremlinAPIConfig.bearer_token
+       or GremlinAPIConfig.is_bearer_expired()):
         if token:
             log.debug(f'MFA Login for {email} in company {company_name}')
             auth_response = userMFAuth.auth_user(email=email, password=password,
@@ -147,10 +151,8 @@ def login(email=GremlinAPIConfig.user, password=GremlinAPIConfig.password,
             log.debug(f'Non-MFA Login for {email} in company {company_name}')
             auth_response = userAuth.auth_user(email=email, password=password, companyName=company_name)
         # log.debug(auth_response)
-        GremlinAPIConfig.bearer_token = _response_to_bearer(auth_response)
-        GremlinAPIConfig.bearer_timestamp = time.monotonic()
-    else:
-        return GremlinAPIConfig.bearer_token
+        _auth_response_to_bearer_config(auth_response)
+
 
 def saml_login(email=GremlinAPIConfig.user, saml_assertion=None, relay_state=None):
     """
@@ -179,5 +181,4 @@ def saml_login(email=GremlinAPIConfig.user, saml_assertion=None, relay_state=Non
     saml_sessions = GremlinAPISaml.sessions(code=saml_session_code)
     GremlinAPIConfig.bearer_token = saml_sessions['header']
     return GremlinAPIConfig.bearer_token
-
 
