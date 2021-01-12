@@ -56,7 +56,7 @@ class GremlinAPIReports(GremlinAPI):
     @classmethod
     def report_pricing(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = 'GET'
-        params = ['start', 'end']
+        params = ['startDate', 'endDate', 'trackingPeriod']
         endpoint = cls._build_query_string_endpoint('/reports/pricing', params, **kwargs)
         payload = cls._payload(**{'headers': https_client.header()})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
