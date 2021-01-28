@@ -173,7 +173,7 @@ def saml_login(email=GremlinAPIConfig.user, saml_assertion=None, relay_state=Non
     acs_response = GremlinAPISaml.acs(SAMLResponse=saml_assertion, RelayState=relay_state)
     try:
         # redirect = re.search('window\.location="(.+?)"', acs_response).group(1)
-        saml_session_code = re.search('SamlSessionCode=(.+?)&', acs_response).group(1)
+        saml_session_code = re.search('SamlSessionCode=(.+?)&', acs_response.headers['location']).group(1)
     except AttributeError:
         error_msg = 'SAML Response did not provide a valid saml session code'
         log.fatal(error_msg)
