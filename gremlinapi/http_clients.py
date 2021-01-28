@@ -116,9 +116,9 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
         log.debug(f'httpd client kwargs: {kwargs}')
 
         if data:
-            resp = client(uri, data=data, **kwargs)
+            resp = client(uri, data=data, allow_redirects=False, **kwargs)
         else:
-            resp = client(uri, **kwargs)
+            resp = client(uri, allow_redirects=False, **kwargs)
 
         if resp.status_code >= 400:
             error_msg = f'error {resp.status_code} : {resp.reason}'

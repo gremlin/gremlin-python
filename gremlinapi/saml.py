@@ -33,7 +33,7 @@ class GremlinAPISaml(GremlinAPI):
         }
         payload = cls._payload(**{'headers': https_client.header(), 'data': data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        return resp
 
     @classmethod
     @register_cli_action('samllogin', ('companyName', 'destination', 'acsHandler'), ('',))
