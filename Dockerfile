@@ -13,8 +13,8 @@ LABEL org.label-schema.build-date=$BUILD_DATE
 LABEL org.label-schema.name=$IMAGE_NAME
 LABEL org.label-schema.version=$BUILD_VERSION
 
-RUN apk add --no-cache --update  bash ca-certificates curl gcc git go gzip \
-    libffi-dev make musl-dev openssh openssl openssl-dev python3 python3-dev tar
+RUN apk add --no-cache --update  bash ca-certificates cargo curl gcc git go gzip \
+    libffi-dev make musl-dev openssh openssl openssl-dev python3 python3-dev rust swig tar
 
 RUN python3 -m ensurepip  && \
     rm -r /usr/lib/python*/ensurepip && \
