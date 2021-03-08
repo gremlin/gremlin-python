@@ -411,9 +411,8 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
                             self._multiSelectLabels[_label].append(_labels[_label])
                         else:
                             self._multiSelectLabels[_label] = [_labels[_label]]
-                elif isinstance(_labels[_label], list()):
-                    if not isinstance(self._multiSelectLabels[_label]):
-                        self._multiSelectLabels[_label] = list()
+                elif isinstance(_labels[_label], list):
+                    self._multiSelectLabels[_label] = list()
                     for _value in _labels[_label]:
                         if self._valid_label_pair(_label, _value):
                             self._multiSelectLabels[_label].append(_value)
