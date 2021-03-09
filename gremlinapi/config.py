@@ -7,11 +7,10 @@ import logging
 
 from datetime import datetime, timezone
 
-log = logging.getLogger('GremlinAPI.client')
+log = logging.getLogger("GremlinAPI.client")
 
 
 class GremlinAPIConfig(object):
-
     def __init__(self):
         self._api_key = None
         self._base_uri = None

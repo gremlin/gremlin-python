@@ -1,4 +1,3 @@
-
 import gremlinapi
 from gremlinapi.exceptions import GremlinAuthError
 

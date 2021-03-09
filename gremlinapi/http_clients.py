@@ -10,7 +10,7 @@ from gremlinapi.exceptions import (
     ClientError,
     HTTPTimeout,
     HTTPError,
-    HTTPBadHeader
+    HTTPBadHeader,
 )
 
 from gremlinapi.config import GremlinAPIConfig
@@ -23,26 +23,26 @@ except ImportError:
     requests = None
     import urllib3
 
-log = logging.getLogger('GremlinAPI.client')
+log = logging.getLogger("GremlinAPI.client")
 
 
 class GremlinAPIHttpClient(object):
     @classmethod
     def api_call(cls, method, uri, *args, **kwargs):
-        error_message = f'This function is not implemented, please consume the proper http library for your environment'
+        error_message = f"This function is not implemented, please consume the proper http library for your environment"
         log.fatal(error_message)
         raise NotImplementedError(error_message)
 
     @classmethod
     def base_uri(cls, uri):
-        if not uri.startswith('http') and GremlinAPIConfig.base_uri not in uri:
-            uri = f'{GremlinAPIConfig.base_uri}{uri}'
+        if not uri.startswith("http") and GremlinAPIConfig.base_uri not in uri:
+            uri = f"{GremlinAPIConfig.base_uri}{uri}"
         return uri
 
     @classmethod
     def header(cls, *args, **kwargs):
-        api_key = kwargs.get('api_key', None)
-        bearer_token = kwargs.get('bearer_token', None)
+        api_key = kwargs.get("api_key", None)
+        bearer_token = kwargs.get("bearer_token", None)
         header = dict()
         if not (api_key and bearer_token):
             if GremlinAPIConfig.bearer_token:
@@ -51,24 +51,24 @@ class GremlinAPIHttpClient(object):
                 api_key = GremlinAPIConfig.api_key
         if api_key and not bearer_token:
             if "Key" in api_key:
-                header['Authorization'] = api_key
+                header["Authorization"] = api_key
             else:
-                header['Authorization'] = f'Key {api_key}'
+                header["Authorization"] = f"Key {api_key}"
         elif bearer_token:
             if "Bearer" in bearer_token:
-                header['Authorization'] = bearer_token
+                header["Authorization"] = bearer_token
             else:
-                header['Authorization'] = f'Bearer {bearer_token}'
+                header["Authorization"] = f"Bearer {bearer_token}"
         else:
-            error_msg = f'Missing API Key or Bearer Token, none supplied: {api_key}, {bearer_token}'
+            error_msg = f"Missing API Key or Bearer Token, none supplied: {api_key}, {bearer_token}"
             log.fatal(error_msg)
             # raise HTTPBadHeader(error_msg)
-        header['X-Gremlin-Agent'] = f'gremlin-sdk-python/{get_version()}'
+        header["X-Gremlin-Agent"] = f"gremlin-sdk-python/{get_version()}"
         return header
 
     @classmethod
     def proxies(cls):
-        error_message = f'This function is not implemented, please consume the proper http library for your environment'
+        error_message = f"This function is not implemented, please consume the proper http library for your environment"
         log.fatal(error_message)
         raise NotImplementedError(error_message)
 
@@ -79,9 +79,9 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
         proxies = dict()
 
         if GremlinAPIConfig.http_proxy and type(GremlinAPIConfig.http_proxy) is str:
-            proxies['http'] = GremlinAPIConfig.http_proxy
+            proxies["http"] = GremlinAPIConfig.http_proxy
         if GremlinAPIConfig.https_proxy and type(GremlinAPIConfig.https_proxy) is str:
-            proxies['https'] = GremlinAPIConfig.https_proxy
+            proxies["https"] = GremlinAPIConfig.https_proxy
 
         return proxies
 
@@ -102,18 +102,20 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
         client = request_methods.get(method.upper())
         raw_content = kwargs.pop("raw_content", False)
         data = None
-        if 'data' in kwargs:
-            data = kwargs.pop('data')
-        elif 'body' in kwargs:
+        if "data" in kwargs:
+            data = kwargs.pop("data")
+        elif "body" in kwargs:
             if "Content-Type" not in kwargs["headers"]:
                 kwargs["headers"]["Content-Type"] = "application/json"
-            data = kwargs.pop('body')
+            data = kwargs.pop("body")
             if not isinstance(data, str):
                 data = json.dumps(data)
-            log.debug(f'body: {data}')
+            if log.getEffectiveLevel() == logging.DEBUG:
+                log.debug(f"body: {data}")
 
-        kwargs['proxies'] = cls.proxies()
-        log.debug(f'httpd client kwargs: {kwargs}')
+        kwargs["proxies"] = cls.proxies()
+        if log.getEffectiveLevel() == logging.DEBUG:
+            log.debug(f"httpd client kwargs: {kwargs}")
 
         if data:
             resp = client(uri, data=data, allow_redirects=False, **kwargs)
@@ -121,9 +123,10 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
             resp = client(uri, allow_redirects=False, **kwargs)
 
         if resp.status_code >= 400:
-            error_msg = f'error {resp.status_code} : {resp.reason}'
+            error_msg = f"error {resp.status_code} : {resp.reason}"
             log.warning(error_msg)
-            log.debug(f'{client}\n{uri}\n{data}\n{kwargs}')
+            if log.getEffectiveLevel() == logging.DEBUG:
+                log.debug(f"{client}\n{uri}\n{data}\n{kwargs}")
             raise HTTPError(error_msg)
 
         if raw_content:
@@ -137,28 +140,31 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
                     body = str(resp.content, resp.encoding)
                 except TypeError:
                     # Response must be empty, return something nice
-                    body = 'Success'
+                    body = "Success"
 
         return resp, body
 
 
 class GremlinAPIurllibClient(GremlinAPIHttpClient):
     """Fallback library in the event requests library is unavailable."""
+
     @classmethod
     def api_call(cls, method, endpoint, *args, **kwargs):
 
-        log.warning(f'The request to {endpoint} is using the urllib3 library. Consider installing th requests library.')
+        log.warning(
+            f"The request to {endpoint} is using the urllib3 library. Consider installing th requests library."
+        )
         form_data = None
         request_body = None
 
-        if 'data' in kwargs:
-            form_data = kwargs.pop('data')
-        elif 'body' in kwargs:
+        if "data" in kwargs:
+            form_data = kwargs.pop("data")
+        elif "body" in kwargs:
             if "Content-Type" not in kwargs["headers"]:
                 kwargs["headers"]["Content-Type"] = "application/json"
             request_body = json.dumps(kwargs.pop("body"))
 
-        uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
+        uri = f"{GremlinAPIConfig.base_uri}{endpoint}"
 
         if GremlinAPIConfig.https_proxy and type(GremlinAPIConfig.https_proxy) is str:
             http_client = urllib3.ProxyManager(GremlinAPIConfig.https_proxy)
@@ -173,10 +179,14 @@ class GremlinAPIurllibClient(GremlinAPIHttpClient):
             resp = http_client.request(method, uri, body=request_body, **kwargs)
         else:
             resp = http_client.request(method, uri, **kwargs)
-        log.debug(resp)
+        if log.getEffectiveLevel() == logging.DEBUG:
+            log.debug(resp)
 
         if resp.status >= 400:
-            log.debug(f'Failed response: {resp.status}\n{http_client}\n{uri}\n{kwargs}\n{resp}')
+            if log.getEffectiveLevel() == logging.DEBUG:
+                log.debug(
+                    f"Failed response: {resp.status}\n{http_client}\n{uri}\n{kwargs}\n{resp}"
+                )
             raise HTTPError(resp)
 
         body = json.loads(resp.data)
@@ -188,4 +198,3 @@ def get_gremlin_httpclient():
         return GremlineAPIRequestsClient
     else:
         return GremlinAPIurllibClient
-
