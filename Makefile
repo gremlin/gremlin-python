@@ -13,6 +13,12 @@ install:
 package:
 	python3 setup.py sdist bdist_wheel
 
+test:
+	python3 $(PWD)/tests/test_all.py
+
+lint:
+	python3 -m black $(PWD)
+
 pypi-test: export TWINE_PASSWORD=$(PYPI_TEST)
 pypi-test: package
 	python3 -m twine upload --non-interactive --config-file ${HOME}/.pypirc --repository testpypi dist/*
