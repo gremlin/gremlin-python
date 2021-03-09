@@ -37,7 +37,7 @@ class GremlinScenarioHelper(object):
             raise GremlinParameterError(error_msg)
         _cur_step_obj = json.loads(str(_step))
         if len(self._steps) > 0:
-            if (log.getEffectiveLevel() == logging.DEBUG): log.debug('checking last step')
+            log.debug('checking last step')
             _last_step_obj = self._steps[-1]
             last_attack_type = _last_step_obj['attacks'][0]['attackType']
             last_target_type = _last_step_obj['attacks'][0]['targetDefinition']['targetType']
@@ -59,7 +59,7 @@ class GremlinScenarioHelper(object):
                 raise GremlinCommandTargetError(error_msg)
             self._steps.append(_cur_step_obj)
         else:
-            if (log.getEffectiveLevel() == logging.DEBUG): log.debug('fist step, just adding')
+            log.debug('fist step, just adding')
             self._steps.append(_cur_step_obj)
 
     @property

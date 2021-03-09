@@ -129,16 +129,16 @@ def _parse_args():
             log.fatal(error_msg)
             raise GremlinAuthError(error_msg)
         elif args.gremlin_api_key:
-            if (log.getEffectiveLevel() == logging.DEBUG): log.debug(f'API authentication supplied: key {args.gremlin_api_key}')
+            log.debug(f'API authentication supplied: key {args.gremlin_api_key}')
         elif args.bearer:
-            if (log.getEffectiveLevel() == logging.DEBUG): log.debug(f'Bearer supplied at CLI runtime: {args.bearer}')
+            log.debug(f'Bearer supplied at CLI runtime: {args.bearer}')
             GremlinAPIConfig.bearer_token = args.bearer
         elif args.gremlin_user and args.gremlin_password:
-            if (log.getEffectiveLevel() == logging.DEBUG): log.debug(f'User authentication provided for user: {args.gremlin_user}')
+            log.debug(f'User authentication provided for user: {args.gremlin_user}')
             GremlinAPIConfig.user = args.gremlin_user
             GremlinAPIConfig.password = args.gremlin_password
             if args.gremlin_user_mfa_token:
-                if (log.getEffectiveLevel() == logging.DEBUG): log.debug(f'MFA token provided for user {args.gremlin_user}')
+                log.debug(f'MFA token provided for user {args.gremlin_user}')
                 GremlinAPIConfig.user_mfa_token_value = args.gremlin_user_mfa_token
         else:
             error_msg = f'Unexpected state, authentication logic fallthrough: {args}'

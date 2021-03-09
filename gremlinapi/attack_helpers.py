@@ -1097,7 +1097,7 @@ class GremlinDiskIOAttack(GremlinResourceAttackHelper):
     def blockcount(self, _blockcount=None):
         if not (isinstance(_blockcount, int) and _blockcount >= 1):
             error_msg = f'blockcount requires a positive integer'
-            if (log.getEffectiveLevel() == logging.DEBUG): log.debug(error_msg)
+            log.debug(error_msg)
             raise GremlinParameterError(error_msg)
         self._blockcount = _blockcount
 
