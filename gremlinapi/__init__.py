@@ -120,7 +120,7 @@ GremlinAPIConfig.https_proxy = _https_proxy
 
 
 def _auth_response_to_bearer_config(auth_response):
-    # log.debug(auth_response[0]['header'])
+    # if (log.getEffectiveLevel() == logging.DEBUG): log.debug(auth_response[0]['header'])
     GremlinAPIConfig.bearer_token = auth_response[0]['header']
     GremlinAPIConfig.bearer_timestamp = datetime.now(timezone.utc)
     GremlinAPIConfig.bearer_expires = datetime.strptime(auth_response[0]['expires_at'], '%Y-%m-%dT%H:%M:%S.%f%z')
@@ -129,26 +129,26 @@ def _auth_response_to_bearer_config(auth_response):
 def login(email=GremlinAPIConfig.user, password=GremlinAPIConfig.password,
           company_name=GremlinAPIConfig.company_name, token=GremlinAPIConfig.user_mfa_token_value):
     if GremlinAPIConfig.user != email:
-        log.debug('Received user without value being present in config, updating config to match.')
+        if (log.getEffectiveLevel() == logging.DEBUG): log.debug('Received user without value being present in config, updating config to match.')
         GremlinAPIConfig.user = email
     if GremlinAPIConfig.password != password:
-        log.debug('Received password without value being present in config, updating config to match.')
+        if (log.getEffectiveLevel() == logging.DEBUG): log.debug('Received password without value being present in config, updating config to match.')
         GremlinAPIConfig.password = password
     if GremlinAPIConfig.company_name != company_name:
-        log.debug('Received company name without value being present in config, updating config to match.')
+        if (log.getEffectiveLevel() == logging.DEBUG): log.debug('Received company name without value being present in config, updating config to match.')
         GremlinAPIConfig.company_name = company_name
     if token and GremlinAPIConfig.user_mfa_token_value != token:
-        log.debug('Received mfa token without value being present in config, updating config to match.')
+        if (log.getEffectiveLevel() == logging.DEBUG): log.debug('Received mfa token without value being present in config, updating config to match.')
         GremlinAPIConfig.user_mfa_token_value = token
     if(not GremlinAPIConfig.bearer_timestamp
        or not GremlinAPIConfig.bearer_token
        or GremlinAPIConfig.is_bearer_expired()):
         if token:
-            log.debug(f'MFA Login for {email} in company {company_name}')
+            if (log.getEffectiveLevel() == logging.DEBUG): log.debug(f'MFA Login for {email} in company {company_name}')
             auth_response = userMFAuth.auth_user(email=email, password=password,
                                                  companyName=company_name, token=token)
         else:
-            log.debug(f'Non-MFA Login for {email} in company {company_name}')
+            if (log.getEffectiveLevel() == logging.DEBUG): log.debug(f'Non-MFA Login for {email} in company {company_name}')
             auth_response = userAuth.auth_user(email=email, password=password, companyName=company_name)
         # log.debug(auth_response)
         _auth_response_to_bearer_config(auth_response)
@@ -164,7 +164,7 @@ def saml_login(email=GremlinAPIConfig.user, saml_assertion=None, relay_state=Non
     :return:
     """
     if GremlinAPIConfig.user != email:
-        log.debug('Received user without value being present in config, updating config to match.')
+        if (log.getEffectiveLevel() == logging.DEBUG): log.debug('Received user without value being present in config, updating config to match.')
         GremlinAPIConfig.user = email
     if not saml_assertion and relay_state:
         error_msg = f'Expecting a SAML assertion and relay state, received none'

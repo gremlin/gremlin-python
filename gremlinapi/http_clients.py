@@ -110,10 +110,10 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
             data = kwargs.pop('body')
             if not isinstance(data, str):
                 data = json.dumps(data)
-            log.debug(f'body: {data}')
+            if (log.getEffectiveLevel() == logging.DEBUG): log.debug(f'body: {data}')
 
         kwargs['proxies'] = cls.proxies()
-        log.debug(f'httpd client kwargs: {kwargs}')
+        if (log.getEffectiveLevel() == logging.DEBUG): log.debug(f'httpd client kwargs: {kwargs}')
 
         if data:
             resp = client(uri, data=data, allow_redirects=False, **kwargs)
@@ -123,7 +123,7 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
         if resp.status_code >= 400:
             error_msg = f'error {resp.status_code} : {resp.reason}'
             log.warning(error_msg)
-            log.debug(f'{client}\n{uri}\n{data}\n{kwargs}')
+            if (log.getEffectiveLevel() == logging.DEBUG): log.debug(f'{client}\n{uri}\n{data}\n{kwargs}')
             raise HTTPError(error_msg)
 
         if raw_content:
@@ -173,10 +173,10 @@ class GremlinAPIurllibClient(GremlinAPIHttpClient):
             resp = http_client.request(method, uri, body=request_body, **kwargs)
         else:
             resp = http_client.request(method, uri, **kwargs)
-        log.debug(resp)
+        if (log.getEffectiveLevel() == logging.DEBUG): log.debug(resp)
 
         if resp.status >= 400:
-            log.debug(f'Failed response: {resp.status}\n{http_client}\n{uri}\n{kwargs}\n{resp}')
+            if (log.getEffectiveLevel() == logging.DEBUG): log.debug(f'Failed response: {resp.status}\n{http_client}\n{uri}\n{kwargs}\n{resp}')
             raise HTTPError(resp)
 
         body = json.loads(resp.data)
