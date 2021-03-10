@@ -33,3 +33,9 @@ class TestHttpClient(unittest.TestCase):
         https_client = get_gremlin_httpclient()
         header = https_client.header()
         self.assertIn(bearer_token, header["Authorization"])
+
+    def test_base_uri(self):
+        https_client = get_gremlin_httpclient()
+        t_uri = "test"
+        g_uri = config.base_uri
+        self.assertEqual(f"{config.base_uri}{t_uri}",https_client.base_uri(t_uri))

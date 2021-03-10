@@ -28,13 +28,15 @@ log = logging.getLogger("GremlinAPI.client")
 
 class GremlinAPIHttpClient(object):
     @classmethod
-    def api_call(cls, method, uri, *args, **kwargs):
+    def api_call(
+        cls: GremlinAPIHttpClient, method, uri: str, *args: tuple, **kwargs: dict
+    ) -> None:
         error_message = f"This function is not implemented, please consume the proper http library for your environment"
         log.fatal(error_message)
         raise NotImplementedError(error_message)
 
     @classmethod
-    def base_uri(cls, uri):
+    def base_uri(cls: GremlinAPIHttpClient, uri: str) -> str:
         if not uri.startswith("http") and GremlinAPIConfig.base_uri not in uri:
             uri = f"{GremlinAPIConfig.base_uri}{uri}"
         return uri
