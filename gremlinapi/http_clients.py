@@ -149,7 +149,8 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
 
 class GremlinAPIurllibClient(GremlinAPIHttpClient):
     """Fallback library in the event requests library is unavailable."""
-
+    import urllib3
+    
     @classmethod
     def api_call(
         cls, method: str, endpoint: str, *args: tuple, **kwargs: dict

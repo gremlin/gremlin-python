@@ -14,7 +14,7 @@ package:
 	python3 setup.py sdist bdist_wheel
 
 test:
-	python3 $(PWD)/tests/test_all.py
+	python3 -m tests.test_all
 
 lint:
 	python3 -m black $(PWD)/gremlinapi
