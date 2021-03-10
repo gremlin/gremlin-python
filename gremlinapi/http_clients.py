@@ -25,13 +25,12 @@ except ImportError:
     requests = None
     import urllib3
 
-log:logging.Logger = logging.getLogger("GremlinAPI.client")
+log: logging.Logger = logging.getLogger("GremlinAPI.client")
+
 
 class GremlinAPIHttpClient(object):
     @classmethod
-    def api_call(
-        cls, method, uri: str, *args: tuple, **kwargs: dict
-    ) -> None:
+    def api_call(cls, method, uri: str, *args: tuple, **kwargs: dict) -> None:
         error_message: str = f"This function is not implemented, please consume the proper http library for your environment"
         log.fatal(error_message)
         raise NotImplementedError(error_message)
@@ -75,6 +74,7 @@ class GremlinAPIHttpClient(object):
         log.fatal(error_message)
         raise NotImplementedError(error_message)
 
+
 class GremlineAPIRequestsClient(GremlinAPIHttpClient):
     @classmethod
     def proxies(cls) -> dict:
@@ -86,7 +86,9 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
         return proxies
 
     @classmethod
-    def api_call(cls, method: str, endpoint: str, *args: tuple, **kwargs: dict) -> Tuple[requests.Response,dict]:
+    def api_call(
+        cls, method: str, endpoint: str, *args: tuple, **kwargs: dict
+    ) -> Tuple[requests.Response, dict]:
         request_methods: dict = {
             "HEAD": requests.head,
             "GET": requests.get,
@@ -116,7 +118,9 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
             log.debug(f"httpd client kwargs: {kwargs}")
 
         if data:
-            resp: requests.Request = client(uri, data=data, allow_redirects=False, **kwargs)
+            resp: requests.Request = client(
+                uri, data=data, allow_redirects=False, **kwargs
+            )
         else:
             resp: requests.Request = client(uri, allow_redirects=False, **kwargs)
 

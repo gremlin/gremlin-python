@@ -13,13 +13,12 @@ LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.build-date=$BUILD_DATE
 LABEL org.label-schema.name=$IMAGE_NAME
 LABEL org.label-schema.version=$BUILD_VERSION
-
 RUN mkdir -p ${APP_DIR}
-
 WORKDIR ${APP_DIR}
 
 # RUN git clone $GREMLIN_PYTHON_REPO .
-COPY ${SRC_DIR} ${APP_DIR}
+
+COPY ${SRC_DIR} ./
 
 # uncomment to install the package container wide
 # RUN python3 setup.py install
