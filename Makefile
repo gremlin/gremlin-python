@@ -19,6 +19,7 @@ test:
 lint:
 	python3 -m black $(PWD)/gremlinapi
 	python3 -m black $(PWD)/tests
+	mypy $(PWD)/gremlinapi/*.py
 
 pypi-test: export TWINE_PASSWORD=$(PYPI_TEST)
 pypi-test: package

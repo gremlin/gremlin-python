@@ -22,7 +22,7 @@ try:
     import requests
     import requests.adapters
 except ImportError:
-    requests = None
+    del requests
     import urllib3
 
 log: logging.Logger = logging.getLogger("GremlinAPI.client")
@@ -32,7 +32,7 @@ class GremlinAPIHttpClient(object):
     @classmethod
     def api_call(cls, method, uri: str, *args: tuple, **kwargs: dict) -> None:
         error_message: str = f"This function is not implemented, please consume the proper http library for your environment"
-        log.fatal(error_message)
+        log.error(error_message)
         raise NotImplementedError(error_message)
 
     @classmethod
@@ -149,8 +149,9 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
 
 class GremlinAPIurllibClient(GremlinAPIHttpClient):
     """Fallback library in the event requests library is unavailable."""
+
     import urllib3
-    
+
     @classmethod
     def api_call(
         cls, method: str, endpoint: str, *args: tuple, **kwargs: dict
