@@ -9,7 +9,7 @@
 # import tempfile
 import unittest
 
-from test_httpclient import TestHttpClient
+from .test_httpclient import TestHttpClient
 
 # parentPath = os.path.abspath("..")
 # if parentPath not in sys.path:

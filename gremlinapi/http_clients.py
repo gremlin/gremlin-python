@@ -16,6 +16,8 @@ from gremlinapi.exceptions import (
 from gremlinapi.config import GremlinAPIConfig
 from gremlinapi.util import get_version
 
+from typing import Tuple
+
 try:
     import requests
     import requests.adapters
@@ -23,29 +25,28 @@ except ImportError:
     requests = None
     import urllib3
 
-log = logging.getLogger("GremlinAPI.client")
-
+log:logging.Logger = logging.getLogger("GremlinAPI.client")
 
 class GremlinAPIHttpClient(object):
     @classmethod
     def api_call(
-        cls: GremlinAPIHttpClient, method, uri: str, *args: tuple, **kwargs: dict
+        cls, method, uri: str, *args: tuple, **kwargs: dict
     ) -> None:
-        error_message = f"This function is not implemented, please consume the proper http library for your environment"
+        error_message: str = f"This function is not implemented, please consume the proper http library for your environment"
         log.fatal(error_message)
         raise NotImplementedError(error_message)
 
     @classmethod
-    def base_uri(cls: GremlinAPIHttpClient, uri: str) -> str:
+    def base_uri(cls, uri: str) -> str:
         if not uri.startswith("http") and GremlinAPIConfig.base_uri not in uri:
-            uri = f"{GremlinAPIConfig.base_uri}{uri}"
+            uri: str = f"{GremlinAPIConfig.base_uri}{uri}"
         return uri
 
     @classmethod
-    def header(cls, *args, **kwargs):
-        api_key = kwargs.get("api_key", None)
-        bearer_token = kwargs.get("bearer_token", None)
-        header = dict()
+    def header(cls, *args: tuple, **kwargs: dict) -> dict:
+        api_key: str = kwargs.get("api_key", None)
+        bearer_token: str = kwargs.get("bearer_token", None)
+        header: dict = dict()
         if not (api_key and bearer_token):
             if GremlinAPIConfig.bearer_token:
                 bearer_token = GremlinAPIConfig.bearer_token
@@ -62,35 +63,31 @@ class GremlinAPIHttpClient(object):
             else:
                 header["Authorization"] = f"Bearer {bearer_token}"
         else:
-            error_msg = f"Missing API Key or Bearer Token, none supplied: {api_key}, {bearer_token}"
+            error_msg: str = f"Missing API Key or Bearer Token, none supplied: {api_key}, {bearer_token}"
             log.fatal(error_msg)
             # raise HTTPBadHeader(error_msg)
         header["X-Gremlin-Agent"] = f"gremlin-sdk-python/{get_version()}"
         return header
 
     @classmethod
-    def proxies(cls):
-        error_message = f"This function is not implemented, please consume the proper http library for your environment"
+    def proxies(cls) -> None:
+        error_message: str = f"This function is not implemented, please consume the proper http library for your environment"
         log.fatal(error_message)
         raise NotImplementedError(error_message)
 
-
 class GremlineAPIRequestsClient(GremlinAPIHttpClient):
     @classmethod
-    def proxies(cls):
-        proxies = dict()
-
+    def proxies(cls) -> dict:
+        proxies: dict = dict()
         if GremlinAPIConfig.http_proxy and type(GremlinAPIConfig.http_proxy) is str:
             proxies["http"] = GremlinAPIConfig.http_proxy
         if GremlinAPIConfig.https_proxy and type(GremlinAPIConfig.https_proxy) is str:
             proxies["https"] = GremlinAPIConfig.https_proxy
-
         return proxies
 
     @classmethod
-    def api_call(cls, method, endpoint, *args, **kwargs):
-
-        request_methods = {
+    def api_call(cls, method: str, endpoint: str, *args: tuple, **kwargs: dict) -> Tuple[requests.Response,dict]:
+        request_methods: dict = {
             "HEAD": requests.head,
             "GET": requests.get,
             "POST": requests.post,
@@ -99,11 +96,10 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
             "PATCH": requests.patch,
         }
 
-        # uri = f'{GremlinAPIConfig.base_uri}{endpoint}'
-        uri = cls.base_uri(endpoint)
-        client = request_methods.get(method.upper())
-        raw_content = kwargs.pop("raw_content", False)
-        data = None
+        uri: str = cls.base_uri(endpoint)
+        client: requests.Request = request_methods.get(method.upper())
+        raw_content: dict = kwargs.pop("raw_content", False)
+        data: dict = None
         if "data" in kwargs:
             data = kwargs.pop("data")
         elif "body" in kwargs:
@@ -120,22 +116,22 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
             log.debug(f"httpd client kwargs: {kwargs}")
 
         if data:
-            resp = client(uri, data=data, allow_redirects=False, **kwargs)
+            resp: requests.Request = client(uri, data=data, allow_redirects=False, **kwargs)
         else:
-            resp = client(uri, allow_redirects=False, **kwargs)
+            resp: requests.Request = client(uri, allow_redirects=False, **kwargs)
 
         if resp.status_code >= 400:
-            error_msg = f"error {resp.status_code} : {resp.reason}"
+            error_msg: str = f"error {resp.status_code} : {resp.reason}"
             log.warning(error_msg)
             if log.getEffectiveLevel() == logging.DEBUG:
                 log.debug(f"{client}\n{uri}\n{data}\n{kwargs}")
             raise HTTPError(error_msg)
-
+        body: any = None
         if raw_content:
             body = resp.content
         else:
             try:
-                body = resp.json()
+                body: dict = resp.json()
             except ValueError:
                 # No JSON in response
                 try:
