@@ -18,19 +18,22 @@ from gremlinapi.util import get_version
 
 from typing import Tuple, Union
 
-try:
-    import requests
-    import requests.adapters
-except ImportError:
-    del requests
-    import urllib3
+import requests, urllib3
+# try:
+#     import requests
+#     import requests.adapters
+# except ImportError:
+#     del requests
+#     import urllib3
 
 log: logging.Logger = logging.getLogger("GremlinAPI.client")
 
 
 class GremlinAPIHttpClient(object):
     @classmethod
-    def api_call(cls, method, uri: str, *args: tuple, **kwargs: dict) -> None:
+    def api_call(
+        cls, method: str, endpoint: str, *args: tuple, **kwargs: dict
+    ) -> Tuple[requests.Response, urllib3.HTTPResponse, dict]:
         error_message: str = f"This function is not implemented, please consume the proper http library for your environment"
         log.error(error_message)
         raise NotImplementedError(error_message)
@@ -69,13 +72,13 @@ class GremlinAPIHttpClient(object):
         return header
 
     @classmethod
-    def proxies(cls) -> None:
+    def proxies(cls) -> dict:
         error_message: str = f"This function is not implemented, please consume the proper http library for your environment"
         log.error(error_message)
         raise NotImplementedError(error_message)
 
 
-class GremlineAPIRequestsClient(GremlinAPIHttpClient):
+class GremlinAPIRequestsClient(GremlinAPIHttpClient):
     @classmethod
     def proxies(cls) -> dict:
         proxies: dict = dict()
@@ -88,7 +91,7 @@ class GremlineAPIRequestsClient(GremlinAPIHttpClient):
     @classmethod
     def api_call(
         cls, method: str, endpoint: str, *args: tuple, **kwargs: dict
-    ) -> Tuple[requests.Response, dict]:
+    ) -> Tuple[requests.Response, urllib3.HTTPResponse, dict]:
         request_methods: dict = {
             "HEAD": requests.head,
             "GET": requests.get,
@@ -155,7 +158,7 @@ class GremlinAPIurllibClient(GremlinAPIHttpClient):
     @classmethod
     def api_call(
         cls, method: str, endpoint: str, *args: tuple, **kwargs: dict
-    ) -> Tuple[urllib3.HTTPResponse, dict]:
+    ) -> Tuple[requests.Response, urllib3.HTTPResponse, dict]:
 
         log.warning(
             f"The request to {endpoint} is using the urllib3 library. Consider installing th requests library."
@@ -209,9 +212,9 @@ class GremlinAPIurllibClient(GremlinAPIHttpClient):
 
 
 def get_gremlin_httpclient() -> Union[
-    GremlineAPIRequestsClient, GremlinAPIurllibClient
+    GremlinAPIRequestsClient, GremlinAPIurllibClient
 ]:
     if requests:
-        return GremlineAPIRequestsClient
+        return GremlinAPIRequestsClient
     else:
         return GremlinAPIurllibClient
