@@ -16,7 +16,7 @@ from gremlinapi.exceptions import (
 from gremlinapi.config import GremlinAPIConfig
 from gremlinapi.util import get_version
 
-from typing import Tuple, Union
+from typing import Tuple, Union, Optional, Any, Dict, Callable
 
 import requests, urllib3
 # try:
@@ -92,7 +92,7 @@ class GremlinAPIRequestsClient(GremlinAPIHttpClient):
     def api_call(
         cls, method: str, endpoint: str, *args: tuple, **kwargs: dict
     ) -> Tuple[requests.Response, urllib3.HTTPResponse, dict]:
-        request_methods: dict = {
+        request_methods: Dict[str,Callable] = {
             "HEAD": requests.head,
             "GET": requests.get,
             "POST": requests.post,
@@ -102,9 +102,9 @@ class GremlinAPIRequestsClient(GremlinAPIHttpClient):
         }
 
         uri: str = cls.base_uri(endpoint)
-        client: requests.Request = request_methods.get(method.upper())
-        raw_content: dict = kwargs.pop("raw_content", False)
-        data: dict = None
+        client: Union[Callable, Any] = request_methods.get(method.upper())
+        raw_content: dict = kwargs.pop("raw_content", {})
+        data: Union[dict,str] = {}
         if "data" in kwargs:
             data = kwargs.pop("data")
         elif "body" in kwargs:
@@ -119,14 +119,14 @@ class GremlinAPIRequestsClient(GremlinAPIHttpClient):
         kwargs["proxies"] = cls.proxies()
         if log.getEffectiveLevel() == logging.DEBUG:
             log.debug(f"httpd client kwargs: {kwargs}")
-
+        
         if data:
-            resp: requests.Request = client(
+            resp: requests.Response = client(
                 uri, data=data, allow_redirects=False, **kwargs
             )
         else:
-            resp: requests.Request = client(uri, allow_redirects=False, **kwargs)
-
+            resp = client(uri, allow_redirects=False, **kwargs)
+        
         if resp.status_code >= 400:
             error_msg: str = f"error {resp.status_code} : {resp.reason}"
             log.warning(error_msg)
