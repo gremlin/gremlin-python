@@ -151,11 +151,11 @@ class GremlinAPIConfig(object):
         self._user_mfa_token_value = user_mfa_token_value
         return self.user_mfa_token_value
 
-    @classmethod
-    def is_bearer_expired(cls) -> bool:
+    # @classmethod
+    def is_bearer_expired(self) -> bool:
         """
         Built-in to let the user check in the bearer token is expired
         Primarily used by the login function
         :return: bool
         """
-        return datetime.now(timezone.utc) >= cls.bearer_expires
+        return datetime.now(timezone.utc) >= self.bearer_expires
