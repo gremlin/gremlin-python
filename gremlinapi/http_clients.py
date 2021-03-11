@@ -16,15 +16,16 @@ from gremlinapi.exceptions import (
 from gremlinapi.config import GremlinAPIConfig
 from gremlinapi.util import get_version
 
-from typing import Tuple, Union, Optional, Any, Dict, Callable
+from typing import Tuple, Union, Optional, Any, Dict, Callable, Type
 
-import requests, urllib3
+import requests
+import urllib3 # type: ignore
 # try:
 #     import requests
 #     import requests.adapters
 # except ImportError:
 #     del requests
-#     import urllib3
+#     import urllib3 # type: ignore
 
 log: logging.Logger = logging.getLogger("GremlinAPI.client")
 
@@ -33,7 +34,7 @@ class GremlinAPIHttpClient(object):
     @classmethod
     def api_call(
         cls, method: str, endpoint: str, *args: tuple, **kwargs: dict
-    ) -> Tuple[requests.Response, urllib3.HTTPResponse, dict]:
+    ) -> Tuple[Union[requests.Response, urllib3.HTTPResponse], dict]:
         error_message: str = f"This function is not implemented, please consume the proper http library for your environment"
         log.error(error_message)
         raise NotImplementedError(error_message)
@@ -91,7 +92,7 @@ class GremlinAPIRequestsClient(GremlinAPIHttpClient):
     @classmethod
     def api_call(
         cls, method: str, endpoint: str, *args: tuple, **kwargs: dict
-    ) -> Tuple[requests.Response, urllib3.HTTPResponse, dict]:
+    ) -> Tuple[Union[requests.Response, urllib3.HTTPResponse], dict]:
         request_methods: Dict[str,Callable] = {
             "HEAD": requests.head,
             "GET": requests.get,
@@ -131,14 +132,14 @@ class GremlinAPIRequestsClient(GremlinAPIHttpClient):
             error_msg: str = f"error {resp.status_code} : {resp.reason}"
             log.warning(error_msg)
             if log.getEffectiveLevel() == logging.DEBUG:
-                log.debug(f"{client}\n{uri}\n{data}\n{kwargs}")
+                log.debug(f"{uri}\n{data}\n{kwargs}")
             raise HTTPError(error_msg)
-        body: any = None
+        body: Any = None
         if raw_content:
             body = resp.content
         else:
             try:
-                body: dict = resp.json()
+                body = resp.json()
             except ValueError:
                 # No JSON in response
                 try:
@@ -158,20 +159,18 @@ class GremlinAPIurllibClient(GremlinAPIHttpClient):
     @classmethod
     def api_call(
         cls, method: str, endpoint: str, *args: tuple, **kwargs: dict
-    ) -> Tuple[requests.Response, urllib3.HTTPResponse, dict]:
+    ) -> Tuple[Union[requests.Response, urllib3.HTTPResponse], dict]:
 
         log.warning(
             f"The request to {endpoint} is using the urllib3 library. Consider installing th requests library."
         )
-        form_data: dict = None
-        request_body: str = None
 
         if "data" in kwargs:
-            form_data = kwargs.pop("data")
+            form_data: dict = kwargs.pop("data")
         elif "body" in kwargs:
             if "Content-Type" not in kwargs["headers"]:
                 kwargs["headers"]["Content-Type"] = "application/json"
-            request_body = json.dumps(kwargs.pop("body"))
+            request_body: str = json.dumps(kwargs.pop("body"))
 
         uri: str = f"{GremlinAPIConfig.base_uri}{endpoint}"
 
@@ -180,22 +179,22 @@ class GremlinAPIurllibClient(GremlinAPIHttpClient):
                 GremlinAPIConfig.https_proxy
             )
         elif GremlinAPIConfig.http_proxy and type(GremlinAPIConfig.http_proxy) is str:
-            http_client: urllib3.ProxyManager = urllib3.ProxyManager(
+            http_client = urllib3.ProxyManager(
                 GremlinAPIConfig.http_proxy
             )
         else:
-            http_client: urllib3.ProxyManager = urllib3.PoolManager()
+            http_client = urllib3.PoolManager()
 
         if form_data:
             resp: urllib3.HTTPResponse = http_client.request(
                 method, uri, fields=form_data, **kwargs
             )
         elif request_body:
-            resp: urllib3.HTTPResponse = http_client.request(
+            resp = http_client.request(
                 method, uri, body=request_body, **kwargs
             )
         else:
-            resp: urllib3.HTTPResponse = http_client.request(method, uri, **kwargs)
+            resp = http_client.request(method, uri, **kwargs)
 
         if log.getEffectiveLevel() == logging.DEBUG:
             log.debug(resp)
@@ -212,7 +211,7 @@ class GremlinAPIurllibClient(GremlinAPIHttpClient):
 
 
 def get_gremlin_httpclient() -> Union[
-    GremlinAPIRequestsClient, GremlinAPIurllibClient
+    Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
 ]:
     if requests:
         return GremlinAPIRequestsClient
