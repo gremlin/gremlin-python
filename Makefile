@@ -20,7 +20,7 @@ lint: typecheck
 	python3 -m black $(PWD)/gremlinapi
 	python3 -m black $(PWD)/tests
 typecheck:
-	mypy -p gremlinapi
+	mypy gremlinapi tests
 
 pypi-test: export TWINE_PASSWORD=$(PYPI_TEST)
 pypi-test: package

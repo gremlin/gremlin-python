@@ -101,7 +101,6 @@ class GremlinAPIRequestsClient(GremlinAPIHttpClient):
             "DELETE": requests.delete,
             "PATCH": requests.patch,
         }
-
         uri: str = cls.base_uri(endpoint)
         client: Union[Callable, Any] = request_methods.get(method.upper())
         raw_content: dict = kwargs.pop("raw_content", {})

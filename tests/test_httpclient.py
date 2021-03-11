@@ -24,6 +24,7 @@ bearer_token: str = "bearer-token-string"
 
 class TestHttpClient(unittest.TestCase):
     def test_api_key(self) -> None:
+        print(config.api_key)
         config.api_key = api_key
         https_client: GremlinAPIHttpClient = get_gremlin_httpclient()
         header: dict = https_client.header()

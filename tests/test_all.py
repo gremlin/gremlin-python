@@ -5,6 +5,7 @@
 import unittest
 
 from .test_httpclient import TestHttpClient
+from .test_attacks import TestAttacks
 
 if __name__ == "__main__":
     unittest.main()
