@@ -16,10 +16,11 @@ package:
 test:
 	python3 -m tests.test_all
 
-lint:
+lint: typecheck
 	python3 -m black $(PWD)/gremlinapi
 	python3 -m black $(PWD)/tests
-	mypy $(PWD)/gremlinapi/*.py
+typecheck:
+	mypy -p gremlinapi
 
 pypi-test: export TWINE_PASSWORD=$(PYPI_TEST)
 pypi-test: package

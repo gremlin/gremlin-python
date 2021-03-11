@@ -37,20 +37,20 @@ class GremlinAPIHttpClient(object):
 
     @classmethod
     def base_uri(cls, uri: str) -> str:
-        if not uri.startswith("http") and GremlinAPIConfig.base_uri not in uri:
-            uri: str = f"{GremlinAPIConfig.base_uri}{uri}"
+        if not uri.startswith("http") and str(GremlinAPIConfig.base_uri) not in uri:
+            uri = f"{GremlinAPIConfig.base_uri}{uri}"
         return uri
 
     @classmethod
     def header(cls, *args: tuple, **kwargs: dict) -> dict:
-        api_key: str = kwargs.get("api_key", None)
-        bearer_token: str = kwargs.get("bearer_token", None)
+        api_key: Union[dict, str] = kwargs.get("api_key", "")
+        bearer_token: Union[dict, str] = kwargs.get("bearer_token", "")
         header: dict = dict()
         if not (api_key and bearer_token):
             if GremlinAPIConfig.bearer_token:
-                bearer_token = GremlinAPIConfig.bearer_token
+                bearer_token = str(GremlinAPIConfig.bearer_token)
             if GremlinAPIConfig.api_key:
-                api_key = GremlinAPIConfig.api_key
+                api_key = str(GremlinAPIConfig.api_key)
         if api_key and not bearer_token:
             if "Key" in api_key:
                 header["Authorization"] = api_key
@@ -63,7 +63,7 @@ class GremlinAPIHttpClient(object):
                 header["Authorization"] = f"Bearer {bearer_token}"
         else:
             error_msg: str = f"Missing API Key or Bearer Token, none supplied: {api_key}, {bearer_token}"
-            log.fatal(error_msg)
+            log.error(error_msg)
             # raise HTTPBadHeader(error_msg)
         header["X-Gremlin-Agent"] = f"gremlin-sdk-python/{get_version()}"
         return header
@@ -71,7 +71,7 @@ class GremlinAPIHttpClient(object):
     @classmethod
     def proxies(cls) -> None:
         error_message: str = f"This function is not implemented, please consume the proper http library for your environment"
-        log.fatal(error_message)
+        log.error(error_message)
         raise NotImplementedError(error_message)
 
 
