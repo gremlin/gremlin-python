@@ -2,22 +2,17 @@
 #
 # Copyright (C) 2020 Kyle Hultman <kyle@gremlin.com>, Gremlin Inc <sales@gremlin.com>
 
-import json
 import os
-import pickle
 import sys
-import tempfile
 import unittest
 
+from gremlinapi.config import GremlinAPIConfig as config
+from gremlinapi.http_clients import get_gremlin_httpclient, GremlinAPIHttpClient
 
 parentPath: str = os.path.abspath("..")
 if parentPath not in sys.path:
     sys.path.insert(0, parentPath)
-
-from gremlinapi.config import GremlinAPIConfig as config
-from gremlinapi.http_clients import get_gremlin_httpclient, GremlinAPIHttpClient
-from gremlinapi.attacks import GremlinAPIAttacks
-
+    
 api_key: str = "api-key-string"
 bearer_token: str = "bearer-token-string"
 

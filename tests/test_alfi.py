@@ -3,16 +3,10 @@
 # Copyright (C) 2021 Kyle Bouchard <kyle.bouchard@gremlin.com>, Gremlin Inc <sales@gremlin.com>
 
 import unittest
-import json
 import requests
 import logging
 from unittest.mock import patch
-from unittest.mock import MagicMock, Mock, PropertyMock
-import gremlinapi
 from gremlinapi.alfi import GremlinALFI
-from gremlinapi.attacks import GremlinAPIAttacks
-from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetContainers, GremlinLatencyAttack
-import gremlinapi.http_clients
 
 log = logging.getLogger("GremlinAPI.unit_tests")
 log.setLevel(logging.DEBUG)
