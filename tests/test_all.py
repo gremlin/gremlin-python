@@ -6,6 +6,7 @@ import unittest
 
 from .test_httpclient import TestHttpClient
 from .test_attacks import TestAttacks
+from .test_alfi import TestAlfi
 
 if __name__ == "__main__":
     unittest.main()
