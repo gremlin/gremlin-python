@@ -21,20 +21,6 @@ def mock_json():
     return mock_data
 
 class TestAttacks(unittest.TestCase):
-    @patch('requests.get')
-    def test_list_attacks_with_decorator(self, mock_get) -> None:
-        mock_get.return_value = requests.Response()
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json = mock_json
-        self.assertEqual(GremlinAPIAttacks.list_attacks(),mock_data)
-    
-    @patch('requests.get')
-    def test_list_active_attacks_with_decorator(self, mock_get) -> None:
-        mock_get.return_value = requests.Response()
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json = mock_json
-        self.assertEqual(GremlinAPIAttacks.list_active_attacks(),mock_data)
-
     def test_list_endpoint(self) -> None:
         test_endpoint = "test-endpoint.com"        
         expected_output = "%s/?source=scenario&pageSize=3&" % test_endpoint
@@ -43,8 +29,37 @@ class TestAttacks(unittest.TestCase):
         self.assertEqual(test_output, expected_output)
 
     def test_error_if_not_attack_body(self) -> None:
-        # expected_output = GremlinAttackHelper(target=GremlinTargetContainers(strategy_type='Random', labels={'owner': 'kyle'}, percent=100),command=GremlinLatencyAttack(delay=1))
-        expected_output = "expected string output"
-        test_kwargs = {"body":expected_output}      
+        expected_output_class = GremlinAttackHelper()
+        test_kwargs = {"body":expected_output_class}      
         test_output = GremlinAPIAttacks._error_if_not_attack_body(**test_kwargs)
-        self.assertEqual(test_output, expected_output)
+        self.assertEqual(test_output, str(expected_output_class))
+
+    @patch('requests.get')
+    def test_create_attack_with_decorator(self, mock_get) -> None:
+        expected_output_class = GremlinAttackHelper()
+        self.assertTrue(True)
+        # mock_get.return_value = requests.Response()
+        # mock_get.return_value.status_code = 200
+        # mock_get.return_value.json = mock_json
+        # self.assertEqual(GremlinAPIAttacks.list_active_attacks(),mock_data)
+
+    @patch('requests.get')
+    def test_list_active_attacks_with_decorator(self, mock_get) -> None:
+        mock_get.return_value = requests.Response()
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json = mock_json
+        self.assertEqual(GremlinAPIAttacks.list_active_attacks(),mock_data)
+
+    @patch('requests.get')
+    def test_list_attacks_with_decorator(self, mock_get) -> None:
+        mock_get.return_value = requests.Response()
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json = mock_json
+        self.assertEqual(GremlinAPIAttacks.list_attacks(),mock_data)
+    
+
+
+
+
+
+
