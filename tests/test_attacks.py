@@ -34,14 +34,14 @@ class TestAttacks(unittest.TestCase):
         test_output = GremlinAPIAttacks._error_if_not_attack_body(**test_kwargs)
         self.assertEqual(test_output, str(expected_output_class))
 
-    @patch('requests.get')
+    @patch('requests.post')
     def test_create_attack_with_decorator(self, mock_get) -> None:
         expected_output_class = GremlinAttackHelper()
-        self.assertTrue(True)
-        # mock_get.return_value = requests.Response()
-        # mock_get.return_value.status_code = 200
-        # mock_get.return_value.json = mock_json
-        # self.assertEqual(GremlinAPIAttacks.list_active_attacks(),mock_data)
+        test_kwargs = {"body":expected_output_class}
+        mock_get.return_value = requests.Response()
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json = mock_json
+        self.assertEqual(GremlinAPIAttacks.create_attack(**test_kwargs), mock_data)
 
     @patch('requests.get')
     def test_list_active_attacks_with_decorator(self, mock_get) -> None:
