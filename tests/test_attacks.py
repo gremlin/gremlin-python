@@ -56,10 +56,33 @@ class TestAttacks(unittest.TestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.json = mock_json
         self.assertEqual(GremlinAPIAttacks.list_attacks(),mock_data)
-    
 
+    @patch('requests.get')
+    def test_list_completed_attacks_with_decorator(self, mock_get) -> None:
+        mock_get.return_value = requests.Response()
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json = mock_json
+        self.assertEqual(GremlinAPIAttacks.list_completed_attacks(),mock_data) 
 
+    @patch('requests.get')
+    def test_get_attack_with_decorator(self, mock_get) -> None:
+        mock_get.return_value = requests.Response()
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json = mock_json
+        test_kwargs = {"guid":"1234567890"}
+        self.assertEqual(GremlinAPIAttacks.get_attack(**test_kwargs),mock_data) 
 
+    @patch('requests.delete')
+    def test_halt_all_attacks_with_decorator(self, mock_get) -> None:
+        mock_get.return_value = requests.Response()
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json = mock_json
+        self.assertEqual(GremlinAPIAttacks.halt_all_attacks(),mock_data) 
 
-
-
+    @patch('requests.delete')
+    def test_halt_attack_with_decorator(self, mock_get) -> None:
+        mock_get.return_value = requests.Response()
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json = mock_json
+        test_kwargs = {"guid":"1234567890"}
+        self.assertEqual(GremlinAPIAttacks.halt_attack(**test_kwargs),mock_data) 
