@@ -9,12 +9,7 @@ from unittest.mock import patch
 from gremlinapi.attacks import GremlinAPIAttacks
 from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetContainers, GremlinLatencyAttack
 
-log = logging.getLogger("GremlinAPI.unit_tests")
-log.setLevel(logging.DEBUG)
-
-mock_data = {"testkey":"testval"}
-def mock_json():
-    return mock_data
+from .util import mock_json, mock_data
 
 class TestAttacks(unittest.TestCase):
     def test_list_endpoint(self) -> None:

@@ -9,13 +9,11 @@ import unittest
 from gremlinapi.config import GremlinAPIConfig as config
 from gremlinapi.http_clients import get_gremlin_httpclient, GremlinAPIHttpClient
 
+from .util import api_key, bearer_token
+
 parentPath: str = os.path.abspath("..")
 if parentPath not in sys.path:
     sys.path.insert(0, parentPath)
-    
-api_key: str = "api-key-string"
-bearer_token: str = "bearer-token-string"
-
 
 class TestHttpClient(unittest.TestCase):
     def test_api_key(self) -> None:

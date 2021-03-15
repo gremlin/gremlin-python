@@ -8,14 +8,7 @@ import logging
 from unittest.mock import patch
 from gremlinapi.alfi import GremlinALFI
 
-log = logging.getLogger("GremlinAPI.unit_tests")
-log.setLevel(logging.DEBUG)
-
-mock_data = {"testkey":"testval"}
-def mock_json():
-    return mock_data
-mock_body = {"body":mock_data}
-mock_guid = {"guid":mock_data}
+from .util import mock_json, mock_body, mock_data, mock_guid
 
 class TestAlfi(unittest.TestCase):
     @patch('requests.post')
