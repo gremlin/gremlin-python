@@ -142,28 +142,3 @@ class TestAttackHelpers(unittest.TestCase):
         helper = GremlinNetworkAttackHelper()
         helper_output = helper._port_maker(expected_output)
         self.assertEqual(expected_output, helper_output)
-
-    # GremlinCPUAttack
-    # GremlinMemoryAttack
-    # GremlinDiskSpaceAttack
-    # GremlinDiskIOAttack
-    # GremlinShutdownAttack
-    # GremlinProcessKillerAttack
-    # GremlinTimeTravelAttack
-    # GremlinBlackholeAttack
-    # GremlinLatencyAttack
-    # GremlinPacketLossAttack
-    # def test_list_endpoint(self) -> None:
-    #     test_endpoint = "test-endpoint.com"
-    #     expected_output = "%s/?source=scenario&pageSize=3&" % test_endpoint
-    #     test_kwargs = {"source":"scenario","pageSize":3}
-    #     test_output = GremlinAPIAttacks._list_endpoint(test_endpoint,**test_kwargs)
-    #     self.assertEqual(test_output, expected_output)
-    # @patch('requests.post')
-    # def test_create_attack_with_decorator(self, mock_get) -> None:
-    #     expected_output_class = GremlinAttackHelper()
-    #     test_kwargs = {"body":expected_output_class}
-    #     mock_get.return_value = requests.Response()
-    #     mock_get.return_value.status_code = 200
-    #     mock_get.return_value.json = mock_json
-    #     self.assertEqual(GremlinAPIAttacks.create_attack(**test_kwargs), mock_data)
