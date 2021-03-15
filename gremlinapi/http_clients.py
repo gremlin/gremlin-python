@@ -19,7 +19,8 @@ from gremlinapi.util import get_version
 from typing import Tuple, Union, Optional, Any, Dict, Callable, Type
 
 import requests
-import urllib3 # type: ignore
+import urllib3  # type: ignore
+
 # try:
 #     import requests
 #     import requests.adapters
@@ -93,7 +94,7 @@ class GremlinAPIRequestsClient(GremlinAPIHttpClient):
     def api_call(
         cls, method: str, endpoint: str, *args: tuple, **kwargs: dict
     ) -> Tuple[Union[requests.Response, urllib3.HTTPResponse], dict]:
-        request_methods: Dict[str,Callable] = {
+        request_methods: Dict[str, Callable] = {
             "HEAD": requests.head,
             "GET": requests.get,
             "POST": requests.post,
@@ -104,7 +105,7 @@ class GremlinAPIRequestsClient(GremlinAPIHttpClient):
         uri: str = cls.base_uri(endpoint)
         client: Union[Callable, Any] = request_methods.get(method.upper())
         raw_content: dict = kwargs.pop("raw_content", {})
-        data: Union[dict,str] = {}
+        data: Union[dict, str] = {}
         if "data" in kwargs:
             data = kwargs.pop("data")
         elif "body" in kwargs:
@@ -119,14 +120,14 @@ class GremlinAPIRequestsClient(GremlinAPIHttpClient):
         kwargs["proxies"] = cls.proxies()
         if log.getEffectiveLevel() == logging.DEBUG:
             log.debug(f"httpd client kwargs: {kwargs}")
-        
+
         if data:
             resp: requests.Response = client(
                 uri, data=data, allow_redirects=False, **kwargs
             )
         else:
             resp = client(uri, allow_redirects=False, **kwargs)
-        
+
         if resp.status_code >= 400:
             error_msg: str = f"error {resp.status_code} : {resp.reason}"
             log.warning(error_msg)
@@ -178,9 +179,7 @@ class GremlinAPIurllibClient(GremlinAPIHttpClient):
                 GremlinAPIConfig.https_proxy
             )
         elif GremlinAPIConfig.http_proxy and type(GremlinAPIConfig.http_proxy) is str:
-            http_client = urllib3.ProxyManager(
-                GremlinAPIConfig.http_proxy
-            )
+            http_client = urllib3.ProxyManager(GremlinAPIConfig.http_proxy)
         else:
             http_client = urllib3.PoolManager()
 
@@ -189,9 +188,7 @@ class GremlinAPIurllibClient(GremlinAPIHttpClient):
                 method, uri, fields=form_data, **kwargs
             )
         elif request_body:
-            resp = http_client.request(
-                method, uri, body=request_body, **kwargs
-            )
+            resp = http_client.request(method, uri, body=request_body, **kwargs)
         else:
             resp = http_client.request(method, uri, **kwargs)
 

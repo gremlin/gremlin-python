@@ -158,4 +158,4 @@ class GremlinAPIConfig(object):
         Primarily used by the login function
         :return: bool
         """
-        return datetime.now(timezone.utc) >= cls.bearer_expires # type: ignore
+        return datetime.now(timezone.utc) >= cls.bearer_expires  # type: ignore

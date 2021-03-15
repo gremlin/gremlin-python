@@ -16,10 +16,15 @@ from gremlinapi.exceptions import (
 
 from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.attack_helpers import GremlinAttackHelper
-from gremlinapi.http_clients import get_gremlin_httpclient, GremlinAPIurllibClient, GremlinAPIRequestsClient
+from gremlinapi.http_clients import (
+    get_gremlin_httpclient,
+    GremlinAPIurllibClient,
+    GremlinAPIRequestsClient,
+)
 from typing import Union, Type
 
 log = logging.getLogger("GremlinAPI.client")
+
 
 class GremlinAPIAttacks(GremlinAPI):
     @classmethod
@@ -50,7 +55,14 @@ class GremlinAPIAttacks(GremlinAPI):
 
     @classmethod
     @register_cli_action("create_attack", ("body",), ("teamId",))
-    def create_attack(cls, https_client: Union[Type[GremlinAPIRequestsClient],Type[GremlinAPIurllibClient]]=get_gremlin_httpclient(), *args: tuple, **kwargs: dict) -> dict:
+    def create_attack(
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
+    ) -> dict:
         method: str = "POST"
         data: str = cls._error_if_not_attack_body(**kwargs)
         endpoint: str = cls._optional_team_endpoint("/attacks/new", **kwargs)
@@ -61,17 +73,29 @@ class GremlinAPIAttacks(GremlinAPI):
     @classmethod
     @register_cli_action("list_active_attacks", ("",), ("source", "pageSize", "teamId"))
     def list_active_attacks(
-        cls, https_client: Union[Type[GremlinAPIRequestsClient],Type[GremlinAPIurllibClient]]=get_gremlin_httpclient(), *args: tuple, **kwargs: dict
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "GET"
         endpoint: str = cls._list_endpoint("/attacks/active", **kwargs)
-        payload: dict  = cls._payload(**{"headers": https_client.header()})
+        payload: dict = cls._payload(**{"headers": https_client.header()})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
     @register_cli_action("list_attacks", ("",), ("source", "pageSize", "teamId"))
-    def list_attacks(cls, https_client: Union[Type[GremlinAPIRequestsClient],Type[GremlinAPIurllibClient]]=get_gremlin_httpclient(), *args: tuple, **kwargs: dict) -> dict:
+    def list_attacks(
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
+    ) -> dict:
         """
         :param https_client:
         :param kwargs: { source(adhoc or scenario, query), pageSize(int32, query), teamId(string, query) }
@@ -88,7 +112,12 @@ class GremlinAPIAttacks(GremlinAPI):
         "list_complete_attacks", ("",), ("source", "pageSize", "teamId")
     )
     def list_completed_attacks(
-        cls, https_client: Union[Type[GremlinAPIRequestsClient],Type[GremlinAPIurllibClient]]=get_gremlin_httpclient(), *args: tuple, **kwargs: dict
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         """
         :param https_client:
@@ -103,7 +132,14 @@ class GremlinAPIAttacks(GremlinAPI):
 
     @classmethod
     @register_cli_action("get_attack", ("guid",), ("teamId",))
-    def get_attack(cls, https_client: Union[Type[GremlinAPIRequestsClient],Type[GremlinAPIurllibClient]]=get_gremlin_httpclient(), *args: tuple, **kwargs: dict) -> dict:
+    def get_attack(
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
+    ) -> dict:
         method: str = "GET"
         guid: str = cls._error_if_not_param("guid", **kwargs)
         endpoint: str = cls._optional_team_endpoint(f"/attacks/{guid}", **kwargs)
@@ -113,7 +149,14 @@ class GremlinAPIAttacks(GremlinAPI):
 
     @classmethod
     @register_cli_action("halt_all_attacks", ("",), ("teamId",))
-    def halt_all_attacks(cls, https_client: Union[Type[GremlinAPIRequestsClient],Type[GremlinAPIurllibClient]]=get_gremlin_httpclient(), *args: tuple, **kwargs: dict) -> dict:
+    def halt_all_attacks(
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
+    ) -> dict:
         method: str = "DELETE"
         endpoint: str = cls._optional_team_endpoint("/attacks", **kwargs)
         payload: dict = cls._payload(**{"headers": https_client.header()})
@@ -122,7 +165,14 @@ class GremlinAPIAttacks(GremlinAPI):
 
     @classmethod
     @register_cli_action("halt_attack", ("guid",), ("teamId",))
-    def halt_attack(cls, https_client: Union[Type[GremlinAPIRequestsClient],Type[GremlinAPIurllibClient]]=get_gremlin_httpclient(), *args: tuple, **kwargs: dict) -> dict:
+    def halt_attack(
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
+    ) -> dict:
         method: str = "DELETE"
         guid: str = cls._error_if_not_param("guid", **kwargs)
         endpoint: str = cls._optional_team_endpoint(f"/attacks/{guid}", **kwargs)

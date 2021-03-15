@@ -15,6 +15,7 @@ parentPath: str = os.path.abspath("..")
 if parentPath not in sys.path:
     sys.path.insert(0, parentPath)
 
+
 class TestHttpClient(unittest.TestCase):
     def test_api_key(self) -> None:
         config.api_key = api_key
