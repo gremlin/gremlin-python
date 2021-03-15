@@ -6,6 +6,7 @@ from gremlinapi.attack_helpers import (
     GremlinAttackTargetHelper,
     GremlinTargetHosts,
     GremlinTargetContainers,
+    GremlinAttackCommandHelper,
 )
 
 from .util import mock_data
@@ -98,8 +99,33 @@ class TestAttackHelpers(unittest.TestCase):
         helper._filter_active_labels()
         self.assertEqual(helper._active_labels, expected_output)
 
-    #
-    # GremlinAttackCommandHelper
+    def test_impact_definition(self) -> None:
+        expected_output = {
+            "commandArgs": {"cliArgs": ["memory", "-l", "100"], "length": 100},
+            "commandType": "memory",
+        }
+
+        helper = GremlinAttackCommandHelper()
+        helper.shortType = expected_output["commandType"]
+        helper.length = expected_output["commandArgs"]["length"]
+
+        helper_output = helper.impact_definition()
+        self.assertEqual(helper_output, expected_output)
+
+    def test_impact_definition_graph(self) -> None:
+        expected_output = {
+            "infra_command_args": {
+                "cli_args": ["memory", "-l", "60"],
+                "type": "memory",
+            },
+            "infra_command_type": "memory",
+        }
+        helper = GremlinAttackCommandHelper()
+        helper.shortType = expected_output["infra_command_type"]
+
+        helper_output = helper.impact_definition_graph()
+        self.assertEqual(helper_output, expected_output)
+
     # GremlinResourceAttackHelper
     # GremlinNetworkAttackHelper
     # GremlinCPUAttack
