@@ -15,7 +15,7 @@ from gremlinapi.exceptions import (
 
 from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.http_clients import get_gremlin_httpclient,GremlinAPIRequestsClient,GremlinAPIurllibClient
-from typing import Union
+from typing import Union, Type
 
 log = logging.getLogger("GremlinAPI.client")
 
@@ -23,8 +23,8 @@ class GremlinALFI(GremlinAPI):
     @classmethod
     @register_cli_action("create_alfi_experiment", ("body",), ("teamId"))
     def create_alfi_experiment(
-        cls, https_client: Union[GremlinAPIRequestsClient,GremlinAPIurllibClient]=get_gremlin_httpclient(), *args, **kwargs
-    ) -> str:
+        cls, https_client: Union[Type[GremlinAPIRequestsClient],Type[GremlinAPIurllibClient]]=get_gremlin_httpclient(), *args, **kwargs
+    ) -> dict:
         method: str = "POST"
         data: str = cls._error_if_not_json_body(**kwargs)
         endpoint: str = cls._optional_team_endpoint("/experiments", **kwargs)
@@ -35,8 +35,8 @@ class GremlinALFI(GremlinAPI):
     @classmethod
     @register_cli_action("halt_all_alfi_experiments", ("",), ("teamId",))
     def halt_all_alfi_experiments(
-        cls, https_client: Union[GremlinAPIRequestsClient,GremlinAPIurllibClient]=get_gremlin_httpclient(), *args, **kwargs
-    ) -> str:
+        cls, https_client: Union[Type[GremlinAPIRequestsClient],Type[GremlinAPIurllibClient]]=get_gremlin_httpclient(), *args, **kwargs
+    ) -> dict:
         method: str = "DELETE"
         endpoint: str = cls._optional_team_endpoint("/experiments", **kwargs)
         payload: dict = cls._payload(**{"headers": https_client.header()})
@@ -46,8 +46,8 @@ class GremlinALFI(GremlinAPI):
     @classmethod
     @register_cli_action("get_alfi_experiment_details", ("guid",), ("teamId",))
     def get_alfi_experiment_details(
-        cls, https_client: Union[GremlinAPIRequestsClient,GremlinAPIurllibClient]=get_gremlin_httpclient(), *args, **kwargs
-    ) -> str:
+        cls, https_client: Union[Type[GremlinAPIRequestsClient],Type[GremlinAPIurllibClient]]=get_gremlin_httpclient(), *args, **kwargs
+    ) -> dict:
         method: str = "GET"
         guid: str = cls._error_if_not_param("guid", **kwargs)
         endpoint: str = cls._optional_team_endpoint(f"/experiments/{guid}", **kwargs)
@@ -58,8 +58,8 @@ class GremlinALFI(GremlinAPI):
     @classmethod
     @register_cli_action("halt_alfi_experiment", ("guid",), ("teamId",))
     def halt_alfi_experiment(
-        cls, https_client: Union[GremlinAPIRequestsClient,GremlinAPIurllibClient]=get_gremlin_httpclient(), *args, **kwargs
-    ) -> str:
+        cls, https_client: Union[Type[GremlinAPIRequestsClient],Type[GremlinAPIurllibClient]]=get_gremlin_httpclient(), *args, **kwargs
+    ) -> dict:
         method: str = "DELETE"
         guid: str = cls._error_if_not_param("guid", **kwargs)
         endpoint: str = cls._optional_team_endpoint(f"/experiments/{guid}", **kwargs)
@@ -70,8 +70,8 @@ class GremlinALFI(GremlinAPI):
     @classmethod
     @register_cli_action("list_active_alfi_experiments", ("",), ("teamId",))
     def list_active_alfi_experiments(
-        cls, https_client: Union[GremlinAPIRequestsClient,GremlinAPIurllibClient]=get_gremlin_httpclient(), *args, **kwargs
-    ) -> str:
+        cls, https_client: Union[Type[GremlinAPIRequestsClient],Type[GremlinAPIurllibClient]]=get_gremlin_httpclient(), *args, **kwargs
+    ) -> dict:
         method: str = "GET"
         endpoint: str = cls._optional_team_endpoint("/experiments/active", **kwargs)
         payload: dict = cls._payload(**{"headers": https_client.header()})
@@ -81,8 +81,8 @@ class GremlinALFI(GremlinAPI):
     @classmethod
     @register_cli_action("list_completed_alfi_experiments", ("",), ("teamId"))
     def list_completed_alfi_experiments(
-        cls, https_client: Union[GremlinAPIRequestsClient,GremlinAPIurllibClient]=get_gremlin_httpclient(), *args, **kwargs
-    ) -> str:
+        cls, https_client: Union[Type[GremlinAPIRequestsClient],Type[GremlinAPIurllibClient]]=get_gremlin_httpclient(), *args, **kwargs
+    ) -> dict:
         method: str = "GET"
         endpoint: str = cls._optional_team_endpoint("/experiments/completed", **kwargs)
         payload: dict = cls._payload(**{"headers": https_client.header()})
