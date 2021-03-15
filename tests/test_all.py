@@ -8,6 +8,7 @@ from .test_httpclient import TestHttpClient
 from .test_attacks import TestAttacks
 from .test_alfi import TestAlfi
 from .test_apikeys import TestAPIKeys
+from .test_attack_helpers import TestAttackHelpers
 
 if __name__ == "__main__":
     unittest.main()
