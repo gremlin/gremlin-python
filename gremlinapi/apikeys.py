@@ -13,7 +13,8 @@ from gremlinapi.exceptions import (
 )
 
 from gremlinapi.gremlinapi import GremlinAPI
-from gremlinapi.http_clients import get_gremlin_httpclient
+from gremlinapi.http_clients import get_gremlin_httpclient, GremlinAPIRequestsClient,GremlinAPIurllibClient
+from typing import Union
 
 
 log = logging.getLogger("GremlinAPI.client")
@@ -29,7 +30,7 @@ class GremlinAPIapikeys(GremlinAPI):
         ),
         ("teamId",),
     )
-    def create_apikey(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+    def create_apikey(cls, https_client: Union[GremlinAPIRequestsClient,GremlinAPIurllibClient]=get_gremlin_httpclient(), *args: tuple, **kwargs: dict) -> str:
         method = "POST"
         data = {
             "description": cls._error_if_not_param("description", **kwargs),
@@ -42,7 +43,7 @@ class GremlinAPIapikeys(GremlinAPI):
 
     @classmethod
     @register_cli_action("list_apikeys", ("",), ("teamId",))
-    def list_apikeys(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+    def list_apikeys(cls, https_client: Union[GremlinAPIRequestsClient,GremlinAPIurllibClient]=get_gremlin_httpclient(), *args: tuple, **kwargs: dict):
         method = "GET"
         endpoint = cls._optional_team_endpoint(f"/apikeys", **kwargs)
         payload = cls._payload(**{"headers": https_client.header()})
@@ -51,7 +52,7 @@ class GremlinAPIapikeys(GremlinAPI):
 
     @classmethod
     @register_cli_action("revoke_apikey", ("identifier",), ("teamId",))
-    def revoke_apikey(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+    def revoke_apikey(cls, https_client: Union[GremlinAPIRequestsClient,GremlinAPIurllibClient]=get_gremlin_httpclient(), *args: tuple, **kwargs: dict):
         method = "DELETE"
         identifier = cls._error_if_not_param("identifier", **kwargs)
         endpoint = cls._optional_team_endpoint(f"/apikeys/{identifier}", **kwargs)

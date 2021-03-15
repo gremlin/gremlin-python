@@ -16,7 +16,8 @@ from gremlinapi.exceptions import (
 
 from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.attack_helpers import GremlinAttackHelper
-from gremlinapi.http_clients import get_gremlin_httpclient
+from gremlinapi.http_clients import get_gremlin_httpclient, GremlinAPIurllibClient, GremlinAPIRequestsClient
+from typing import Union
 
 log = logging.getLogger("GremlinAPI.client")
 
@@ -49,7 +50,7 @@ class GremlinAPIAttacks(GremlinAPI):
 
     @classmethod
     @register_cli_action("create_attack", ("body",), ("teamId",))
-    def create_attack(cls, https_client=get_gremlin_httpclient(), *args: tuple, **kwargs: dict) -> str:
+    def create_attack(cls, https_client: Union[GremlinAPIRequestsClient,GremlinAPIurllibClient]=get_gremlin_httpclient(), *args: tuple, **kwargs: dict) -> str:
         method: str = "POST"
         data: str = cls._error_if_not_attack_body(**kwargs)
         endpoint: str = cls._optional_team_endpoint("/attacks/new", **kwargs)
