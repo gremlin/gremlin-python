@@ -7,6 +7,7 @@ from gremlinapi.attack_helpers import (
     GremlinTargetHosts,
     GremlinTargetContainers,
     GremlinAttackCommandHelper,
+    GremlinNetworkAttackHelper,
 )
 
 from .util import mock_data
@@ -126,8 +127,22 @@ class TestAttackHelpers(unittest.TestCase):
         helper_output = helper.impact_definition_graph()
         self.assertEqual(helper_output, expected_output)
 
-    # GremlinResourceAttackHelper
-    # GremlinNetworkAttackHelper
+    def test__port_maker(self) -> None:
+        expected_output = []
+        helper = GremlinNetworkAttackHelper()
+        helper_output = helper._port_maker()
+        self.assertEqual(expected_output, helper_output)
+
+        expected_output = ["80"]
+        helper = GremlinNetworkAttackHelper()
+        helper_output = helper._port_maker(80)
+        self.assertEqual(expected_output, helper_output)
+
+        expected_output = ["8080", "433", "23"]
+        helper = GremlinNetworkAttackHelper()
+        helper_output = helper._port_maker(expected_output)
+        self.assertEqual(expected_output, helper_output)
+
     # GremlinCPUAttack
     # GremlinMemoryAttack
     # GremlinDiskSpaceAttack
