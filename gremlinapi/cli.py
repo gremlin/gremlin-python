@@ -155,7 +155,7 @@ def _parse_args():
     cli_module = importlib.import_module("gremlinapi.cli.cli")
     parser = _get_parser(cli_module)
     try:
-        import argcomplete
+        import argcomplete # type: ignore
 
         argcomplete.autocomplete(parser)
     except Exception:

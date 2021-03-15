@@ -173,7 +173,7 @@ class GremlinAPIUsers(GremlinAPI):
 
     @classmethod
     @register_cli_action("update_user_self", ("body",), ("",))
-    def get_user_self(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
+    def update_user_self(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
         method = "PATCH"
         data = cls._error_if_not_json_body(**kwargs)
         endpoint = f"/users/self"
