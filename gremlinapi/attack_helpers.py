@@ -12,6 +12,8 @@ from gremlinapi.exceptions import (
     GremlinParameterError,
 )
 
+from typing import Type, Optional, Union, Dict, TypedDict
+
 from gremlinapi.clients import GremlinAPIClients as clients
 from gremlinapi.containers import GremlinAPIContainers as containers
 from gremlinapi.providers import GremlinAPIProviders as providers
@@ -19,91 +21,37 @@ from gremlinapi.providers import GremlinAPIProviders as providers
 log = logging.getLogger("GremlinAPI.client")
 
 
-class GremlinAttackHelper(object):
-    def __init__(self, *args, **kwargs):
-        self._command = None
-        self._target = None
-        self.command = kwargs.get("command", GremlinCPUAttack())
-        self.target = kwargs.get("target", GremlinTargetHosts())
-
-    @property
-    def command(self):
-        return self._command
-
-    @command.setter
-    def command(self, _command=None):
-        if not issubclass(type(_command), GremlinAttackCommandHelper):
-            error_msg = f"Command needs to be a child class of {type(GremlinAttackCommandHelper)}"
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        if issubclass(type(_command), GremlinTimeTravelAttack) and issubclass(
-            type(self.target), GremlinTargetContainers
-        ):
-            error_msg = f"TimeTravel cannot target containers"
-            log.fatal(error_msg)
-            raise GremlinCommandTargetError(error_msg)
-        self._command = _command
-
-    @property
-    def target(self):
-        return self._target
-
-    @target.setter
-    def target(self, _target=None):
-        if not issubclass(type(_target), GremlinAttackTargetHelper):
-            error_msg = f"Command needs to be a child class of {type(GremlinAttackTargetHelper)}"
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        if issubclass(type(_target), GremlinTargetContainers) and issubclass(
-            type(self.command), GremlinTimeTravelAttack
-        ):
-            error_msg = f"TimeTravel cannot target containers"
-            log.fatal(error_msg)
-            raise GremlinCommandTargetError(error_msg)
-        self._target = _target
-
-    def repr_model(self):
-        model = {
-            "target": json.loads(str(self.target)),
-            "command": json.loads(str(self.command)),
-        }
-        return model
-
-    def __repr__(self):
-        model = self.repr_model()
-        return json.dumps(model)
-
-
 class GremlinAttackTargetHelper(object):
-    def __init__(self, *args, **kwargs):
-        self._strategy_type = None
-        self._exact = 0
-        self._percent = 10
-        self._allowed_strategy_types = {"exact": "Exact", "random": "Random"}
-        self.exact = kwargs.get("exact", self._exact)
-        self.percent = kwargs.get("percent", self._percent)
-        self.strategy_type = kwargs.get(
-            "strategy_type", "random"
-        )  # Validate Random or Exact
+    def __init__(self, *args: tuple, **kwargs: dict):
+        self._strategy_type: str = ""
+        self._exact: int = 0
+        self._percent: int = 10
+        self._allowed_strategy_types: dict = {"exact": "Exact", "random": "Random"}
+        self.exact = kwargs.get("exact", self._exact)  # type: ignore
+        self.percent = kwargs.get("percent", self._percent)  # type: ignore
+        self.strategy_type = kwargs.get("strategy_type", "random")  # type: ignore
 
-    def target_definition(self):
-        model = self.repr_model()
-        _target_definition = {"strategyType": self.strategy_type, "strategy": dict()}
+    def target_definition(self) -> dict:
+        model: dict = self.repr_model()
+        _target_definition: dict = {
+            "strategyType": self.strategy_type,
+            "strategy": dict(),
+        }
         if model.get("percent", None):
             _target_definition["strategy"] = {"percentage": model["percent"]}
         elif model.get("exact", None):
             _target_definition["strategy"] = {"count": model["exact"]}
         else:
-            error_msg = "Targeting was not properly defined"
-            log.fatal(error_msg)
+            error_msg: str = "Targeting was not properly defined"
+            log.error(error_msg)
             raise GremlinCommandTargetError(error_msg)
-        if type(model.get("containers")) == dict and model.get("containers").get(
-            "multiSelectLabels"
-        ):
+        if type(model.get("containers")) == dict and model.get(
+            "containers", dict()
+        ).get("multiSelectLabels"):
             _target_definition["strategy"]["multiSelectLabels"] = model["containers"][
                 "multiSelectLabels"
             ]
-        if type(model.get("hosts")) == dict and model.get("hosts").get(
+        if type(model.get("hosts")) == dict and model.get("hosts", dict()).get(
             "multiSelectLabels"
         ):
             _target_definition["strategy"]["multiSelectLabels"] = model["hosts"][
@@ -111,9 +59,12 @@ class GremlinAttackTargetHelper(object):
             ]
         return _target_definition
 
-    def target_definition_graph(self):
-        model = self.repr_model()
-        _target_definition = {"strategy_type": self.strategy_type, "strategy": dict()}
+    def target_definition_graph(self) -> dict:
+        model: dict = self.repr_model()
+        _target_definition: dict = {
+            "strategy_type": self.strategy_type,
+            "strategy": dict(),
+        }
         if model.get("percent", None):
             _target_definition["strategy"] = {
                 "type": "RandomPercent",
@@ -122,18 +73,18 @@ class GremlinAttackTargetHelper(object):
         elif model.get("exact", None):
             _target_definition["strategy"] = {"type": "Exact", "count": model["exact"]}
         else:
-            error_msg = "Targeting was not properly defined"
-            log.fatal(error_msg)
+            error_msg: str = "Targeting was not properly defined"
+            log.error(error_msg)
             raise GremlinCommandTargetError(error_msg)
-        if type(model.get("containers")) == dict and model.get("containers").get(
-            "multiSelectLabels"
-        ):
+        if type(model.get("containers")) == dict and model.get(
+            "containers", dict()
+        ).get("multiSelectLabels"):
             _target_definition["target_type"] = "Container"
             _target_definition["strategy"]["attrs"] = dict()
             _target_definition["strategy"]["attrs"]["multiSelectLabels"] = model[
                 "containers"
             ]["multiSelectLabels"]
-        if type(model.get("hosts")) == dict and model.get("hosts").get(
+        if type(model.get("hosts")) == dict and model.get("hosts", dict()).get(
             "multiSelectLabels"
         ):
             _target_definition["target_type"] = "Host"
@@ -144,68 +95,236 @@ class GremlinAttackTargetHelper(object):
         return _target_definition
 
     @property
-    def exact(self):
+    def exact(self) -> int:
         return self._exact
 
     @exact.setter
-    def exact(self, _exact=None):
+    def exact(self, _exact: int = None) -> None:
         if not _exact:
             self._exact = 0
         elif isinstance(_exact, int) and _exact > 0:
             self._exact = _exact
             self._percent = 0
         else:
-            error_msg = f"Exact number of targets must be an integer greater than 0"
-            log.fatal(error_msg)
+            error_msg: str = (
+                f"Exact number of targets must be an integer greater than 0"
+            )
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
 
     @property
-    def percent(self):
+    def percent(self) -> int:
         return self._percent
 
     @percent.setter
-    def percent(self, _percent=None):
+    def percent(self, _percent: int = None) -> None:
         if not _percent:
             self._percent = 0
         elif isinstance(_percent, int) and 1 <= _percent <= 100:
             self._percent = _percent
             self._exact = 0
         else:
-            error_msg = f"Target percentage must be an integer between 1 and 100"
-            log.fatal(error_msg)
+            error_msg: str = f"Target percentage must be an integer between 1 and 100"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
 
     @property
-    def strategy_type(self):
+    def strategy_type(self) -> str:
         return self._strategy_type
 
     @strategy_type.setter
-    def strategy_type(self, _target_type=None):
+    def strategy_type(self, _target_type: str = None) -> None:
         if not isinstance(_target_type, str) or not self._allowed_strategy_types.get(
             _target_type.lower(), None
         ):
-            error_msg = f"strategy_type needs to be one of {str(self._allowed_strategy_types.keys())[1:-2]}"
-            log.fatal(error_msg)
+            error_msg: str = f"strategy_type needs to be one of {str(self._allowed_strategy_types.keys())[1:-2]}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._strategy_type = self._allowed_strategy_types.get(
             _target_type.lower(), None
         )
 
-    def repr_model(self):
-        model = dict()
+    def repr_model(self) -> dict:
+        model: dict = dict()
         model["type"] = self.strategy_type
         if self.exact >= 0 and not self.percent:
             model["exact"] = str(self.exact)
         elif self.strategy_type == "Random":
             model["percent"] = self.percent
         else:
-            error_msg = f"Type not correctly set, needs to be one of {str(self._allowed_strategy_types.keys())[1:-2]}"
+            error_msg: str = f"Type not correctly set, needs to be one of {str(self._allowed_strategy_types.keys())[1:-2]}"
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         return model
 
-    def __repr__(self):
-        model = self.repr_model()
+    def __repr__(self) -> str:
+        model: dict = self.repr_model()
+        return json.dumps(model)
+
+
+class GremlinAttackCommandHelper(object):
+    def __init__(self, *args: tuple, **kwargs: dict):
+        self._length: int = 60
+        self._commandType: str = ""
+        self._shortType: str = ""
+        self._typeMap: dict = {
+            "cpu": "CPU",
+            "memory": "Memory",
+            "disk": "Disk",
+            "io": "IO",
+            "process_killer": "Process Killer",
+            "shutdown": "Shutdown",
+            "time_travel": "Time Travel",
+            "blackhole": "Blackhole",
+            "dns": "DNS",
+            "latency": "Latency",
+            "packet_loss": "Packet Loss",
+        }
+        self.length = kwargs.get("length", 60)  # type: ignore
+
+    def impact_definition(self) -> dict:
+        model: dict = self.repr_model()
+        _impact_definition: dict = {
+            "commandArgs": {"cliArgs": [str(self.shortType)], "length": self.length},
+            "commandType": str(self.shortType),
+        }
+        _impact_definition["commandArgs"]["cliArgs"].extend(model["args"])
+        return _impact_definition
+
+    def impact_definition_graph(self) -> dict:
+        model: dict = self.repr_model()
+        _impact_definition: dict = {
+            "infra_command_args": {
+                "cli_args": [str(self.shortType)],
+                "type": str(self.shortType),
+            },
+            "infra_command_type": str(self.shortType),
+        }
+        _impact_definition["infra_command_args"]["cli_args"].extend(model["args"])
+        return _impact_definition
+
+    @property
+    def commandType(self) -> str:
+        return self._commandType
+
+    @commandType.setter
+    def commandType(self, _commandType: str = None) -> None:
+        if not isinstance(_commandType, str):
+            error_msg: str = (
+                f"commandType expects a string, received {type(_commandType)}"
+            )
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+        try:
+            self._shortType = list(self._typeMap.keys())[
+                list(self._typeMap.values()).index(_commandType)
+            ]
+        except ValueError:
+            error_msg = (
+                f"commandType needs to be one of: {str(self._typeMap.values())[1:-2]}"
+            )
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._commandType = _commandType
+
+    @property
+    def length(self) -> int:
+        return self._length
+
+    @length.setter
+    def length(self, _length: int = None) -> None:
+        if not (
+            isinstance(_length, int) and 1 <= _length <= 31449600
+        ):  # Roughly 1 year in seconds
+            error_msg: str = (
+                f"Attack length needs to be an integer between 1 and 31449600"
+            )
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._length = _length
+
+    @property
+    def shortType(self) -> str:
+        return self._shortType
+
+    @shortType.setter
+    def shortType(self, _shortType: str = None) -> None:
+        if not isinstance(_shortType, str):
+            error_msg: str = f"type_ expects a string, received {type(_shortType)}"
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+        if not _shortType.lower() in self._typeMap:
+            error_msg = f"invalid attack type, expected one of {str(self._typeMap.keys())[1:-2]}"
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._commandType = self._typeMap[_shortType]
+        self._shortType = _shortType
+
+    def repr_model(self) -> dict:
+        model: dict = {
+            "type": self.shortType,
+            "commandType": self.commandType,
+            "args": ["-l", str(self.length)],
+        }
+        return model
+
+    def __repr__(self) -> str:
+        model: dict = self.repr_model()
+        return json.dumps(model)
+
+
+class GremlinAttackHelper(object):
+    def __init__(self, *args: tuple, **kwargs: dict):
+        self._command: GremlinAttackCommandHelper = None  # type: ignore
+        self._target: GremlinAttackTargetHelper = None  # type: ignore
+        self.command: GremlinCPUAttack = kwargs.get("command", GremlinCPUAttack())  # type: ignore
+        self.target: GremlinTargetHosts = kwargs.get("target", GremlinTargetHosts())  # type: ignore
+
+    @property
+    def command(self) -> GremlinAttackCommandHelper:
+        return self._command
+
+    @command.setter
+    def command(self, _command: GremlinAttackCommandHelper) -> None:
+        if not issubclass(type(_command), GremlinAttackCommandHelper):
+            error_msg: str = f"Command needs to be a child class of {type(GremlinAttackCommandHelper)}"
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+        if issubclass(type(_command), GremlinTimeTravelAttack) and issubclass(
+            type(self.target), GremlinTargetContainers
+        ):
+            error_msg = f"TimeTravel cannot target containers"
+            log.error(error_msg)
+            raise GremlinCommandTargetError(error_msg)
+        self._command = _command
+
+    @property
+    def target(self) -> GremlinAttackTargetHelper:
+        return self._target
+
+    @target.setter
+    def target(self, _target: GremlinAttackTargetHelper) -> None:
+        if not issubclass(type(_target), GremlinAttackTargetHelper):
+            error_msg: str = f"Command needs to be a child class of {type(GremlinAttackTargetHelper)}"
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+        if issubclass(type(_target), GremlinTargetContainers) and issubclass(
+            type(self.command), GremlinTimeTravelAttack
+        ):
+            error_msg = f"TimeTravel cannot target containers"
+            log.error(error_msg)
+            raise GremlinCommandTargetError(error_msg)
+        self._target = _target
+
+    def repr_model(self) -> dict:
+        model: dict = {
+            "target": json.loads(str(self.target)),
+            "command": json.loads(str(self.command)),
+        }
+        return model
+
+    def __repr__(self) -> str:
+        model: dict = self.repr_model()
         return json.dumps(model)
 
 
@@ -523,113 +642,6 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
     #                 'multiSelectLabels': self.labels
     #             }
     #     return json.dumps(model)
-
-
-class GremlinAttackCommandHelper(object):
-    def __init__(self, *args, **kwargs):
-        self._length = 60
-        self._commandType = str()
-        self._shortType = str()
-        self._typeMap = {
-            "cpu": "CPU",
-            "memory": "Memory",
-            "disk": "Disk",
-            "io": "IO",
-            "process_killer": "Process Killer",
-            "shutdown": "Shutdown",
-            "time_travel": "Time Travel",
-            "blackhole": "Blackhole",
-            "dns": "DNS",
-            "latency": "Latency",
-            "packet_loss": "Packet Loss",
-        }
-        self.length = kwargs.get("length", 60)
-
-    def impact_definition(self):
-        model = self.repr_model()
-        _impact_definition = {
-            "commandArgs": {"cliArgs": [str(self.shortType)], "length": self.length},
-            "commandType": str(self.shortType),
-        }
-        _impact_definition["commandArgs"]["cliArgs"].extend(model["args"])
-        return _impact_definition
-
-    def impact_definition_graph(self):
-        model = self.repr_model()
-        _impact_definition = {
-            "infra_command_args": {
-                "cli_args": [str(self.shortType)],
-                "type": str(self.shortType),
-            },
-            "infra_command_type": str(self.shortType),
-        }
-        _impact_definition["infra_command_args"]["cli_args"].extend(model["args"])
-        return _impact_definition
-
-    @property
-    def commandType(self):
-        return self._commandType
-
-    @commandType.setter
-    def commandType(self, _commandType=None):
-        if not isinstance(_commandType, str):
-            error_msg = f"commandType expects a string, received {type(_commandType)}"
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        try:
-            self._shortType = list(self._typeMap.keys())[
-                list(self._typeMap.values()).index(_commandType)
-            ]
-        except ValueError:
-            error_msg = (
-                f"commandType needs to be one of: {str(self._typeMap.values())[1:-2]}"
-            )
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        self._commandType = _commandType
-
-    @property
-    def length(self):
-        return self._length
-
-    @length.setter
-    def length(self, _length=None):
-        if not (
-            isinstance(_length, int) and 1 <= _length <= 31449600
-        ):  # Roughly 1 year in seconds
-            error_msg = f"Attack length needs to be an integer between 1 and 31449600"
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        self._length = _length
-
-    @property
-    def shortType(self):
-        return self._shortType
-
-    @shortType.setter
-    def shortType(self, _shortType=None):
-        if not isinstance(_shortType, str):
-            error_msg = f"type_ expects a string, received {type(_shortType)}"
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        if not _shortType.lower() in self._typeMap:
-            error_msg = f"invalid attack type, expected one of {str(self._typeMap.keys())[1:-2]}"
-            log.fatal(error_msg)
-            raise GremlinParameterError(error_msg)
-        self._commandType = self._typeMap[_shortType]
-        self._shortType = _shortType
-
-    def repr_model(self):
-        model = {
-            "type": self.shortType,
-            "commandType": self.commandType,
-            "args": ["-l", str(self.length)],
-        }
-        return model
-
-    def __repr__(self):
-        model = self.repr_model()
-        return json.dumps(model)
 
 
 class GremlinResourceAttackHelper(GremlinAttackCommandHelper):
