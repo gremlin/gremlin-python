@@ -7,7 +7,7 @@ import logging
 
 log = logging.getLogger("GremlinAPI.client")
 
-_version = "0.9.43"
+_version = "0.9.44"
 
 
 def get_version():
