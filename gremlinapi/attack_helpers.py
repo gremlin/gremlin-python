@@ -669,7 +669,7 @@ class GremlinResourceAttackHelper(GremlinAttackCommandHelper):
         return self._directory
 
     @directory.setter
-    def directory(self, _directory: str=None):
+    def directory(self, _directory: str=None) -> None:
         if not isinstance(_directory, str):
             error_msg: str = f"directory requires a string, received {type(_directory)}"
             log.error(error_msg)
@@ -681,7 +681,7 @@ class GremlinResourceAttackHelper(GremlinAttackCommandHelper):
         return self._percent
 
     @percent.setter
-    def percent(self, _percent: int=None):
+    def percent(self, _percent: int=None) -> None:
         if not (isinstance(_percent, int) and 1 <= _percent <= 100):
             error_msg: str = f"percent is required to be an int between 1 and 100"
             log.error(error_msg)
@@ -693,7 +693,7 @@ class GremlinResourceAttackHelper(GremlinAttackCommandHelper):
         return self._workers
 
     @workers.setter
-    def workers(self, _workers: int=None):
+    def workers(self, _workers: int=None) -> None:
         if not (isinstance(_workers, int) and _workers >= 1):
             error_msg: str = "workers requires a positive integer"
             log.error(error_msg)
@@ -816,7 +816,7 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
         return self._ips
 
     @ips.setter
-    def ips(self, _ips: Union[str, list]=None):
+    def ips(self, _ips: Union[str, list]=None) -> None:
         if not _ips:
             pass
         elif isinstance(_ips, str):
@@ -838,7 +838,7 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
         return self._hostnames
 
     @hostnames.setter
-    def hostnames(self, _hostnames: Union[str,list]=None):
+    def hostnames(self, _hostnames: Union[str,list]=None) -> None:
         if not _hostnames:
             pass
         elif isinstance(_hostnames, str):
@@ -910,7 +910,7 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
         return self._tags
 
     @tags.setter
-    def tags(self, _tags: Union[list,dict]=None):
+    def tags(self, _tags: Union[list,dict]=None) -> None:
         if isinstance(_tags, dict):
             for _tag in _tags:
                 if self._valid_tag_pair(_tag, _tags[_tag]):
@@ -977,7 +977,7 @@ class GremlinCPUAttack(GremlinResourceAttackHelper):
         return self._capacity
 
     @capacity.setter
-    def capacity(self, _capacity: int=None):
+    def capacity(self, _capacity: int=None) -> None:
         if not (isinstance(_capacity, int) and 1 <= _capacity <= 100):
             error_msg: str = f"Capacity expects an integer between 1 and 100"
             log.error(error_msg)
@@ -1018,12 +1018,12 @@ class GremlinCPUAttack(GremlinResourceAttackHelper):
 class GremlinMemoryAttack(GremlinResourceAttackHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
         super().__init__(*args, **kwargs)
-        self.shortType = "memory"
-        self._allowedAmountTypes = ["MB", "GB", "%"]
-        self._amount = "75"
-        self._amountType = "%"
-        self.amount = kwargs.get("amount", 100)  # ['-g' || '-m' || '-p'], int
-        self.amountType = kwargs.get("amountType", "%")  # ['-g' || '-m' || '-p']
+        self.shortType: str = "memory"
+        self._allowedAmountTypes: list = ["MB", "GB", "%"]
+        self._amount: int = 75
+        self._amountType: str = "%"
+        self.amount = kwargs.get("amount", 100) # type: ignore
+        self.amountType = kwargs.get("amountType", "%") # type: ignore
 
     # def impact_definition(self):
     #     model = json.loads(self.__repr__())
@@ -1032,44 +1032,44 @@ class GremlinMemoryAttack(GremlinResourceAttackHelper):
     #     return _impact_definition
 
     @property
-    def amount(self):
+    def amount(self) -> int:
         return self._amount
 
     @amount.setter
-    def amount(self, _amount=None):
+    def amount(self, _amount: int=None) -> None:
         if not (isinstance(_amount, int) and _amount >= 1):
-            error_msg = f"amount expects a positive integer, received {type(_amount)}"
-            log.fata(error_msg)
+            error_msg: str = f"amount expects a positive integer, received {type(_amount)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         if self.amountType == "%" and not 1 <= _amount <= 100:
             error_msg = f"amount must be an integer between 1 and 100 when amountType is set to %"
-            log.fatal(error_msg)
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._amount = _amount
 
     @property
-    def amountType(self):
+    def amountType(self) -> str:
         return self._amountType
 
     @amountType.setter
-    def amountType(self, _amountType=None):
+    def amountType(self, _amountType: str=None) -> None:
         if not (
             isinstance(_amountType, str)
             and _amountType.upper() in self._allowedAmountTypes
         ):
-            error_msg = f"amountType expects a string with a value belonging to {str(self._allowedAmountTypes)[1:-2]}"
-            log.fatal(error_msg)
+            error_msg: str = f"amountType expects a string with a value belonging to {str(self._allowedAmountTypes)[1:-2]}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         if _amountType == "%" and not 1 <= self.amount <= 100:
             error_msg = (
                 f"amountType cannot be set to % while amount is not between 1 and 100"
             )
-            log.fatal(error_msg)
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._amountType = _amountType.upper()
 
-    def repr_model(self):
-        model = super().repr_model()
+    def repr_model(self) -> dict:
+        model: dict = super().repr_model()
         if self.amountType == "MB":
             model["args"].extend(["-m", str(self.amount)])
         elif self.amountType == "GB":
@@ -1077,8 +1077,8 @@ class GremlinMemoryAttack(GremlinResourceAttackHelper):
         elif self.amountType == "%":
             model["args"].extend(["-p", str(self.amount)])
         else:
-            error_msg = f"Fatal error, data model may be corrupted, amountType: {self._amountType} is not valid"
-            log.fatal(error_msg)
+            error_msg: str = f"Fatal error, data model may be corrupted, amountType: {self._amountType} is not valid"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         return model
 
@@ -1100,14 +1100,14 @@ class GremlinMemoryAttack(GremlinResourceAttackHelper):
 class GremlinDiskSpaceAttack(GremlinResourceAttackHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
         super().__init__(*args, **kwargs)
-        self.shortType = "disk"
-        self.blocksize = kwargs.get("blocksize", 4)
-        self.directory = kwargs.get("directory", "/tmp")
-        self.percent = kwargs.get("percent", 100)
-        self.workers = kwargs.get("workers", 1)
+        self.shortType: str = "disk"
+        self.blocksize: int = kwargs.get("blocksize", 4) # type: ignore
+        self.directory: str = kwargs.get("directory", "/tmp") # type: ignore
+        self.percent: int = kwargs.get("percent", 100) # type: ignore
+        self.workers: int = kwargs.get("workers", 1) # type: ignore
 
-    def repr_model(self):
-        model = super().repr_model()
+    def repr_model(self) -> dict:
+        model: dict = super().repr_model()
         model["args"].extend(["-d", str(self.directory)])
         model["args"].extend(["-w", str(self.workers)])
         model["args"].extend(["-b", str(self.blocksize)])
@@ -1126,43 +1126,43 @@ class GremlinDiskSpaceAttack(GremlinResourceAttackHelper):
 class GremlinDiskIOAttack(GremlinResourceAttackHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
         super().__init__(*args, **kwargs)
-        self.shortType = "io"
-        self._allowed_modes = ["r", "rw", "w"]
-        self._blockcount = 1
-        self._mode = "rw"
-        self.blockcount = kwargs.get("blockcount", 1)  # -c, int
-        self.blocksize = kwargs.get("blocksize", 4)  # -s, int
-        self.directory = kwargs.get("directory", "/tmp")  # -d, str
-        self.mode = kwargs.get("mode", "rw")  # -m, str
-        self.workers = kwargs.get("workers", 1)  # -w, int
+        self.shortType: str = "io"
+        self._allowed_modes: list = ["r", "rw", "w"]
+        self._blockcount: int = 1
+        self._mode: str = "rw"
+        self.blockcount: int = kwargs.get("blockcount", 1) # type: ignore
+        self.blocksize: int = kwargs.get("blocksize", 4) # type: ignore
+        self.directory: str = kwargs.get("directory", "/tmp") # type: ignore
+        self.mode: str = kwargs.get("mode", "rw") # type: ignore
+        self.workers: int = kwargs.get("workers", 1) # type: ignore
 
     @property
-    def blockcount(self):
+    def blockcount(self) -> int:
         return self._blockcount
 
     @blockcount.setter
-    def blockcount(self, _blockcount=None):
+    def blockcount(self, _blockcount: int=None) -> None:
         if not (isinstance(_blockcount, int) and _blockcount >= 1):
-            error_msg = f"blockcount requires a positive integer"
+            error_msg: str = f"blockcount requires a positive integer"
             if log.getEffectiveLevel() == logging.DEBUG:
                 log.debug(error_msg)
             raise GremlinParameterError(error_msg)
         self._blockcount = _blockcount
 
     @property
-    def mode(self):
+    def mode(self) -> str:
         return self._mode
 
     @mode.setter
-    def mode(self, _mode=None):
+    def mode(self, _mode: str=None) -> None:
         if not (isinstance(_mode, str) and _mode.lower() in self._allowed_modes):
-            error_msg = f"mode needs to be one of {str(self._allowed_modes)[1:-2]}"
-            log.fatal(error_msg)
+            error_msg: str = f"mode needs to be one of {str(self._allowed_modes)[1:-2]}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._mode = _mode.lower()
 
-    def repr_model(self):
-        model = super().repr_model()
+    def repr_model(self) -> dict:
+        model: dict = super().repr_model()
         model["args"].extend(["-c", str(self.blockcount)])
         model["args"].extend(["-d", self.directory])
         model["args"].extend(["-m", self.mode])
@@ -1183,38 +1183,38 @@ class GremlinDiskIOAttack(GremlinResourceAttackHelper):
 class GremlinShutdownAttack(GremlinStateAttackHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
         super().__init__(*args, **kwargs)
-        self.shortType = "shutdown"
-        self._delay = 1
-        self._reboot = False
-        self.delay = kwargs.get("delay", 1)  # -d, int
-        self.reboot = kwargs.get("reboot", False)  # -r
+        self.shortType: str = "shutdown"
+        self._delay: int = 1
+        self._reboot: bool = False
+        self.delay: int = kwargs.get("delay", 1) # type: ignore
+        self.reboot: bool = kwargs.get("reboot", False) # type: ignore
 
     @property
-    def delay(self):
+    def delay(self) -> int:
         return self._delay
 
     @delay.setter
-    def delay(self, _delay=None):
+    def delay(self, _delay: int=None) -> None:
         if not (isinstance(_delay, int) and _delay >= 1):
-            error_msg = f"delay expects a positive {type(int)}"
-            log.fatal(error_msg)
+            error_msg: str = f"delay expects a positive {type(int)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._delay = _delay
 
     @property
-    def reboot(self):
+    def reboot(self) -> bool:
         return self._reboot
 
     @reboot.setter
-    def reboot(self, _reboot=None):
+    def reboot(self, _reboot: bool=None) -> None:
         if not isinstance(_reboot, bool):
-            error_msg = f"reboot expects a {type(bool)}"
-            log.fatal(error_msg)
+            error_msg: str = f"reboot expects a {type(bool)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._reboot = _reboot
 
-    def repr_model(self):
-        model = super().repr_model()
+    def repr_model(self) -> dict:
+        model: dict = super().repr_model()
         model["args"] = ["-d", str(self.delay)]
         if self.reboot:
             model["args"].append("-r")
@@ -1231,106 +1231,106 @@ class GremlinShutdownAttack(GremlinStateAttackHelper):
 class GremlinProcessKillerAttack(GremlinStateAttackHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
         super().__init__(*args, **kwargs)
-        self.shortType = "process_killer"
-        self._exact = False
-        self._full_match = False
-        self._group = str()
-        self._interval = 1
-        self._kill_children = False
-        self._process = str()
-        self._target_newest = False
-        self._target_oldest = False
-        self._user = str()
-        self.exact = kwargs.get("exact", False)  # -e
-        self.full_match = kwargs.get("full_match", False)  # -f
-        self.group = kwargs.get("group", str())  # -g, str
-        self.interval = kwargs.get("interval", 1)  # -i, int
-        self.kill_children = kwargs.get("kill_children", False)  # -c
-        self.process = kwargs.get("process", str())  # -p, str
-        self.target_newest = kwargs.get("target_newest", False)  # -n
-        self._target_oldest = kwargs.get("target_oldest", False)  # -o
-        self.user = kwargs.get("user", str())  # -p, str
+        self.shortType: str = "process_killer"
+        self._exact: bool = False
+        self._full_match:bool = False
+        self._group: str = str()
+        self._interval: int = 1
+        self._kill_children: bool = False
+        self._process: str = str()
+        self._target_newest: bool = False
+        self._target_oldest: bool = False
+        self._user: str = str()
+        self.exact: bool = kwargs.get("exact", False) # type: ignore
+        self.full_match: bool = kwargs.get("full_match", False) # type: ignore
+        self.group: str = kwargs.get("group", str()) # type: ignore
+        self.interval: int = kwargs.get("interval", 1) # type: ignore
+        self.kill_children: bool= kwargs.get("kill_children", False) # type: ignore
+        self.process: str = kwargs.get("process", str()) # type: ignore
+        self.target_newest: bool = kwargs.get("target_newest", False) # type: ignore
+        self.target_oldest: bool = kwargs.get("target_oldest", False) # type: ignore
+        self.user : str= kwargs.get("user", str()) # type: ignore
 
     @property
-    def exact(self):
+    def exact(self) -> bool:
         return self._exact
 
     @exact.setter
-    def exact(self, _exact=None):
+    def exact(self, _exact: bool=None) ->  None:
         if not isinstance(_exact, bool):
-            error_msg = f"exact expects type {type(bool)}"
-            log.fatal(error_msg)
+            error_msg: str = f"exact expects type {type(bool)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._exact = _exact
 
     @property
-    def full_match(self):
+    def full_match(self) -> bool:
         return self._full_match
 
     @full_match.setter
-    def full_match(self, _full_match=None):
+    def full_match(self, _full_match: bool=None) -> None:
         if not _full_match:
             self._full_match = False
         elif not isinstance(_full_match, bool):
-            error_msg = f"exact expects type {type(bool)}"
-            log.fatal(error_msg)
+            error_msg: str = f"exact expects type {type(bool)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._full_match = True
 
     @property
-    def group(self):
+    def group(self) -> str:
         return self._group
 
     @group.setter
-    def group(self, _group=None):
+    def group(self, _group: str=None) -> None:
         if not isinstance(_group, str):
-            error_msg = f"group expects type {type(str)}"
-            log.fatal(error_msg)
+            error_msg: str = f"group expects type {type(str)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._group = _group
 
     @property
-    def interval(self):
+    def interval(self) -> int:
         return self._interval
 
     @interval.setter
-    def interval(self, _interval=None):
+    def interval(self, _interval: int=None) -> None:
         if not (isinstance(_interval, int) and _interval >= 1):
-            error_msg = f"group expects positive integer of type {type(int)}"
-            log.fatal(error_msg)
+            error_msg: str = f"group expects positive integer of type {type(int)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._interval = _interval
 
     @property
-    def kill_children(self):
+    def kill_children(self) -> bool:
         return self._kill_children
 
     @kill_children.setter
-    def kill_children(self, _kill_children=None):
+    def kill_children(self, _kill_children: bool=None) -> None:
         if not isinstance(_kill_children, bool):
-            error_msg = f"kill_children expects {type(bool)}"
-            log.fatal(error_msg)
+            error_msg: str = f"kill_children expects {type(bool)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._kill_children = _kill_children
 
     @property
-    def process(self):
+    def process(self) ->  str:
         return self._process
 
     @process.setter
-    def process(self, _process=None):
+    def process(self, _process: str=None) -> None:
         if not isinstance(_process, str):
-            error_msg = f"process expects {type(str)}"
-            log.fatal(error_msg)
+            error_msg: str = f"process expects {type(str)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._process = _process
 
     @property
-    def target_newest(self):
+    def target_newest(self) -> bool:
         return self._target_newest
 
     @target_newest.setter
-    def target_newest(self, _target_newest=None):
+    def target_newest(self, _target_newest: bool=None) -> None:
         if isinstance(_target_newest, bool):
             if _target_newest == True:
                 self._target_newest = True
@@ -1338,52 +1338,52 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
             else:
                 self._target_newest = False
         else:
-            error_msg = f"target_newest expects type {type(bool)}"
-            log.fatal(error_msg)
+            error_msg: str = f"target_newest expects type {type(bool)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
 
     @property
-    def target_oldest(self):
+    def target_oldest(self) -> bool:
         return self._target_oldest
 
     @target_oldest.setter
-    def target_oldest(self, _target_oldest=None):
+    def target_oldest(self, _target_oldest: bool=None) -> None:
         if isinstance(_target_oldest, bool):
             if _target_oldest == True:
                 self._target_oldest = True
                 self._target_newest = False
             else:
-                self.target_oldest = False
+                self._target_oldest = False
         else:
-            error_msg = f"target_oldest expects type {type(bool)}"
-            log.fatal(error_msg)
+            error_msg: str = f"target_oldest expects type {type(bool)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
 
     @property
-    def user(self):
+    def user(self) -> str:
         return self._user
 
     @user.setter
-    def user(self, _user=None):
+    def user(self, _user: str=None) -> None:
         if not _user:
-            self._user = None
+            self._user = ''
         elif isinstance(_user, str):
             self._user = _user
         else:
-            error_msg = f"user expects {type(str)}"
-            log.fatal(error_msg)
+            error_msg: str = f"user expects {type(str)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
 
-    def repr_model(self):
-        model = super().repr_model()
+    def repr_model(self) -> dict:
+        model: dict = super().repr_model()
         model["args"].extend(["-i", str(self.interval)])
         if self.group:
             model["args"].extend(["-g", self.group])
         if self.process:
             model["args"].extend(["-p", self.process])
         else:
-            error_msg = f"process is required to a be a non-empty string"
-            log.fatal(error_msg)
+            error_msg: str = f"process is required to a be a non-empty string"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         if self.user:
             model["args"].extend(["-u", self.user])
@@ -1428,38 +1428,38 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
 class GremlinTimeTravelAttack(GremlinStateAttackHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
         super().__init__(*args, **kwargs)
-        self.shortType = "time_travel"
-        self._block_ntp = False
-        self._offset = 86400
-        self.block_ntp = kwargs.get("block_ntp", False)  # -n
-        self.offset = kwargs.get("offset", 86400)  # -o, int
+        self.shortType: str = "time_travel"
+        self._block_ntp: bool = False
+        self._offset: int = 86400
+        self.block_ntp: bool = kwargs.get("block_ntp", False) # type: ignore
+        self.offset: int = kwargs.get("offset", 86400) # type: ignore
 
     @property
-    def block_ntp(self):
+    def block_ntp(self) -> bool:
         return self._block_ntp
 
     @block_ntp.setter
-    def block_ntp(self, _block_ntp=None):
+    def block_ntp(self, _block_ntp: bool=None) -> None:
         if not isinstance(_block_ntp, bool):
-            error_msg = f"block_ntp expects type {type(bool)}"
-            log.fatal(error_msg)
+            error_msg: str = f"block_ntp expects type {type(bool)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._block_ntp = _block_ntp
 
     @property
-    def offset(self):
+    def offset(self) -> int:
         return self._offset
 
     @offset.setter
-    def offset(self, offset=None):
+    def offset(self, offset: int=None) -> None:
         if not isinstance(offset, int):
-            error_msg = f"Offset needs to be an integer, received {type(offset)}"
-            log.fatal(error_msg)
+            error_msg: str = f"Offset needs to be an integer, received {type(offset)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._offset = offset
 
-    def repr_model(self):
-        model = super().repr_model()
+    def repr_model(self) -> dict:
+        model: dict = super().repr_model()
         model["args"].extend(["-o", str(self.offset)])
         if self.block_ntp:
             model["args"].append("-n")
@@ -1476,13 +1476,13 @@ class GremlinTimeTravelAttack(GremlinStateAttackHelper):
 class GremlinBlackholeAttack(GremlinNetworkAttackHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
         super().__init__(*args, **kwargs)
-        self.shortType = "blackhole"
-        self.egress_ports = kwargs.get("egress_ports", ["^53"])  # -p, str
-        self.hostnames = kwargs.get("hostnames", "^api.gremlin.com")  # -h, str
-        self.ingress_ports = kwargs.get("ingress_ports", None)  # -n, str
+        self.shortType: str = "blackhole"
+        self.egress_ports: list = kwargs.get("egress_ports", ["^53"]) # type: ignore
+        self.hostnames: str = kwargs.get("hostnames", "^api.gremlin.com") # type: ignore
+        self.ingress_ports: list = kwargs.get("ingress_ports", []) # type: ignore
 
-    def repr_model(self):
-        model = super().repr_model()
+    def repr_model(self) ->  dict:
+        model: dict = super().repr_model()
         if len(self.egress_ports) > 0:
             model["args"].extend(["-p", ",".join(self.egress_ports)])
         if len(self.hostnames) > 0:
@@ -1491,8 +1491,8 @@ class GremlinBlackholeAttack(GremlinNetworkAttackHelper):
             model["args"].extend(["-n", ",".join(self.ingress_ports)])
         return model
 
-    def __repr__(self):
-        model = json.loads(super().__repr__())
+    def __repr__(self) ->  str:
+        model: dict = json.loads(super().__repr__())
         if len(self.egress_ports) > 0:
             model["args"].extend(["-p", ",".join(self.egress_ports)])
         if len(self.hostnames) > 0:
@@ -1505,12 +1505,12 @@ class GremlinBlackholeAttack(GremlinNetworkAttackHelper):
 class GremlinDNSAttack(GremlinNetworkAttackHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
         super().__init__(*args, **kwargs)
-        self.shortType = "dns"
-        self._allowed_protocols = ["TCP", "UDP"]
-        self.protocol = kwargs.get("protocol", None)
+        self.shortType: str = "dns"
+        self._allowed_protocols: list = ["TCP", "UDP"]
+        self.protocol: str = kwargs.get("protocol", '') # type: ignore
 
-    def repr_model(self):
-        model = super().repr_model()
+    def repr_model(self) -> dict:
+        model: dict = super().repr_model()
         return model
 
     # def __repr__(self):
@@ -1521,27 +1521,27 @@ class GremlinDNSAttack(GremlinNetworkAttackHelper):
 class GremlinLatencyAttack(GremlinNetworkAttackHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
         super().__init__(*args, **kwargs)
-        self.shortType = "latency"
-        self._delay = 100
-        self.delay = kwargs.get("delay", 100)  # -m, int
-        self.egress_ports = kwargs.get("egress_ports", ["^53"])  # -p, str
-        self.hostnames = kwargs.get("hostnames", "^api.gremlin.com")  # -h, str
-        self.source_ports = kwargs.get("source_ports", None)  # -s, str
+        self.shortType: str = "latency"
+        self._delay: int = 100
+        self.delay: int = kwargs.get("delay", 100) # type: ignore
+        self.egress_ports: list = kwargs.get("egress_ports", ["^53"]) # type: ignore
+        self.hostnames: str = kwargs.get("hostnames", "^api.gremlin.com") # type: ignore
+        self.source_ports: list = kwargs.get("source_ports", []) # type: ignore
 
     @property
-    def delay(self):
+    def delay(self) -> int:
         return self._delay
 
     @delay.setter
-    def delay(self, _delay=None):
+    def delay(self, _delay: int=None) -> None:
         if not (isinstance(_delay, int) and _delay >= 1):
-            error_msg = f"delay expects a positive integer type {type(int)}"
-            log.fatal(error_msg)
+            error_msg: str = f"delay expects a positive integer type {type(int)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._delay = _delay
 
-    def repr_model(self):
-        model = super().repr_model()
+    def repr_model(self) -> dict:
+        model: dict = super().repr_model()
         model["args"].extend(["-m", str(self.delay)])
         if len(self.egress_ports) > 0:
             model["args"].extend(["-p", ",".join(self.egress_ports)])
@@ -1566,46 +1566,46 @@ class GremlinLatencyAttack(GremlinNetworkAttackHelper):
 class GremlinPacketLossAttack(GremlinNetworkAttackHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
         super().__init__(*args, **kwargs)
-        self.shortType = "packet_loss"
-        self._corrupt = False
-        self._percent = 1
-        self.corrupt = kwargs.get("corrupt", False)  # -c
-        self.egress_ports = kwargs.get("egress_ports", ["^53"])  # -p, str
-        self.hostnames = kwargs.get("hostnames", "^api.gremlin.com")  # -h, str
-        self.percent = kwargs.get("percent", 1)  # -r, int
-        self.source_ports = kwargs.get("source_ports", None)  # -s, str
+        self.shortType: str = "packet_loss"
+        self._corrupt: bool = False
+        self._percent: int = 1
+        self.corrupt: bool = kwargs.get("corrupt", False) # type: ignore
+        self.egress_ports: list = kwargs.get("egress_ports", ["^53"]) # type: ignore
+        self.hostnames: str = kwargs.get("hostnames", "^api.gremlin.com") # type: ignore
+        self.percent: int = kwargs.get("percent", 1) # type: ignore
+        self.source_ports: list = kwargs.get("source_ports", []) # type: ignore
 
     @property
-    def corrupt(self):
+    def corrupt(self) -> bool:
         return self._corrupt
 
     @corrupt.setter
-    def corrupt(self, _corrupt=None):
+    def corrupt(self, _corrupt: bool=None) -> None:
         if not _corrupt:
             self._corrupt = False
             return
         if not isinstance(_corrupt, bool):
-            error_msg = f"corrupt expects type {type(bool)}"
-            log.fatal(error_msg)
+            error_msg: str = f"corrupt expects type {type(bool)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._corrupt = _corrupt
 
     @property
-    def percent(self):
+    def percent(self) -> int:
         return self._percent
 
     @percent.setter
-    def percent(self, _percent=None):
+    def percent(self, _percent: int=None) -> None:
         if not (isinstance(_percent, int) and 1 <= _percent <= 100):
-            error_msg = (
+            error_msg: str = (
                 f"percent expects positive integer type {type(int)} between 1 and 100"
             )
-            log.fatal(error_msg)
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._percent = _percent
 
-    def repr_model(self):
-        model = super().repr_model()
+    def repr_model(self) -> dict:
+        model: dict = super().repr_model()
         model["args"].extend(["-r", str(self.percent)])
         if len(self.egress_ports) > 0:
             model["args"].extend(["-p", ",".join(self.egress_ports)])
