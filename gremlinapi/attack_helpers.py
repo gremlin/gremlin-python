@@ -1094,10 +1094,10 @@ class GremlinDiskSpaceAttack(GremlinResourceAttackHelper):
 
     def repr_model(self):
         model = super().repr_model()
-        model["args"].expand(["-d", str(self.directory)])
-        model["args"].expand(["-w", str(self.workers)])
-        model["args"].expand(["-b", str(self.blocksize)])
-        model["args"].expand(["-p", str(self.percent)])
+        model["args"].extend(["-d", str(self.directory)])
+        model["args"].extend(["-w", str(self.workers)])
+        model["args"].extend(["-b", str(self.blocksize)])
+        model["args"].extend(["-p", str(self.percent)])
         return model
 
     # def __repr__(self):

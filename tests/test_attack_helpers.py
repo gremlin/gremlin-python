@@ -3,11 +3,24 @@ from unittest.mock import patch
 import logging
 import requests
 from gremlinapi.attack_helpers import (
+    GremlinAttackHelper,
     GremlinAttackTargetHelper,
     GremlinTargetHosts,
     GremlinTargetContainers,
     GremlinAttackCommandHelper,
     GremlinNetworkAttackHelper,
+    GremlinResourceAttackHelper,
+    GremlinCPUAttack,
+    GremlinMemoryAttack,
+    GremlinDiskSpaceAttack,
+    GremlinDiskIOAttack,
+    GremlinShutdownAttack,
+    GremlinProcessKillerAttack,
+    GremlinTimeTravelAttack,
+    GremlinBlackholeAttack,
+    GremlinDNSAttack,
+    GremlinLatencyAttack,
+    GremlinPacketLossAttack,
 )
 
 from .util import mock_data
@@ -26,6 +39,20 @@ attack_helper_params_default = {
 
 
 class TestAttackHelpers(unittest.TestCase):
+    def test_attack_helper_repr_model(self) -> None:
+        # defaults
+        expected_output = {
+            "command": {
+                "args": ["-l", "60", "-p", "100", "-c", "1"],
+                "commandType": "CPU",
+                "type": "cpu",
+            },
+            "target": {"hosts": "all", "percent": 10, "type": "Random"},
+        }
+        helper = GremlinAttackHelper()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
     def test_target_helper_target_definition(self) -> None:
         helper = GremlinAttackTargetHelper(**attack_helper_params_custom)
         test_output = helper.target_definition()
@@ -66,6 +93,13 @@ class TestAttackHelpers(unittest.TestCase):
         }
         self.assertEqual(test_output, expected_output)
 
+    def test_attack_target_helper_repr_model(self) -> None:
+        # defaults
+        expected_output = {"percent": 10, "type": "Random"}
+        helper = GremlinAttackTargetHelper()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
     @patch("requests.get")
     def test_filter_active_tags_with_decorator(self, mock_get) -> None:
         expected_output = {
@@ -84,6 +118,13 @@ class TestAttackHelpers(unittest.TestCase):
         helper._filter_active_tags()
         self.assertEqual(helper._active_tags, expected_output)
 
+    def test_target_hosts_repr_model(self) -> None:
+        # defaults
+        expected_output = {"hosts": "all", "percent": 10, "type": "Random"}
+        helper = GremlinTargetHosts()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
     @patch("requests.get")
     def test_filter_active_labels_with_decorator(self, mock_get) -> None:
         expected_output = {"os_type": ["testwindows"], "os-version": ["test10"]}
@@ -99,6 +140,13 @@ class TestAttackHelpers(unittest.TestCase):
         helper = GremlinTargetContainers()
         helper._filter_active_labels()
         self.assertEqual(helper._active_labels, expected_output)
+
+    def test_target_containers_repr_model(self) -> None:
+        # defaults
+        expected_output = {"containers": "all", "percent": 10, "type": "Random"}
+        helper = GremlinTargetContainers()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
 
     def test_impact_definition(self) -> None:
         expected_output = {
@@ -127,6 +175,20 @@ class TestAttackHelpers(unittest.TestCase):
         helper_output = helper.impact_definition_graph()
         self.assertEqual(helper_output, expected_output)
 
+    def test_attack_command_helper_repr_model(self) -> None:
+        # defaults
+        expected_output = {"args": ["-l", "60"], "commandType": "", "type": ""}
+        helper = GremlinAttackCommandHelper()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
+    def test_resource_attack_helper_repr_model(self) -> None:
+        # defaults
+        expected_output = {"args": ["-l", "60"], "commandType": "", "type": ""}
+        helper = GremlinResourceAttackHelper()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
     def test__port_maker(self) -> None:
         expected_output = []
         helper = GremlinNetworkAttackHelper()
@@ -142,3 +204,142 @@ class TestAttackHelpers(unittest.TestCase):
         helper = GremlinNetworkAttackHelper()
         helper_output = helper._port_maker(expected_output)
         self.assertEqual(expected_output, helper_output)
+
+    def test_network_attack_helper_repr_model(self) -> None:
+        # defaults
+        expected_output = {"args": ["-l", "60"], "commandType": "", "type": ""}
+        helper = GremlinNetworkAttackHelper()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
+    def test_cpu_attack_repr_model(self) -> None:
+        # defaults
+        expected_output = {
+            "args": ["-l", "60", "-p", "100", "-c", "1"],
+            "commandType": "CPU",
+            "type": "cpu",
+        }
+        helper = GremlinCPUAttack()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
+    def test_memory_attack_repr_model(self) -> None:
+        # defaults
+        expected_output = {
+            "args": ["-l", "60", "-p", "100"],
+            "commandType": "Memory",
+            "type": "memory",
+        }
+        helper = GremlinMemoryAttack()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
+    def test_disk_space_attack_repr_model(self) -> None:
+        # defaults
+        expected_output = {
+            "args": ["-l", "60", "-d", "/tmp", "-w", "1", "-b", "4", "-p", "100"],
+            "commandType": "Disk",
+            "type": "disk",
+        }
+        helper = GremlinDiskSpaceAttack()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
+    def test_disk_io_repr_model(self) -> None:
+        # defaults
+        expected_output = {
+            "args": [
+                "-l",
+                "60",
+                "-c",
+                "1",
+                "-d",
+                "/tmp",
+                "-m",
+                "rw",
+                "-s",
+                "4",
+                "-w",
+                "1",
+            ],
+            "commandType": "IO",
+            "type": "io",
+        }
+        helper = GremlinDiskIOAttack()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
+    def test_shutdown_attack_repr_model(self) -> None:
+        # defaults
+        expected_output = {
+            "args": ["-d", "1"],
+            "commandType": "Shutdown",
+            "type": "shutdown",
+        }
+        helper = GremlinShutdownAttack()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
+    def test_process_killer_attack_repr_model(self) -> None:
+        test_process = "ls"
+        kwargs = {"process": test_process}
+        # defaults
+        expected_output = {
+            "args": ["-l", "60", "-i", "1", "-p", test_process, "-f"],
+            "commandType": "Process Killer",
+            "type": "process_killer",
+        }
+        helper = GremlinProcessKillerAttack(**kwargs)
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
+    def test_time_travel_attack_repr_model(self) -> None:
+        # defaults
+        expected_output = {
+            "args": ["-l", "60", "-o", "86400"],
+            "commandType": "Time Travel",
+            "type": "time_travel",
+        }
+        helper = GremlinTimeTravelAttack()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
+    def test_black_hole_attack_repr_model(self) -> None:
+        # defaults
+        expected_output = {
+            "args": ["-l", "60", "-p", "^53", "-h", "^api.gremlin.com"],
+            "commandType": "Blackhole",
+            "type": "blackhole",
+        }
+        helper = GremlinBlackholeAttack()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
+    def test_dns_attack_repr_model(self) -> None:
+        # defaults
+        expected_output = {"args": ["-l", "60"], "commandType": "DNS", "type": "dns"}
+        helper = GremlinDNSAttack()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
+    def test_latency_attack_repr_model(self) -> None:
+        # defaults
+        expected_output = {
+            "args": ["-l", "60", "-m", "100", "-p", "^53", "-h", "^api.gremlin.com"],
+            "commandType": "Latency",
+            "type": "latency",
+        }
+        helper = GremlinLatencyAttack()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
+
+    def test_packet_loss_attack_repr_model(self) -> None:
+        # defaults
+        expected_output = {
+            "args": ["-l", "60", "-r", "1", "-p", "^53", "-h", "^api.gremlin.com"],
+            "commandType": "Packet Loss",
+            "type": "packet_loss",
+        }
+        helper = GremlinPacketLossAttack()
+        helper_output = helper.repr_model()
+        self.assertEqual(helper_output, expected_output)
