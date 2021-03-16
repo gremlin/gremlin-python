@@ -952,52 +952,52 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
 class GremlinCPUAttack(GremlinResourceAttackHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
         super().__init__(*args, **kwargs)
-        self.shortType = "cpu"
-        self._all_cores = False  # ['-a']
-        self._capacity = 100  # ['-p', int]
-        self._cores = 1  # ['-c', int]
-        self.all_cores = kwargs.get("all_cores", False)  # -a
-        self.capacity = kwargs.get("capacity", 100)  # -p, int
-        self.cores = kwargs.get("cores", 1)  # -c, int
+        self.shortType: str = "cpu"
+        self._all_cores: bool = False  # ['-a']
+        self._capacity: int = 100  # ['-p', int]
+        self._cores: int = 1  # ['-c', int]
+        self.all_cores = kwargs.get("all_cores", False) # type: ignore
+        self.capacity = kwargs.get("capacity", 100) # type: ignore
+        self.cores = kwargs.get("cores", 1) # type: ignore
 
     @property
-    def all_cores(self):
+    def all_cores(self) -> bool:
         return self._all_cores
 
     @all_cores.setter
-    def all_cores(self, _all_cores=None):
+    def all_cores(self, _all_cores: bool=None) -> None:
         if not isinstance(_all_cores, bool):
-            error_msg = f"all_cores expects a bool, received {type(_all_cores)}"
-            log.fatal(error_msg)
+            error_msg: str = f"all_cores expects a bool, received {type(_all_cores)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._all_cores = _all_cores
 
     @property
-    def capacity(self):
+    def capacity(self) -> int:
         return self._capacity
 
     @capacity.setter
-    def capacity(self, _capacity=None):
+    def capacity(self, _capacity: int=None):
         if not (isinstance(_capacity, int) and 1 <= _capacity <= 100):
-            error_msg = f"Capacity expects an integer between 1 and 100"
-            log.fatal(error_msg)
+            error_msg: str = f"Capacity expects an integer between 1 and 100"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._capacity = _capacity
 
     @property
-    def cores(self):
+    def cores(self) -> int:
         return self._cores
 
     @cores.setter
-    def cores(self, _cores=None):
+    def cores(self, _cores: int=None) -> None:
         if not (isinstance(_cores, int) and _cores >= 1):
-            error_msg = f"Cores expects a positive integer"
-            log.fatal(error_msg)
+            error_msg: str = f"Cores expects a positive integer"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._cores = _cores
 
-    def repr_model(self):
-        model = super().repr_model()
+    def repr_model(self) -> dict:
+        model: dict = super().repr_model()
         model["args"].extend(["-p", str(self.capacity)])
         if self.all_cores:
             model["args"].append("-a")
