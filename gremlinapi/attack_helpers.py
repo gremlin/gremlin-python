@@ -12,7 +12,7 @@ from gremlinapi.exceptions import (
     GremlinParameterError,
 )
 
-from typing import Type, Optional, Union, Dict, TypedDict, Any
+from typing import Type, Optional, Union, Dict, TypedDict, Any, Pattern
 
 from gremlinapi.clients import GremlinAPIClients as clients
 from gremlinapi.containers import GremlinAPIContainers as containers
@@ -647,56 +647,56 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
 class GremlinResourceAttackHelper(GremlinAttackCommandHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
         super().__init__(*args, **kwargs)
-        self._blocksize = 4
-        self._directory = "/tmp"
-        self._percent = 100
-        self._workers = 1
+        self._blocksize: int = 4
+        self._directory: str = "/tmp"
+        self._percent: int = 100
+        self._workers: int = 1
 
     @property
-    def blocksize(self):
+    def blocksize(self) -> int:
         return self._blocksize
 
     @blocksize.setter
-    def blocksize(self, _blocksize=None):
+    def blocksize(self, _blocksize: int=None) -> None:
         if not (isinstance(_blocksize, int) and _blocksize >= 1):
-            error_msg = f"blocksize requires a positive integer"
-            log.fatal(error_msg)
+            error_msg:str = f"blocksize requires a positive integer"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._blocksize = _blocksize
 
     @property
-    def directory(self):
+    def directory(self) -> str:
         return self._directory
 
     @directory.setter
-    def directory(self, _directory=None):
+    def directory(self, _directory: str=None):
         if not isinstance(_directory, str):
-            error_msg = f"directory requires a string, received {type(_directory)}"
-            log.fatal(error_msg)
+            error_msg: str = f"directory requires a string, received {type(_directory)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._directory = _directory
 
     @property
-    def percent(self):
+    def percent(self) -> int:
         return self._percent
 
     @percent.setter
-    def percent(self, _percent=None):
+    def percent(self, _percent: int=None):
         if not (isinstance(_percent, int) and 1 <= _percent <= 100):
-            error_msg = f"percent is required to be an int between 1 and 100"
-            log.fatal(error_msg)
+            error_msg: str = f"percent is required to be an int between 1 and 100"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._percent = _percent
 
     @property
-    def workers(self):
+    def workers(self) -> int:
         return self._workers
 
     @workers.setter
-    def workers(self, _workers=None):
+    def workers(self, _workers: int=None):
         if not (isinstance(_workers, int) and _workers >= 1):
-            error_msg = "workers requires a positive integer"
-            log.fatal(error_msg)
+            error_msg: str = "workers requires a positive integer"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._workers = _workers
 
@@ -709,37 +709,39 @@ class GremlinStateAttackHelper(GremlinAttackCommandHelper):
 class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
         super().__init__(*args, **kwargs)
-        self._allowed_protocols = ["ICMP", "TCP", "UDP"]
-        self._ips = list()
-        self._hostnames = ["^api.gremlin.com"]
-        self._device = None
-        self._egress_ports = ["^53"]
-        self._ingress_ports = list()
-        self._port_regex = "([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])"
-        self._port_validator = re.compile(
+        self._allowed_protocols: list = ["ICMP", "TCP", "UDP"]
+        self._ips: Union[str,list] = list()
+        self._hostnames: Union[str,list] = ["^api.gremlin.com"]
+        self._device: str = ''
+        self._egress_ports: list = ["^53"]
+        self._ids: list = []
+        self._ingress_ports: list = list()
+        self._multiSelectTags: dict = dict()
+        self._port_regex: str = "([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])"
+        self._port_validator: Pattern = re.compile(
             f"^\^?{self._port_regex}(-{self._port_regex})?$"
         )
-        self._protocol = None
-        self._providers = list()
-        self._providers_filter = None
-        self._source_ports = None
-        self._tags = list()
+        self._protocol: str = ''
+        self._providers: list = list()
+        self._providers_filter: list = list()
+        self._source_ports: list = list()
+        self._tags: list = list()
         self._tags_filter = None
-        self.device = kwargs.get("device", None)  # -d, str
-        self.ips = kwargs.get("ips", None)  # -i, str
-        self.protocol = kwargs.get("protocol", None)  # -P, str
-        self.providers = kwargs.get("providers", None)  # providers block
-        self.tags = kwargs.get("tags", None)  # tags block
+        self.device = kwargs.get("device", '') # type: ignore
+        self.ips = kwargs.get("ips", '') # type: ignore
+        self.protocol = kwargs.get("protocol", '') # type: ignore
+        self.providers = kwargs.get("providers", []) # type: ignore
+        self.tags = kwargs.get("tags", []) # type: ignore
 
-    def _filter_providers(self):
+    def _filter_providers(self) -> None:
         _providers = providers.list_providers()
         for _provider in _providers:
             self._providers_filter.extend(
                 getattr(providers, f"list_{_provider}_services")()
             )
 
-    def _port_maker(self, _ports=None):
-        port_list = list()
+    def _port_maker(self, _ports: list=None) -> list:
+        port_list: list = list()
         if not _ports:
             pass
         elif isinstance(_ports, int) or isinstance(_ports, str):
@@ -750,28 +752,28 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
                 if self._validate_port_or_range(str(_port)):
                     port_list.append(str(_port))
         else:
-            error_msg = f"_port_maker expects a {type(str)} or {type(int)} or a {type(list)} of the previous types"
-            log.fatal(error_msg)
+            error_msg: str = f"_port_maker expects a {type(str)} or {type(int)} or a {type(list)} of the previous types"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         return port_list
 
-    def _valid_tag_pair(self, tagKey=None, tagValue=None):
+    def _valid_tag_pair(self, tagKey=None, tagValue=None) -> bool:
         return True
 
-    def _validate_hostname(self, _hostname=None):
+    def _validate_hostname(self, _hostname=None) -> bool:
         return True
 
-    def _validate_ip(self, _ip=None):
+    def _validate_ip(self, _ip:Union[str,list]=None) -> bool:
         return True
 
-    def _validate_port_or_range(self, _port_or_range):
+    def _validate_port_or_range(self, _port_or_range) -> bool:
         if not self._port_validator.match(_port_or_range):
-            error_msg = f"{_port_or_range} is not a valid port or port range"
-            log.fatal(error_msg)
+            error_msg: str = f"{_port_or_range} is not a valid port or port range"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         return True
 
-    def _validate_provider(self, _provider=None):
+    def _validate_provider(self, _provider=None) -> bool:
         if not len(self._providers_filter) > 0:
             self._filter_providers()
         if _provider in self._providers_filter:
@@ -779,42 +781,42 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
         return False
 
     @property
-    def device(self):
+    def device(self) -> str:
         return self._device
 
     @device.setter
-    def device(self, _device=None):
+    def device(self, _device: str=None) -> None:
         if not _device:
-            self._device = None
+            self._device = ''
             return
         elif not isinstance(_device, str):
-            error_msg = f"device expects type {type(str)}"
-            log.fatal(error_msg)
+            error_msg: str = f"device expects type {type(str)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._device = _device
 
     @property
-    def egress_ports(self):
+    def egress_ports(self) -> list:
         return self._egress_ports
 
     @egress_ports.setter
-    def egress_ports(self, _egress_ports=None):
+    def egress_ports(self, _egress_ports: list=None) -> None:
         self._egress_ports = self._port_maker(_egress_ports)
 
     @property
-    def ingress_ports(self):
+    def ingress_ports(self) -> list:
         return self._ingress_ports
 
     @ingress_ports.setter
-    def ingress_ports(self, _ingress_ports=None):
+    def ingress_ports(self, _ingress_ports: list=None) -> None:
         self._ingress_ports = self._port_maker(_ingress_ports)
 
     @property
-    def ips(self):
+    def ips(self) -> Union[str,list]:
         return self._ips
 
     @ips.setter
-    def ips(self, _ips=None):
+    def ips(self, _ips: Union[str, list]=None):
         if not _ips:
             pass
         elif isinstance(_ips, str):
@@ -827,59 +829,59 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
                     pass
             self._ips = _ips
         else:
-            error_msg = f"valid ip addresses required"
-            log.fatal(error_msg)
+            error_msg: str = f"valid ip addresses required"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
 
     @property
-    def hostnames(self):
+    def hostnames(self) -> Union[str,list]:
         return self._hostnames
 
     @hostnames.setter
-    def hostnames(self, _hostnames=None):
+    def hostnames(self, _hostnames: Union[str,list]=None):
         if not _hostnames:
             pass
         elif isinstance(_hostnames, str):
             if not self._validate_hostname(_hostnames):
-                error_msg = f"valid hostnames required"
-                log.fatal(error_msg)
+                error_msg: str = f"valid hostnames required"
+                log.error(error_msg)
                 raise GremlinParameterError(error_msg)
             self._hostnames = [_hostnames]
         elif isinstance(_hostnames, list):
             for _hostname in _hostnames:
                 if not self._validate_hostname(_hostname):
                     error_msg = f"valid hostnames required"
-                    log.fatal(error_msg)
+                    log.error(error_msg)
                     raise GremlinParameterError(error_msg)
                 self._hostnames = _hostname
         else:
             error_msg = f"hostnames requires a {type(str)} or {type(list)}"
-            log.fatal(error_msg)
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
 
     @property
-    def protocol(self):
+    def protocol(self) -> str:
         return self._protocol
 
     @protocol.setter
-    def protocol(self, _protocol=None):
+    def protocol(self, _protocol=None) -> None:
         if not _protocol:
-            self._protocol = None
+            self._protocol = ''
             return
         elif not (
             isinstance(_protocol, str) and _protocol.upper() in self._allowed_protocols
         ):
-            error_msg = f"Protocol must be a string and one of {str(self._allowed_protocols)[1:-2]}"
-            log.fatal(error_msg)
+            error_msg: str = f"Protocol must be a string and one of {str(self._allowed_protocols)[1:-2]}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._protocol = _protocol.upper()
 
     @property
-    def providers(self):
+    def providers(self) -> list:
         return self._providers
 
     @providers.setter
-    def providers(self, _providers=None):
+    def providers(self, _providers: Union[str,list]=None) -> None:
         if not _providers:
             pass
         elif isinstance(_providers, str):
@@ -891,24 +893,24 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
                 if self._validate_provider(_provider):
                     self._providers.append(_provider)
         else:
-            error_msg = f"providers expect a {type(str)} or {type(list)}"
-            log.fatal(error_msg)
+            error_msg: str = f"providers expect a {type(str)} or {type(list)}"
+            log.error(error_msg)
             raise GremlinParameterError(error_msg)
 
     @property
-    def source_ports(self):
+    def source_ports(self) -> list:
         return self._source_ports
 
     @source_ports.setter
-    def source_ports(self, _source_ports=None):
+    def source_ports(self, _source_ports: list=None) -> None:
         self._source_ports = self._port_maker(_source_ports)
 
     @property
-    def tags(self):
+    def tags(self) -> list:
         return self._tags
 
     @tags.setter
-    def tags(self, _tags=None):
+    def tags(self, _tags: Union[list,dict]=None):
         if isinstance(_tags, dict):
             for _tag in _tags:
                 if self._valid_tag_pair(_tag, _tags[_tag]):
@@ -916,8 +918,8 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
         self._ids = []
         self.target_all_hosts = False
 
-    def repr_model(self):
-        model = super().repr_model()
+    def repr_model(self) -> dict:
+        model: dict = super().repr_model()
         if self.device:
             model["args"].extend(["-d", self.device])
         if len(self.ips) > 0:
