@@ -16,6 +16,7 @@ from .test_containers import TestContainers
 from .test_contracts import TestContracts
 from .test_executions import TestExecutions
 from .test_gremlinapi import TestAPI
+from .test_halts import TestHalts
 
 if __name__ == "__main__":
     unittest.main()
