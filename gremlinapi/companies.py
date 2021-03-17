@@ -161,7 +161,7 @@ class GremlinAPICompanies(GremlinAPI):
         cls, https_client=get_gremlin_httpclient(), **kwargs
     ) -> dict:
         method: str = "PUT"
-        identifier: dict = cls._error_if_not_param("identifier", **kwargs)
+        identifier: str = cls._error_if_not_param("identifier", **kwargs)
         email: str = cls._error_if_not_email(**kwargs)
         data: Any = cls._warn_if_not_json_body(**kwargs)
         endpoint: str = f"​/companies​/{identifier}​/users​/{email}"

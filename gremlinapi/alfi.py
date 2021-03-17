@@ -36,7 +36,7 @@ class GremlinALFI(GremlinAPI):
         **kwargs,
     ) -> dict:
         method: str = "POST"
-        data: str = cls._error_if_not_json_body(**kwargs)
+        data: dict = cls._error_if_not_json_body(**kwargs)
         endpoint: str = cls._optional_team_endpoint("/experiments", **kwargs)
         payload: dict = cls._payload(**{"headers": https_client.header(), "body": data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)

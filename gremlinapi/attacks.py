@@ -34,7 +34,7 @@ class GremlinAPIAttacks(GremlinAPI):
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         source: str = cls._info_if_not_param("source", **kwargs)
-        page_size: int = cls._info_if_not_param("pageSize", **kwargs)
+        page_size: str = cls._info_if_not_param("pageSize", **kwargs)
         if source or page_size:
             endpoint += "/?"
             if source and (source.lower() == "adhoc" or source.lower() == "scenario"):
@@ -66,7 +66,8 @@ class GremlinAPIAttacks(GremlinAPI):
         method: str = "POST"
         data: str = cls._error_if_not_attack_body(**kwargs)
         endpoint: str = cls._optional_team_endpoint("/attacks/new", **kwargs)
-        payload: dict = cls._payload(**{"headers": https_client.header(), "body": data})
+        i_payload: dict = {"headers": https_client.header(), "body": data}
+        payload: dict = cls._payload(**i_payload)
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
