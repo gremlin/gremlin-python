@@ -20,3 +20,4 @@ mock_payload = {
     "headers": "1234567890",
     "data": mock_data,
 }
+mock_uid = {"body": mock_data, "uid": "1234567890z"}
