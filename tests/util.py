@@ -6,7 +6,7 @@ mock_data = {"testkey": "testval"}
 def mock_json():
     return mock_data
 
-
+mock_team_id = '1234567890a'
 mock_body = {"body": mock_data}
 mock_guid = {"guid": mock_data}
 mock_identifier = {

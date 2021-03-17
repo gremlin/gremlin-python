@@ -58,36 +58,36 @@ class GremlinAPI(object):
     @classmethod
     def _build_query_string_option_team_endpoint(cls, endpoint, params, **kwargs):
         endpoint = cls._build_query_string_endpoint(endpoint, params, **kwargs)
-        if "teamId" not in params:
+        if "team_id" not in params:
             endpoint = cls._optional_team_endpoint(endpoint, **kwargs)
         return endpoint
 
     @classmethod
     def _build_query_string_required_team_endpoint(cls, endpoint, params, **kwargs):
         endpoint = cls._build_query_string_endpoint(endpoint, params, **kwargs)
-        if "teamId" not in params:
+        if "team_id" not in params:
             endpoint = cls._required_team_endpoint(endpoint, **kwargs)
         return endpoint
 
     @classmethod
     def _optional_team_endpoint(cls, endpoint, **kwargs):
-        team_id = cls._info_if_not_param("teamId", **kwargs)
+        team_id = cls._info_if_not_param("team_id", **kwargs)
         if not team_id and type(config.team_id) is str:
             team_id = config.team_id
         if team_id:
-            endpoint = cls._add_query_param(endpoint, "teamId", team_id)
+            endpoint = cls._add_query_param(endpoint, "team_id", team_id)
         return endpoint
 
     @classmethod
     def _required_team_endpoint(cls, endpoint, **kwargs):
-        team_id = cls._warn_if_not_param("teamId", **kwargs)
+        team_id = cls._warn_if_not_param("team_id", **kwargs)
         if not team_id and type(config.team_id) is str:
             team_id = config.team_id
         else:
             error_msg = f"Endpoint requires a team_id, none supplied"
             log.fatal(error_msg)
             raise GremlinParameterError(error_msg)
-        endpoint = cls._add_query_param(endpoint, "teamId", team_id)
+        endpoint = cls._add_query_param(endpoint, "team_id", team_id)
 
     @classmethod
     def _error_if_not_json_body(cls, **kwargs):
