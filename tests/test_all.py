@@ -9,6 +9,8 @@ from .test_attacks import TestAttacks
 from .test_alfi import TestAlfi
 from .test_apikeys import TestAPIKeys
 from .test_attack_helpers import TestAttackHelpers
+from .test_cli import TestCLI
+from .test_clients import TestClients
 
 if __name__ == "__main__":
     unittest.main()
