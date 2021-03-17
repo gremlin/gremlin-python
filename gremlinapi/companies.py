@@ -34,7 +34,9 @@ class GremlinAPICompanies(GremlinAPI):
 
     @classmethod
     @register_cli_action("list_company_clients", ("identifier",), ("",))
-    def list_company_clients(cls, https_client=get_gremlin_httpclient(), **kwargs) -> dict:
+    def list_company_clients(
+        cls, https_client=get_gremlin_httpclient(), **kwargs
+    ) -> dict:
         method: str = "GET"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
         endpoint: str = f"/companies/{identifier}/clients"
@@ -44,10 +46,12 @@ class GremlinAPICompanies(GremlinAPI):
 
     @classmethod
     @register_cli_action("invite_company_user", ("identifier", "body"), ("",))
-    def invite_company_user(cls, https_client=get_gremlin_httpclient(), **kwargs) -> dict:
+    def invite_company_user(
+        cls, https_client=get_gremlin_httpclient(), **kwargs
+    ) -> dict:
         method: str = "POST"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
-        data: Union[list,dict] = cls._error_if_not_json_body(**kwargs)
+        data: Union[list, dict] = cls._error_if_not_json_body(**kwargs)
         if isinstance(data, dict):
             data = [dict(data)]
         endpoint: str = f"/companies/{identifier}/invites"
@@ -57,7 +61,9 @@ class GremlinAPICompanies(GremlinAPI):
 
     @classmethod
     @register_cli_action("delete_company_invite", ("identifier", "email"), ("",))
-    def delete_company_invite(cls, https_client=get_gremlin_httpclient(), **kwargs) -> dict:
+    def delete_company_invite(
+        cls, https_client=get_gremlin_httpclient(), **kwargs
+    ) -> dict:
         method: str = "DELETE"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
         email: str = cls._error_if_not_email(**kwargs)
@@ -94,7 +100,9 @@ class GremlinAPICompanies(GremlinAPI):
 
     @classmethod
     @register_cli_action("update_company_prefs", ("identifier",), ("domain",))
-    def update_company_prefs(cls, https_client=get_gremlin_httpclient(), **kwargs) -> dict:
+    def update_company_prefs(
+        cls, https_client=get_gremlin_httpclient(), **kwargs
+    ) -> dict:
         method: str = "POST"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
         data: dict = {"domain": cls._info_if_not_param("domain", **kwargs)}
@@ -110,7 +118,9 @@ class GremlinAPICompanies(GremlinAPI):
         ("identifier",),
         ("enabled", "entityId", "idpUrl", "certificate", "forced"),
     )
-    def update_company_saml_props(cls, https_client=get_gremlin_httpclient(), **kwargs) -> dict:
+    def update_company_saml_props(
+        cls, https_client=get_gremlin_httpclient(), **kwargs
+    ) -> dict:
         method: str = "POST"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
         data: dict = {
@@ -128,7 +138,9 @@ class GremlinAPICompanies(GremlinAPI):
 
     @classmethod
     @register_cli_action("list_company_users", ("identifier",), ("",))
-    def list_company_users(cls, https_client=get_gremlin_httpclient(), **kwargs) -> dict:
+    def list_company_users(
+        cls, https_client=get_gremlin_httpclient(), **kwargs
+    ) -> dict:
         method: str = "GET"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
         endpoint: str = f"/companies/{identifier}/users"
@@ -145,7 +157,9 @@ class GremlinAPICompanies(GremlinAPI):
         ),
         ("body",),
     )
-    def update_company_user_role(cls, https_client=get_gremlin_httpclient(), **kwargs) -> dict:
+    def update_company_user_role(
+        cls, https_client=get_gremlin_httpclient(), **kwargs
+    ) -> dict:
         method: str = "PUT"
         identifier: dict = cls._error_if_not_param("identifier", **kwargs)
         email: str = cls._error_if_not_email(**kwargs)
@@ -164,7 +178,9 @@ class GremlinAPICompanies(GremlinAPI):
         ),
         ("",),
     )
-    def activate_company_user(cls, https_client=get_gremlin_httpclient(), **kwargs) -> dict:
+    def activate_company_user(
+        cls, https_client=get_gremlin_httpclient(), **kwargs
+    ) -> dict:
         method: str = "POST"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
         email: str = cls._error_if_not_email(**kwargs)
@@ -182,7 +198,9 @@ class GremlinAPICompanies(GremlinAPI):
         ),
         ("",),
     )
-    def deactivate_company_user(cls, https_client=get_gremlin_httpclient(), **kwargs) -> dict:
+    def deactivate_company_user(
+        cls, https_client=get_gremlin_httpclient(), **kwargs
+    ) -> dict:
         method: str = "DELETE"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
         email: str = cls._error_if_not_email(**kwargs)

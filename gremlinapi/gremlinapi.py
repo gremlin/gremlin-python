@@ -29,7 +29,9 @@ class GremlinAPI(object):
     @classmethod
     def _add_query_param(cls, endpoint, param_name, param_value):
         if endpoint and param_name and param_value:
-            if "/?" in endpoint and not (str(endpoint).endswith("?") or str(endpoint).endswith("&")):
+            if "/?" in endpoint and not (
+                str(endpoint).endswith("?") or str(endpoint).endswith("&")
+            ):
                 endpoint += f"&{param_name}={param_value}"
             elif "/?" in endpoint and (
                 str(endpoint).endswith("?") or str(endpoint).endswith("&")

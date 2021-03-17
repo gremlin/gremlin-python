@@ -6,8 +6,9 @@ from gremlinapi.containers import GremlinAPIContainers
 
 from .util import mock_json, mock_data
 
+
 class TestContainers(unittest.TestCase):
-    @patch('requests.get')
+    @patch("requests.get")
     def test_list_containers_with_decorator(self, mock_get) -> None:
         mock_get.return_value = requests.Response()
         mock_get.return_value.status_code = 200
