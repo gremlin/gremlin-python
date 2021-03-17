@@ -3,22 +3,28 @@ from unittest.mock import patch
 import logging
 import requests
 import gremlinapi.cli as cli
+
 # from gremlinapi.attacks import GremlinAPIAttacks
 # from gremlinapi.attack_helpers import GremlinAttackHelper, GremlinTargetContainers, GremlinLatencyAttack
 
 from .util import mock_json, mock_data
 
+
 class TestCLI(unittest.TestCase):
     def test_register_cli_action(self) -> None:
         pass
+
     def test__base_args(self) -> None:
         pass
+
     def test__get_parser(self) -> None:
         pass
+
     def test__parse_args(self) -> None:
         pass
+
     # def test_list_endpoint(self) -> None:
-    #     test_endpoint = "test-endpoint.com"        
+    #     test_endpoint = "test-endpoint.com"
     #     expected_output = "%s/?source=scenario&pageSize=3&" % test_endpoint
     #     test_kwargs = {"source":"scenario","pageSize":3}
     #     test_output = GremlinAPIAttacks._list_endpoint(test_endpoint,**test_kwargs)
