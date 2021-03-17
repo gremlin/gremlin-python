@@ -9,3 +9,8 @@ def mock_json():
 
 mock_body = {"body": mock_data}
 mock_guid = {"guid": mock_data}
+mock_identifier = {
+    "identifier": mock_data,
+    "email": "testemail@example.com",
+    "body": mock_data,
+}

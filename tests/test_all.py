@@ -11,6 +11,7 @@ from .test_apikeys import TestAPIKeys
 from .test_attack_helpers import TestAttackHelpers
 from .test_cli import TestCLI
 from .test_clients import TestClients
+from .test_companies import TestCompanies
 
 if __name__ == "__main__":
     unittest.main()
