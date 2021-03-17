@@ -12,6 +12,7 @@ from .test_attack_helpers import TestAttackHelpers
 from .test_cli import TestCLI
 from .test_clients import TestClients
 from .test_companies import TestCompanies
+from .test_containers import TestContainers
 
 if __name__ == "__main__":
     unittest.main()

@@ -23,9 +23,9 @@ log = logging.getLogger("GremlinAPI.client")
 class GremlinAPIContainers(GremlinAPI):
     @classmethod
     @register_cli_action("list_containers", ("",), ("teamId"))
-    def list_containers(cls, https_client=get_gremlin_httpclient(), **kwargs):
-        method = "GET"
-        endpoint = cls._optional_team_endpoint(f"/containers", **kwargs)
-        payload = cls._payload(**{"headers": https_client.header()})
+    def list_containers(cls, https_client=get_gremlin_httpclient(), **kwargs) -> dict:
+        method: str = "GET"
+        endpoint: str = cls._optional_team_endpoint(f"/containers", **kwargs)
+        payload: dict = cls._payload(**{"headers": https_client.header()})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
