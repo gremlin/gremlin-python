@@ -14,6 +14,7 @@ mock_identifier = {
     "identifier": mock_data,
     "email": "testemail@example.com",
     "body": mock_data,
+    "name": "Gremlin",
 }
 mock_payload = {
     "body": mock_data,
