@@ -21,3 +21,8 @@ mock_payload = {
     "data": mock_data,
 }
 mock_uid = {"body": mock_data, "uid": "1234567890z"}
+mock_metrics = {
+    "attackId": "1234567890",
+    "scenarioId": "1234567890",
+    "scenarioRunNumber": "1",
+}

@@ -19,6 +19,7 @@ from .test_gremlinapi import TestAPI
 from .test_halts import TestHalts
 from .test_kubernetes import TestKubernetesAttacks, TestKubernetesTargets
 from .test_metadata import TestMetadata
+from .test_metrics import TestMetrics
 
 if __name__ == "__main__":
     unittest.main()
