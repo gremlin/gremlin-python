@@ -497,8 +497,8 @@ class _GremlinNodeGraph(object):
         else:
             _node.previous.next = _node.next
             _node.next.previous = _node.previous
-            if self.head == node:
-                self.head = node.next
+            if self.head == _node:
+                self.head = _node.next
 
     @property
     def head(self):

@@ -59,3 +59,11 @@ mock_ilfi_node = {
     "target": GremlinAttackTargetHelper(),
 }
 mock_delay_node = {"delay": "42"}
+mock_status_check_node = {
+    "description": "A mock status check node",
+    "endpoint_url": "definitely-fake-website1234.com",
+    "endpoint_headers": {"name": "mock header"},
+    "evaluation_response_body_evaluation": "mock evaluation",
+    "evaluation_ok_status_codes": ["24-42"],
+    "evaluation_ok_latency_max": 999,
+}

@@ -13,7 +13,14 @@ from gremlinapi.scenario_graph_helpers import (
     _GremlinNodeGraph,
 )
 
-from .util import mock_json, mock_data, mock_scenario, mock_ilfi_node, mock_delay_node
+from .util import (
+    mock_json,
+    mock_data,
+    mock_scenario,
+    mock_ilfi_node,
+    mock_delay_node,
+    mock_status_check_node,
+)
 
 
 class TestScenarioGraphHelpers(unittest.TestCase):
@@ -80,11 +87,80 @@ class TestScenarioGraphHelpers(unittest.TestCase):
 
         self.assertEqual(helper.repr_model(), expected_output)
 
-    # @patch('requests.post')
-    # def test_create_attack_with_decorator(self, mock_get) -> None:
-    #     expected_output_class = GremlinAttackHelper()
-    #     test_kwargs = {"body":expected_output_class}
-    #     mock_get.return_value = requests.Response()
-    #     mock_get.return_value.status_code = 200
-    #     mock_get.return_value.json = mock_json
-    #     self.assertEqual(GremlinAPIAttacks.create_attack(**test_kwargs), mock_data)
+    def test_gremlin_scenario_status_check_node_repr_model(self) -> None:
+        helper = GremlinScenarioStatusCheckNode(**mock_status_check_node)
+        expected_output = {
+            "endpointConfiguration": {
+                "headers": mock_status_check_node["endpoint_headers"],
+                "url": mock_status_check_node["endpoint_url"],
+            },
+            "evaluationConfiguration": {
+                "okLatencyMaxMs": mock_status_check_node["evaluation_ok_latency_max"],
+                "okStatusCodes": mock_status_check_node["evaluation_ok_status_codes"],
+                "responseBodyEvaluation": mock_status_check_node[
+                    "evaluation_response_body_evaluation"
+                ],
+            },
+            "id": "status-check-%s" % helper.id,
+            "next": None,
+            "thirdPartyPresets": "PythonSDK",
+            "type": "SynchronousStatusCheck",
+        }
+        self.assertEqual(helper.repr_model(), expected_output)
+
+    def test_node_graph_add_edge(self) -> None:
+        helper = _GremlinNodeGraph()
+        helper_node = GremlinScenarioNode(**mock_scenario)
+        helper_node_2 = GremlinScenarioNode(**mock_scenario)
+
+        self.assertEqual(len(helper_node_2._edges), 0)
+        self.assertEqual(len(helper_node._edges), 0)
+        helper.add_edge(helper_node, helper_node_2)
+        self.assertEqual(helper_node_2._edges[helper_node.id]["node"], helper_node)
+        self.assertEqual(helper_node._edges[helper_node_2.id]["node"], helper_node_2)
+
+    def test__gremlin_node_graph_functions(self) -> None:
+        helper = _GremlinNodeGraph()
+        helper_node = GremlinScenarioNode(**mock_scenario)
+        helper_node_2 = GremlinScenarioNode(**mock_scenario)
+        helper_node_3 = GremlinScenarioNode(**mock_scenario)
+        helper_node_4 = GremlinScenarioNode(**mock_scenario)
+
+        # append
+        self.assertEqual(helper.head, None)
+        helper.append(helper_node)
+        self.assertEqual(helper.head, helper_node)
+        self.assertEqual(helper_node.next, helper_node)
+        self.assertEqual(helper_node.previous, helper_node)
+
+        # insert_after
+        helper.append(helper_node_2)
+        self.assertEqual(helper.head, helper_node)
+        self.assertEqual(helper_node.next, helper_node_2)
+        self.assertEqual(helper_node_2.previous, helper_node)
+        self.assertEqual(helper_node_2.next, helper_node)
+
+        # insert before
+        helper.insert_before(helper_node.next, helper_node_3)
+        self.assertEqual(helper.head, helper_node)
+        self.assertEqual(helper_node.next, helper_node_3)
+        self.assertEqual(helper_node_3.previous, helper_node)
+        self.assertEqual(helper_node_3.next, helper_node_2)
+        self.assertEqual(helper_node_2.previous, helper_node_3)
+        self.assertEqual(helper_node_2.next, helper_node)
+
+        # get_node
+        self.assertEqual(helper_node, helper.get_node(0))
+        self.assertEqual(helper_node_3, helper.get_node(1))
+        self.assertEqual(helper_node_2, helper.get_node(2))
+
+        # push
+        helper.push(helper_node_4)
+        self.assertEqual(helper.head, helper_node_4)
+        self.assertEqual(helper.head.next, helper_node)
+        self.assertEqual(helper_node.previous, helper_node_4)
+
+        # remove
+        self.assertEqual(helper.get_node(2), helper_node_3)
+        helper.remove(helper_node_3)
+        self.assertEqual(helper.get_node(2), helper_node_2)
