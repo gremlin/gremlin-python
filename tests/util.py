@@ -27,3 +27,11 @@ mock_metrics = {
     "scenarioId": "1234567890",
     "scenarioRunNumber": "1",
 }
+mock_report = {
+    "start": "mock_start",
+    "end": "mock_end",
+    "period": "4",
+    "startDate": "1/1/1900",
+    "endDate": "1/1/2000",
+    "trackingPeriod": "6",
+}
