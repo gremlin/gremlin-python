@@ -35,3 +35,11 @@ mock_report = {
     "endDate": "1/1/2000",
     "trackingPeriod": "6",
 }
+mock_saml = {
+    "SAMLResponse": "mock_response",
+    "RelayState": "mock_state",
+    "companyName": "Gremlin Mocks",
+    "destination": "earth",
+    "acsHandler": "mock_handler",
+    "code": "12567890",
+}

@@ -23,6 +23,7 @@ from .test_metrics import TestMetrics
 from .test_orgs import TestOrgs
 from .test_providers import TestProviders
 from .test_reports import TestReports
+from .test_saml import TestSaml
 
 if __name__ == "__main__":
     unittest.main()
