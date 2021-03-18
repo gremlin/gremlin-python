@@ -21,6 +21,7 @@ from .test_kubernetes import TestKubernetesAttacks, TestKubernetesTargets
 from .test_metadata import TestMetadata
 from .test_metrics import TestMetrics
 from .test_orgs import TestOrgs
+from .test_providers import TestProviders
 
 if __name__ == "__main__":
     unittest.main()
