@@ -1,21 +1,16 @@
 import unittest
 from unittest.mock import patch
 import logging
-import requests
 from gremlinapi.scenario_graph_helpers import (
     GremlinScenarioGraphHelper,
     GremlinScenarioNode,
-    # GremlinScenarioAttackNode,
     GremlinScenarioILFINode,
-    # GremlinScenarioALFINode,
     GremlinScenarioDelayNode,
     GremlinScenarioStatusCheckNode,
     _GremlinNodeGraph,
 )
 
 from .util import (
-    mock_json,
-    mock_data,
     mock_scenario,
     mock_ilfi_node,
     mock_delay_node,
