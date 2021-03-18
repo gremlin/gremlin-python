@@ -2,6 +2,11 @@ api_key: str = "api-key-string"
 bearer_token: str = "bearer-token-string"
 mock_data = {"testkey": "testval"}
 
+from gremlinapi.attack_helpers import (
+    GremlinAttackTargetHelper,
+    GremlinAttackCommandHelper,
+)
+
 
 def mock_json():
     return mock_data
@@ -43,3 +48,14 @@ mock_saml = {
     "acsHandler": "mock_handler",
     "code": "12567890",
 }
+mock_scenario = {
+    "description": "A mock scenario",
+    "hypothesis": "to prove test status",
+    "name": "mock_scenario",
+}
+mock_ilfi_node = {
+    "name": "mock_scenario",
+    "command": GremlinAttackCommandHelper(),
+    "target": GremlinAttackTargetHelper(),
+}
+mock_delay_node = {"delay": "42"}

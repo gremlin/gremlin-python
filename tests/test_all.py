@@ -24,6 +24,7 @@ from .test_orgs import TestOrgs
 from .test_providers import TestProviders
 from .test_reports import TestReports
 from .test_saml import TestSaml
+from .test_scenario_graph_helpers import TestScenarioGraphHelpers
 
 if __name__ == "__main__":
     unittest.main()

@@ -197,7 +197,10 @@ class GremlinScenarioNode(object):
         return f"{self.name}-{self.id}"
 
     def repr_model(self):
-        model = {"type": self.node_type, "id": self.uuid, "next": self.next.uuid}
+        if not self.next:
+            model = {"type": self.node_type, "id": self.uuid, "next": None}
+        else:
+            model = {"type": self.node_type, "id": self.uuid, "next": self.next.uuid}
         return model
 
     def __repr__(self):
