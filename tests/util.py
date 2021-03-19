@@ -15,6 +15,14 @@ def mock_json():
 mock_team_id = "1234567890a"
 mock_body = {"body": mock_data}
 mock_guid = {"guid": mock_data}
+mock_scenario_guid = {
+    "guid": mock_data,
+    "body": mock_data,
+    "startDate": "1/1/1900",
+    "endDate": "1/1/2000",
+    "runNumber": 1,
+    "staticEndpointName": "not-a-website.comorg",
+}
 mock_identifier = {
     "identifier": mock_data,
     "email": "testemail@example.com",

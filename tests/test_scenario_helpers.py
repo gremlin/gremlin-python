@@ -59,4 +59,3 @@ class TestScenarioHelpers(unittest.TestCase):
         }
 
         self.assertEqual(repr(helper), json.dumps(expected_output))
-        
