@@ -3,6 +3,7 @@
 # Copyright (C) 2020 Kyle Hultman <kyle@gremlin.com>, Gremlin Inc <sales@gremlin.com>
 
 import argparse
+from argparse import ArgumentParser
 import functools
 import importlib
 import logging
@@ -43,10 +44,18 @@ def register_cli_action(
     return wrap
 
 
-def _base_args() -> argparse.ArgumentParser:
-    p: argparse.ArgumentParser = argparse.ArgumentParser(
-        description="Gremlin API Command Line Interface"
-    )
+# class GremlinArgs(ArgumentParser):
+#     def __init__(self, *args, **kwargs) -> None:
+#         super().__init__(*args, **kwargs)
+#         self.gremlin_user = None
+#         self.gremlin_password = None
+#         self.gremlin_bearer = None
+#         self.gremlin_api_key = None
+#         self.bearer = None
+
+
+def _base_args() -> ArgumentParser:
+    p: ArgumentParser = ArgumentParser(description="Gremlin API Command Line Interface")
     p.add_argument(
         "--version",
         help="Display the version.",
