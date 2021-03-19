@@ -7,6 +7,8 @@ import logging
 
 from datetime import datetime, timezone
 
+from typing import Optional
+
 log = logging.getLogger("GremlinAPI.client")
 
 
@@ -27,22 +29,22 @@ class GremlinAPIConfig(object):
         self._user_mfa_token_value = None
 
     @property
-    def api_key(self):
+    def api_key(self) -> Optional[str]:
         if not self._api_key:
             return None
         return self._api_key
 
     @api_key.setter
-    def api_key(self, api_key):
+    def api_key(self, api_key: str):
         self._api_key = api_key
         return self.api_key
 
     @property
-    def base_uri(self):
+    def base_uri(self) -> str:
         return self._base_uri
 
     @base_uri.setter
-    def base_uri(self, base_uri):
+    def base_uri(self, base_uri: str):
         self._base_uri = base_uri
         return self.base_uri
 
@@ -59,95 +61,95 @@ class GremlinAPIConfig(object):
         self._bearer_expires = bearer_expires
 
     @property
-    def bearer_timestamp(self):
+    def bearer_timestamp(self) -> str:
         return self._bearer_timestamp
 
     @bearer_timestamp.setter
-    def bearer_timestamp(self, bearer_timestamp):
+    def bearer_timestamp(self, bearer_timestamp: str) -> None:
         self._bearer_timestamp = bearer_timestamp
 
     @property
-    def bearer_token(self):
+    def bearer_token(self) -> str:
         """Bearer token for API authorization"""
         return self._bearer_token
 
     @bearer_token.setter
-    def bearer_token(self, bearer_token):
+    def bearer_token(self, bearer_token: str) -> str:
         self._bearer_token = bearer_token
         return self.bearer_token
 
     @property
-    def company_name(self):
+    def company_name(self) -> str:
         """Company Name for login"""
         return self._company_name
 
     @company_name.setter
-    def company_name(self, company_name):
+    def company_name(self, company_name: str) -> str:
         self._company_name = company_name
         return self.company_name
 
     @property
-    def http_proxy(self):
+    def http_proxy(self) -> str:
         return self._http_proxy
 
     @http_proxy.setter
-    def http_proxy(self, http_proxy):
+    def http_proxy(self, http_proxy: str) -> str:
         self._http_proxy = http_proxy
         return self.http_proxy
 
     @property
-    def https_proxy(self):
+    def https_proxy(self) -> str:
         return self._https_proxy
 
     @https_proxy.setter
-    def https_proxy(self, https_proxy):
+    def https_proxy(self, https_proxy: str) -> str:
         self._https_proxy = https_proxy
         return self.https_proxy
 
     @property
-    def max_bearer_interval(self):
+    def max_bearer_interval(self) -> int:
         return self._max_bearer_interval
 
     @max_bearer_interval.setter
-    def max_bearer_interval(self, max_bearer_interval):
+    def max_bearer_interval(self, max_bearer_interval: int) -> int:
         self._max_bearer_interval = max_bearer_interval
         return self.max_bearer_interval
 
     @property
-    def password(self):
+    def password(self) -> str:
         """Password for login"""
         return self._password
 
     @password.setter
-    def password(self, password):
+    def password(self, password: str) -> str:
         self._password = password
         return self.password
 
     @property
-    def team_id(self):
+    def team_id(self) -> str:
         return self._team_id
 
     @team_id.setter
-    def team_id(self, team_id):
+    def team_id(self, team_id: str) -> str:
         self._team_id = team_id
         return self.team_id
 
     @property
-    def user(self):
+    def user(self) -> str:
         """Username for login"""
         return self._user
 
     @user.setter
-    def user(self, user):
+    def user(self, user: str) -> str:
         self._user = user
         return self.user
 
     @property
-    def user_mfa_token_value(self):
+    def user_mfa_token_value(self) -> str:
         return self._user_mfa_token_value
 
     @user_mfa_token_value.setter
-    def user_mfa_token_value(self, user_mfa_token_value):
+    def user_mfa_token_value(self, user_mfa_token_value: str) -> str:
         self._user_mfa_token_value = user_mfa_token_value
         return self.user_mfa_token_value
 
