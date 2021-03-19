@@ -45,14 +45,14 @@ class GremlinScenarioHelper(object):
             _last_step_obj = self._steps[-1]
             last_attack_type = _last_step_obj["attacks"][0]["attackType"]
             last_target_type = _last_step_obj["attacks"][0]["targetDefinition"][
-                "targetType"
+                "strategyType"
             ]
             last_command_type = _last_step_obj["attacks"][0]["impactDefinition"][
                 "commandType"
             ]
             cur_attack_type = _cur_step_obj["attacks"][0]["attackType"]
             cur_target_type = _cur_step_obj["attacks"][0]["targetDefinition"][
-                "targetType"
+                "strategyType"
             ]
             cur_command_type = _cur_step_obj["attacks"][0]["impactDefinition"][
                 "commandType"

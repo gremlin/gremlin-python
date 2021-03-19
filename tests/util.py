@@ -53,6 +53,11 @@ mock_scenario = {
     "hypothesis": "to prove test status",
     "name": "mock_scenario",
 }
+mock_scenario_step = {
+    "delay": 65536,
+    "command": GremlinAttackCommandHelper(),
+    "target": GremlinAttackTargetHelper(),
+}
 mock_ilfi_node = {
     "name": "mock_scenario",
     "command": GremlinAttackCommandHelper(),

@@ -25,6 +25,7 @@ from .test_providers import TestProviders
 from .test_reports import TestReports
 from .test_saml import TestSaml
 from .test_scenario_graph_helpers import TestScenarioGraphHelpers
+from .test_scenario_helpers import TestScenarioHelpers
 
 if __name__ == "__main__":
     unittest.main()
