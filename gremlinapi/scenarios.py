@@ -221,7 +221,12 @@ class GremlinAPIScenarios(GremlinAPI):
         ("teamId",),
     )
     def get_scenario_run_details(
-        cls, https_client=get_gremlin_httpclient(), *args, **kwargs
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "GET"
         guid: str = cls._error_if_not_param("guid", **kwargs)
@@ -244,7 +249,12 @@ class GremlinAPIScenarios(GremlinAPI):
         ("teamId",),
     )
     def update_scenario_result_flags(
-        cls, https_client=get_gremlin_httpclient(), *args, **kwargs
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "PUT"
         guid: str = cls._error_if_not_param("guid", **kwargs)
@@ -268,7 +278,12 @@ class GremlinAPIScenarios(GremlinAPI):
         ("teamId",),
     )
     def update_scenario_result_notes(
-        cls, https_client=get_gremlin_httpclient(), *args, **kwargs
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "PUT"
         guid: str = cls._error_if_not_param("guid", **kwargs)
@@ -284,7 +299,12 @@ class GremlinAPIScenarios(GremlinAPI):
     @classmethod
     @register_cli_action("list_scenario_schedules", ("guid",), ("teamId",))
     def list_scenario_schedules(
-        cls, https_client=get_gremlin_httpclient(), *args, **kwargs
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "GET"
         guid: str = cls._error_if_not_param("guid", **kwargs)
@@ -298,7 +318,12 @@ class GremlinAPIScenarios(GremlinAPI):
     @classmethod
     @register_cli_action("list_active_scenarios", ("",), ("teamId",))
     def list_active_scenarios(
-        cls, https_client=get_gremlin_httpclient(), *args, **kwargs
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "GET"
         endpoint: str = cls._optional_team_endpoint(f"/scenarios/active", **kwargs)
@@ -309,7 +334,12 @@ class GremlinAPIScenarios(GremlinAPI):
     @classmethod
     @register_cli_action("list_archived_scenarios", ("",), ("teamId",))
     def list_archived_scenarios(
-        cls, https_client=get_gremlin_httpclient(), *args, **kwargs
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "GET"
         endpoint: str = cls._optional_team_endpoint(f"/scenarios/archived", **kwargs)
@@ -320,7 +350,12 @@ class GremlinAPIScenarios(GremlinAPI):
     @classmethod
     @register_cli_action("list_draft_scenarios", ("",), ("teamId",))
     def list_draft_scenarios(
-        cls, https_client=get_gremlin_httpclient(), *args, **kwargs
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "GET"
         endpoint: str = cls._optional_team_endpoint(f"/scenarios/drafts", **kwargs)
@@ -353,7 +388,12 @@ class GremlinAPIScenariosRecommended(GremlinAPI):
     @classmethod
     @register_cli_action("list_recommended_scenarios", ("",), ("teamId",))
     def list_recommended_scenarios(
-        cls, https_client=get_gremlin_httpclient(), *args, **kwargs
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "GET"
         endpoint: str = cls._optional_team_endpoint(f"/scenarios/recommended", **kwargs)
@@ -364,7 +404,12 @@ class GremlinAPIScenariosRecommended(GremlinAPI):
     @classmethod
     @register_cli_action("get_recommended_scenario", ("guid",), ("teamId",))
     def get_recommended_scenario(
-        cls, https_client=get_gremlin_httpclient(), *args, **kwargs
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "GET"
         guid: str = cls._error_if_not_param("guid", **kwargs)
@@ -380,7 +425,12 @@ class GremlinAPIScenariosRecommended(GremlinAPI):
         "get_recommended_scenario_static", ("staticEndpointName",), ("teamId",)
     )
     def get_recommended_scenario_static(
-        cls, https_client=get_gremlin_httpclient(), *args, **kwargs
+        cls,
+        https_client: Union[
+            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
+        ] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "GET"
         static_endpoint_name: str = cls._error_if_not_param(
