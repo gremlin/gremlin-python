@@ -23,6 +23,19 @@ mock_scenario_guid = {
     "runNumber": 1,
     "staticEndpointName": "not-a-website.comorg",
 }
+mock_users = {
+    "role": "mock user role",
+    "email": "useremail@useremailfakesite123456789.com",
+    "password": "1234567890poiuytrewqASDFGHJKL",
+    "orgId": "102928384756z",
+    "renewToken": "42",
+    "companyId": "c0mp4ny",
+    "companyName": "Mocking Co, A Mockery Company",
+    "provider": "MacinoogleSoft",
+    "teamId": "h4x0r734m",
+    "accessToken": "1q2w3e4r5t6y7u8i9o90p",
+    "token": "1a1f3d4ca3f41fb4d1cb4cd4bfcd14c",
+}
 mock_identifier = {
     "identifier": mock_data,
     "email": "testemail@example.com",
