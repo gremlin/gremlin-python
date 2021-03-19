@@ -22,7 +22,7 @@ log = logging.getLogger("GremlinAPI.client")
 
 class GremlinAPIContainers(GremlinAPI):
     @classmethod
-    @register_cli_action("list_containers", ("",), ("teamId"))
+    @register_cli_action("list_containers", ("",), ("teamId",))
     def list_containers(cls, https_client=get_gremlin_httpclient(), **kwargs) -> dict:
         method: str = "GET"
         endpoint: str = cls._optional_team_endpoint(f"/containers", **kwargs)

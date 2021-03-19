@@ -439,7 +439,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
         return cls.auth_user(https_client, *args, **kwargs)
 
     @classmethod
-    @register_cli_action("get_mfa_status", ("email",), (""))
+    @register_cli_action("get_mfa_status", ("email",), ("",))
     def get_mfa_status(
         cls,
         https_client: Union[
@@ -552,7 +552,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
             "email",
             "token",
         ),
-        (""),
+        ("",),
     )
     def validate_token(
         cls,

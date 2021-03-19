@@ -26,7 +26,7 @@ log = logging.getLogger("GremlinAPI.client")
 
 class GremlinALFI(GremlinAPI):
     @classmethod
-    @register_cli_action("create_alfi_experiment", ("body",), ("teamId"))
+    @register_cli_action("create_alfi_experiment", ("body",), ("teamId",))
     def create_alfi_experiment(
         cls,
         https_client: Union[
@@ -109,7 +109,7 @@ class GremlinALFI(GremlinAPI):
         return body
 
     @classmethod
-    @register_cli_action("list_completed_alfi_experiments", ("",), ("teamId"))
+    @register_cli_action("list_completed_alfi_experiments", ("",), ("teamId",))
     def list_completed_alfi_experiments(
         cls,
         https_client: Union[

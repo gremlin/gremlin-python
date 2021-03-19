@@ -27,7 +27,7 @@ log = logging.getLogger("GremlinAPI.client")
 
 class GremlinAPIKubernetesAttacks(GremlinAPI):
     @classmethod
-    @register_cli_action("list_all_kubernetes_attacks", ("",), ("teamId"))
+    @register_cli_action("list_all_kubernetes_attacks", ("",), ("teamId",))
     def list_all_kubernetes_attacks(
         cls,
         https_client: Union[
@@ -43,7 +43,7 @@ class GremlinAPIKubernetesAttacks(GremlinAPI):
         return body
 
     @classmethod
-    @register_cli_action("get_kubernetes_attack", ("uid",), ("teamId"))
+    @register_cli_action("get_kubernetes_attack", ("uid",), ("teamId",))
     def get_kubernetes_attack(
         cls,
         https_client: Union[
@@ -99,7 +99,7 @@ class GremlinAPIKubernetesAttacks(GremlinAPI):
         return body
 
     @classmethod
-    @register_cli_action("new_kubernetes_attack", ("body",), ("teamId"))
+    @register_cli_action("new_kubernetes_attack", ("body",), ("teamId",))
     def new_kubernetes_attack(
         cls,
         https_client: Union[
