@@ -99,7 +99,7 @@ class GremlinAPIRequestsClient(GremlinAPIHttpClient):
     @classmethod
     def api_call(
         cls, method: str, endpoint: str, *args: tuple, **kwargs: dict
-    ) -> Tuple[Union[requests.Response, urllib3.HTTPResponse], dict]:
+    ) -> Tuple[requests.Response, dict]:
         request_methods: Dict[str, Callable] = {
             "HEAD": requests.head,
             "GET": requests.get,
@@ -165,7 +165,7 @@ class GremlinAPIurllibClient(GremlinAPIHttpClient):
     @classmethod
     def api_call(
         cls, method: str, endpoint: str, *args: tuple, **kwargs: dict
-    ) -> Tuple[Union[requests.Response, urllib3.HTTPResponse], dict]:
+    ) -> Tuple[urllib3.HTTPResponse, dict]:
 
         log.warning(
             f"The request to {endpoint} is using the urllib3 library. Consider installing th requests library."
