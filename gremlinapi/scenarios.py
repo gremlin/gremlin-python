@@ -18,8 +18,7 @@ from typing import Union, Type
 from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.http_clients import (
     get_gremlin_httpclient,
-    GremlinAPIurllibClient,
-    GremlinAPIRequestsClient,
+    GremlinAPIHttpClient,
 )
 from gremlinapi.scenario_helpers import GremlinScenarioHelper
 from gremlinapi.scenario_graph_helpers import GremlinScenarioGraphHelper
@@ -50,9 +49,7 @@ class GremlinAPIScenarios(GremlinAPI):
     @register_cli_action("list_scenarios", ("",), ("teamId",))
     def list_scenarios(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -66,9 +63,7 @@ class GremlinAPIScenarios(GremlinAPI):
     @register_cli_action("create_scenario", ("body",), ("teamId",))
     def create_scenario(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -83,9 +78,7 @@ class GremlinAPIScenarios(GremlinAPI):
     @register_cli_action("get_scenario", ("guid",), ("teamId",))
     def get_scenario(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -100,9 +93,7 @@ class GremlinAPIScenarios(GremlinAPI):
     @register_cli_action("update_scenario", ("guid", "body"), ("teamId",))
     def update_scenario(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -118,9 +109,7 @@ class GremlinAPIScenarios(GremlinAPI):
     @register_cli_action("archive_scenario", ("guid",), ("teamId",))
     def archive_scenario(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -137,9 +126,7 @@ class GremlinAPIScenarios(GremlinAPI):
     @register_cli_action("restore_scenario", ("guid",), ("teamId",))
     def restore_scenario(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -164,9 +151,7 @@ class GremlinAPIScenarios(GremlinAPI):
     )
     def list_scenario_runs(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -197,9 +182,7 @@ class GremlinAPIScenarios(GremlinAPI):
     )
     def run_scenario(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -222,9 +205,7 @@ class GremlinAPIScenarios(GremlinAPI):
     )
     def get_scenario_run_details(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -250,9 +231,7 @@ class GremlinAPIScenarios(GremlinAPI):
     )
     def update_scenario_result_flags(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -279,9 +258,7 @@ class GremlinAPIScenarios(GremlinAPI):
     )
     def update_scenario_result_notes(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -300,9 +277,7 @@ class GremlinAPIScenarios(GremlinAPI):
     @register_cli_action("list_scenario_schedules", ("guid",), ("teamId",))
     def list_scenario_schedules(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -319,9 +294,7 @@ class GremlinAPIScenarios(GremlinAPI):
     @register_cli_action("list_active_scenarios", ("",), ("teamId",))
     def list_active_scenarios(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -335,9 +308,7 @@ class GremlinAPIScenarios(GremlinAPI):
     @register_cli_action("list_archived_scenarios", ("",), ("teamId",))
     def list_archived_scenarios(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -351,9 +322,7 @@ class GremlinAPIScenarios(GremlinAPI):
     @register_cli_action("list_draft_scenarios", ("",), ("teamId",))
     def list_draft_scenarios(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -367,9 +336,7 @@ class GremlinAPIScenarios(GremlinAPI):
     @register_cli_action("halt_scenario", ("guid", "runNumber"), ("teamId",))
     def halt_scenario(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -389,9 +356,7 @@ class GremlinAPIScenariosRecommended(GremlinAPI):
     @register_cli_action("list_recommended_scenarios", ("",), ("teamId",))
     def list_recommended_scenarios(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -405,9 +370,7 @@ class GremlinAPIScenariosRecommended(GremlinAPI):
     @register_cli_action("get_recommended_scenario", ("guid",), ("teamId",))
     def get_recommended_scenario(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -426,9 +389,7 @@ class GremlinAPIScenariosRecommended(GremlinAPI):
     )
     def get_recommended_scenario_static(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:

@@ -16,8 +16,7 @@ from gremlinapi.exceptions import (
 from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.http_clients import (
     get_gremlin_httpclient,
-    GremlinAPIRequestsClient,
-    GremlinAPIurllibClient,
+    GremlinAPIHttpClient,
 )
 
 from typing import Union, Type
@@ -30,9 +29,7 @@ class GremlinAPIHalts(GremlinAPI):
     @register_cli_action("halt_all_attacks", ("",), ("teamId", "body"))
     def halt_all_attacks(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         **kwargs: dict
     ) -> dict:
         method: str = "POST"

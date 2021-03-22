@@ -18,8 +18,7 @@ from gremlinapi.exceptions import (
 from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.http_clients import (
     get_gremlin_httpclient,
-    GremlinAPIRequestsClient,
-    GremlinAPIurllibClient,
+    GremlinAPIHttpClient,
 )
 
 from http.client import HTTPResponse
@@ -34,9 +33,7 @@ class GremlinAPISaml(GremlinAPI):
     @classmethod
     def acs(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> Union[HTTPResponse, Any]:
@@ -56,9 +53,7 @@ class GremlinAPISaml(GremlinAPI):
     )
     def samllogin(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -75,9 +70,7 @@ class GremlinAPISaml(GremlinAPI):
     @register_cli_action("metadata", ("",), ("",))
     def metadata(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -90,9 +83,7 @@ class GremlinAPISaml(GremlinAPI):
     @classmethod
     def sessions(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:

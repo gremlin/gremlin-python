@@ -18,8 +18,7 @@ from typing import Union, Type
 from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.http_clients import (
     get_gremlin_httpclient,
-    GremlinAPIRequestsClient,
-    GremlinAPIurllibClient,
+    GremlinAPIHttpClient,
 )
 
 
@@ -47,9 +46,7 @@ class GremlinAPISchedules(GremlinAPI):
     @register_cli_action("create_schedule", ("body",), ("teamId",))
     def create_schedule(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -64,9 +61,7 @@ class GremlinAPISchedules(GremlinAPI):
     @register_cli_action("get_schedule", ("guid",), ("teamId",))
     def get_schedule(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -81,9 +76,7 @@ class GremlinAPISchedules(GremlinAPI):
     @register_cli_action("delete_schedule", ("guid",), ("teamId",))
     def delete_schedule(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -98,9 +91,7 @@ class GremlinAPISchedules(GremlinAPI):
     @register_cli_action("list_active_schedules", ("",), ("teamId",))
     def list_active_schedules(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -114,9 +105,7 @@ class GremlinAPISchedules(GremlinAPI):
     @register_cli_action("list_attack_schedules", ("",), ("teamId",))
     def list_attack_schedules(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -130,9 +119,7 @@ class GremlinAPISchedules(GremlinAPI):
     @register_cli_action("create_attack_schedule", ("body",), ("teamId",))
     def create_attack_schedule(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -147,9 +134,7 @@ class GremlinAPISchedules(GremlinAPI):
     @register_cli_action("get_attack_schedule", ("guid",), ("teamId",))
     def get_attack_schedule(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -166,9 +151,7 @@ class GremlinAPISchedules(GremlinAPI):
     @register_cli_action("delete_attack_schedule", ("guid",), ("teamId",))
     def delete_attack_schedule(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -185,9 +168,7 @@ class GremlinAPISchedules(GremlinAPI):
     @register_cli_action("list_scenario_schedules", ("",), ("teamId",))
     def list_scenario_schedules(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -201,9 +182,7 @@ class GremlinAPISchedules(GremlinAPI):
     @register_cli_action("create_scenario_schedule", ("body",), ("teamId",))
     def create_scenario_schedule(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -218,9 +197,7 @@ class GremlinAPISchedules(GremlinAPI):
     @register_cli_action("get_scenario_schedule", ("guid",), ("teamId",))
     def get_scenario_schedule(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -244,9 +221,7 @@ class GremlinAPISchedules(GremlinAPI):
     )
     def update_scenario_schedule(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -264,9 +239,7 @@ class GremlinAPISchedules(GremlinAPI):
     @register_cli_action("delete_scenario_schedule", ("guid",), ("teamId",))
     def delete_scenario_schedule(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -283,9 +256,7 @@ class GremlinAPISchedules(GremlinAPI):
     @register_cli_action("enable_scenario_schedule", ("guid",), ("teamId",))
     def enable_scenario_schedule(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -302,9 +273,7 @@ class GremlinAPISchedules(GremlinAPI):
     @register_cli_action("disable_scenario_schedule", ("guid",), ("teamId",))
     def disable_scenario_schedule(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:

@@ -18,8 +18,7 @@ from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.attack_helpers import GremlinAttackHelper
 from gremlinapi.http_clients import (
     get_gremlin_httpclient,
-    GremlinAPIurllibClient,
-    GremlinAPIRequestsClient,
+    GremlinAPIHttpClient,
 )
 from typing import Union, Type
 
@@ -57,9 +56,7 @@ class GremlinAPIAttacks(GremlinAPI):
     @register_cli_action("create_attack", ("body",), ("teamId",))
     def create_attack(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -75,9 +72,7 @@ class GremlinAPIAttacks(GremlinAPI):
     @register_cli_action("list_active_attacks", ("",), ("source", "pageSize", "teamId"))
     def list_active_attacks(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -91,9 +86,7 @@ class GremlinAPIAttacks(GremlinAPI):
     @register_cli_action("list_attacks", ("",), ("source", "pageSize", "teamId"))
     def list_attacks(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -114,9 +107,7 @@ class GremlinAPIAttacks(GremlinAPI):
     )
     def list_completed_attacks(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -135,9 +126,7 @@ class GremlinAPIAttacks(GremlinAPI):
     @register_cli_action("get_attack", ("guid",), ("teamId",))
     def get_attack(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -152,9 +141,7 @@ class GremlinAPIAttacks(GremlinAPI):
     @register_cli_action("halt_all_attacks", ("",), ("teamId",))
     def halt_all_attacks(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -168,9 +155,7 @@ class GremlinAPIAttacks(GremlinAPI):
     @register_cli_action("halt_attack", ("guid",), ("teamId",))
     def halt_attack(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:

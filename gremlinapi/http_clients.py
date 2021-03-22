@@ -36,9 +36,10 @@ class GremlinAPIHttpClient(object):
     def api_call(
         cls, method: str, endpoint: str, *args: tuple, **kwargs: dict
     ) -> Tuple[Union[requests.Response, urllib3.HTTPResponse], dict]:
-        error_message: str = f"This function is not implemented, please consume the proper http library for your environment"
-        log.error(error_message)
-        raise NotImplementedError(error_message)
+        if requests:
+            return GremlinAPIRequestsClient.api_call(method, endpoint, *args, **kwargs)
+        else:
+            return GremlinAPIurllibClient.api_call(method, endpoint, *args, **kwargs)
 
     @classmethod
     def base_uri(cls, uri: str) -> str:
@@ -75,9 +76,14 @@ class GremlinAPIHttpClient(object):
 
     @classmethod
     def proxies(cls) -> dict:
-        error_message: str = f"This function is not implemented, please consume the proper http library for your environment"
-        log.error(error_message)
-        raise NotImplementedError(error_message)
+        if requests:
+            return GremlinAPIRequestsClient.proxies()
+        else:
+            error_message: str = (
+                f"This function is not implemented, proxiea not supported for urllib"
+            )
+            log.error(error_message)
+            raise NotImplementedError(error_message)
 
 
 class GremlinAPIRequestsClient(GremlinAPIHttpClient):
@@ -206,10 +212,5 @@ class GremlinAPIurllibClient(GremlinAPIHttpClient):
         return resp, body
 
 
-def get_gremlin_httpclient() -> Union[
-    Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-]:
-    if requests:
-        return GremlinAPIRequestsClient
-    else:
-        return GremlinAPIurllibClient
+def get_gremlin_httpclient() -> Type[GremlinAPIHttpClient]:
+    return GremlinAPIHttpClient

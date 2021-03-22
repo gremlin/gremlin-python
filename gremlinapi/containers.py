@@ -13,8 +13,10 @@ from gremlinapi.exceptions import (
     HTTPError,
 )
 
+from typing import Type
+
 from gremlinapi.gremlinapi import GremlinAPI
-from gremlinapi.http_clients import get_gremlin_httpclient
+from gremlinapi.http_clients import get_gremlin_httpclient, GremlinAPIHttpClient
 
 
 log = logging.getLogger("GremlinAPI.client")
@@ -23,7 +25,11 @@ log = logging.getLogger("GremlinAPI.client")
 class GremlinAPIContainers(GremlinAPI):
     @classmethod
     @register_cli_action("list_containers", ("",), ("teamId",))
-    def list_containers(cls, https_client=get_gremlin_httpclient(), **kwargs) -> dict:
+    def list_containers(
+        cls,
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
+        **kwargs,
+    ) -> dict:
         method: str = "GET"
         endpoint: str = cls._optional_team_endpoint(f"/containers", **kwargs)
         payload: dict = cls._payload(**{"headers": https_client.header()})

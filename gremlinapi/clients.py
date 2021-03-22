@@ -13,7 +13,7 @@ from gremlinapi.exceptions import (
     HTTPError,
 )
 
-from gremlinapi.http_clients import GremlinAPIRequestsClient, GremlinAPIurllibClient
+from gremlinapi.http_clients import GremlinAPIHttpClient
 
 from typing import Union, Type, Any
 
@@ -28,9 +28,7 @@ class GremlinAPIClients(GremlinAPI):
     @register_cli_action("activate_client", ("guid",), ("teamId",))
     def activate_client(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         **kwargs: dict,
     ) -> dict:
         method: str = "PUT"
@@ -46,9 +44,7 @@ class GremlinAPIClients(GremlinAPI):
     @register_cli_action("deactivate_client", ("guid",), ("teamId",))
     def deactivate_client(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         **kwargs: dict,
     ) -> dict:
         method: str = "DELETE"
@@ -62,9 +58,7 @@ class GremlinAPIClients(GremlinAPI):
     @register_cli_action("list_active_clients", ("",), ("teamId",))
     def list_active_clients(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         **kwargs: dict,
     ) -> dict:
         method: str = "GET"
@@ -77,9 +71,7 @@ class GremlinAPIClients(GremlinAPI):
     @register_cli_action("list_clients", ("",), ("teamId",))
     def list_clients(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         **kwargs: dict,
     ) -> dict:
         method: str = "GET"

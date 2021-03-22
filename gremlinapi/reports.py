@@ -18,8 +18,7 @@ from gremlinapi.exceptions import (
 from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.http_clients import (
     get_gremlin_httpclient,
-    GremlinAPIRequestsClient,
-    GremlinAPIurllibClient,
+    GremlinAPIHttpClient,
 )
 
 from typing import Union, Type
@@ -33,9 +32,7 @@ class GremlinAPIReports(GremlinAPI):
     @register_cli_action("report_attacks", ("",), ("start", "end", "period", "teamId"))
     def report_attacks(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -52,9 +49,7 @@ class GremlinAPIReports(GremlinAPI):
     @register_cli_action("report_clients", ("",), ("start", "end", "period", "teamId"))
     def report_clients(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -73,9 +68,7 @@ class GremlinAPIReports(GremlinAPI):
     )
     def report_companies(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -91,9 +84,7 @@ class GremlinAPIReports(GremlinAPI):
     @classmethod
     def report_pricing(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -110,9 +101,7 @@ class GremlinAPIReports(GremlinAPI):
     @register_cli_action("report_teams", ("",), ("start", "end", "period", "teamId"))
     def report_teams(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -129,9 +118,7 @@ class GremlinAPIReports(GremlinAPI):
     @register_cli_action("report_users", ("",), ("start", "end", "period", "teamId"))
     def report_users(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -150,9 +137,7 @@ class GremlinAPIReportsSecurity(GremlinAPI):
     @register_cli_action("report_security_access", ("start", "end"), ("",))
     def report_security_access(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:

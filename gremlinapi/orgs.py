@@ -16,8 +16,7 @@ from gremlinapi.exceptions import (
 from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.http_clients import (
     get_gremlin_httpclient,
-    GremlinAPIRequestsClient,
-    GremlinAPIurllibClient,
+    GremlinAPIHttpClient,
 )
 
 from typing import Union, Type
@@ -31,9 +30,7 @@ class GremlinAPIOrgs(GremlinAPI):
     @register_cli_action("list_orgs", ("",), ("",))
     def list_orgs(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -47,9 +44,7 @@ class GremlinAPIOrgs(GremlinAPI):
     @register_cli_action("get_org", ("identifier",), ("",))
     def get_org(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -64,9 +59,7 @@ class GremlinAPIOrgs(GremlinAPI):
     @register_cli_action("create_org", ("name",), ("addUser",))
     def create_org(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -82,9 +75,7 @@ class GremlinAPIOrgs(GremlinAPI):
     @register_cli_action("new_certificate", ("",), ("teamId",))
     def new_certificate(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -98,9 +89,7 @@ class GremlinAPIOrgs(GremlinAPI):
     @register_cli_action("delete_certificate", ("",), ("teamId",))
     def delete_certificate(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -114,9 +103,7 @@ class GremlinAPIOrgs(GremlinAPI):
     @register_cli_action("delete_old_certificate", ("",), ("teamId",))
     def delete_old_certificate(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -132,9 +119,7 @@ class GremlinAPIOrgs(GremlinAPI):
     @register_cli_action("reset_secret", ("",), ("identifier", "teamId"))
     def reset_secret(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:

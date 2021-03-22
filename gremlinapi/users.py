@@ -18,8 +18,7 @@ from gremlinapi.exceptions import (
 from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.http_clients import (
     get_gremlin_httpclient,
-    GremlinAPIurllibClient,
-    GremlinAPIRequestsClient,
+    GremlinAPIHttpClient,
 )
 
 from typing import Type, Union
@@ -42,9 +41,7 @@ class GremlinAPIUsers(GremlinAPI):
     @register_cli_action("list_user", ("",), ("teamId",))
     def list_users(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -58,9 +55,7 @@ class GremlinAPIUsers(GremlinAPI):
     @register_cli_action("add_user_to_team", ("body",), ("teamId",))
     def add_user_to_team(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -77,9 +72,7 @@ class GremlinAPIUsers(GremlinAPI):
     @register_cli_action("update_user", ("email", "role"), ("teamId",))
     def update_user(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -95,9 +88,7 @@ class GremlinAPIUsers(GremlinAPI):
     @register_cli_action("deactivate_user", ("email",), ("teamId",))
     def deactivate_user(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -112,9 +103,7 @@ class GremlinAPIUsers(GremlinAPI):
     @register_cli_action("list_active_user", ("",), ("teamId",))
     def list_active_users(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -128,9 +117,7 @@ class GremlinAPIUsers(GremlinAPI):
     @register_cli_action("invite_user", ("email",), ("teamId",))
     def invite_user(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -146,9 +133,7 @@ class GremlinAPIUsers(GremlinAPI):
     @register_cli_action("revoke_user_invite", ("email",), ("teamId",))
     def revoke_user_invite(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -165,9 +150,7 @@ class GremlinAPIUsers(GremlinAPI):
     )
     def renew_user_authorization(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -197,9 +180,7 @@ class GremlinAPIUsers(GremlinAPI):
     )
     def renew_user_authorization_rbac(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -231,9 +212,7 @@ class GremlinAPIUsers(GremlinAPI):
     @register_cli_action("get_user_self", ("",), ("",))
     def get_user_self(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -247,9 +226,7 @@ class GremlinAPIUsers(GremlinAPI):
     @register_cli_action("update_user_self", ("body",), ("",))
     def update_user_self(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -264,9 +241,7 @@ class GremlinAPIUsers(GremlinAPI):
     @register_cli_action("get_user_session", ("",), ("getCompanySession",))
     def get_user_session(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -293,9 +268,7 @@ class GremlinAPIUsersAuth(GremlinAPI):
     )
     def auth_user(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -321,9 +294,7 @@ class GremlinAPIUsersAuth(GremlinAPI):
     )
     def auth_user_sso(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -346,9 +317,7 @@ class GremlinAPIUsersAuth(GremlinAPI):
     @register_cli_action("invalidate_session", ("",), ("",))
     def invalidate_session(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -362,9 +331,7 @@ class GremlinAPIUsersAuth(GremlinAPI):
     @register_cli_action("get_company_affiliations", ("email",), ("",))
     def get_company_affiliations(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -379,9 +346,7 @@ class GremlinAPIUsersAuth(GremlinAPI):
     @register_cli_action("get_saml_metadata", ("",), ("",))
     def get_saml_metadata(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -405,9 +370,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
     )
     def auth_user(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -429,9 +392,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
     @classmethod
     def auth_user_mfa(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -442,9 +403,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
     @register_cli_action("get_mfa_status", ("email",), ("",))
     def get_mfa_status(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -458,9 +417,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
     @register_cli_action("get_user_mfa_status", ("",), ("",))
     def get_user_mfa_status(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -482,9 +439,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
     )
     def disable_mfa(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -503,9 +458,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
     @register_cli_action("force_disable_mfa", ("email",), ("",))
     def force_disable_mfa(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -528,9 +481,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
     )
     def enable_mfa(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
@@ -556,9 +507,7 @@ class GremlinAPIUsersAuthMFA(GremlinAPI):
     )
     def validate_token(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
     ) -> dict:

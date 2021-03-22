@@ -13,8 +13,10 @@ from gremlinapi.exceptions import (
     HTTPError,
 )
 
+from typing import Type
+
 from gremlinapi.gremlinapi import GremlinAPI
-from gremlinapi.http_clients import get_gremlin_httpclient
+from gremlinapi.http_clients import get_gremlin_httpclient, GremlinAPIHttpClient
 
 
 log = logging.getLogger("GremlinAPI.client")
@@ -23,7 +25,11 @@ log = logging.getLogger("GremlinAPI.client")
 class GremlinAPIContracts(GremlinAPI):
     @classmethod
     @register_cli_action("update_contract", ("identifier", "body"), ("",))
-    def update_contract(cls, https_client=get_gremlin_httpclient(), **kwargs) -> dict:
+    def update_contract(
+        cls,
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
+        **kwargs,
+    ) -> dict:
         method: str = "PATCH"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
         data: dict = cls._error_if_not_json_body(**kwargs)

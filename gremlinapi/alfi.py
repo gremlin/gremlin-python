@@ -16,8 +16,7 @@ from gremlinapi.exceptions import (
 from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.http_clients import (
     get_gremlin_httpclient,
-    GremlinAPIRequestsClient,
-    GremlinAPIurllibClient,
+    GremlinAPIHttpClient,
 )
 from typing import Union, Type
 
@@ -29,9 +28,7 @@ class GremlinALFI(GremlinAPI):
     @register_cli_action("create_alfi_experiment", ("body",), ("teamId",))
     def create_alfi_experiment(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args,
         **kwargs,
     ) -> dict:
@@ -46,9 +43,7 @@ class GremlinALFI(GremlinAPI):
     @register_cli_action("halt_all_alfi_experiments", ("",), ("teamId",))
     def halt_all_alfi_experiments(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args,
         **kwargs,
     ) -> dict:
@@ -62,9 +57,7 @@ class GremlinALFI(GremlinAPI):
     @register_cli_action("get_alfi_experiment_details", ("guid",), ("teamId",))
     def get_alfi_experiment_details(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args,
         **kwargs,
     ) -> dict:
@@ -79,9 +72,7 @@ class GremlinALFI(GremlinAPI):
     @register_cli_action("halt_alfi_experiment", ("guid",), ("teamId",))
     def halt_alfi_experiment(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args,
         **kwargs,
     ) -> dict:
@@ -96,9 +87,7 @@ class GremlinALFI(GremlinAPI):
     @register_cli_action("list_active_alfi_experiments", ("",), ("teamId",))
     def list_active_alfi_experiments(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args,
         **kwargs,
     ) -> dict:
@@ -112,9 +101,7 @@ class GremlinALFI(GremlinAPI):
     @register_cli_action("list_completed_alfi_experiments", ("",), ("teamId",))
     def list_completed_alfi_experiments(
         cls,
-        https_client: Union[
-            Type[GremlinAPIRequestsClient], Type[GremlinAPIurllibClient]
-        ] = get_gremlin_httpclient(),
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args,
         **kwargs,
     ) -> dict:
