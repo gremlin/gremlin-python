@@ -29,8 +29,8 @@ class GremlinALFI(GremlinAPI):
     def create_alfi_experiment(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        *args,
-        **kwargs,
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "POST"
         data: dict = cls._error_if_not_json_body(**kwargs)
@@ -44,8 +44,8 @@ class GremlinALFI(GremlinAPI):
     def halt_all_alfi_experiments(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        *args,
-        **kwargs,
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "DELETE"
         endpoint: str = cls._optional_team_endpoint("/experiments", **kwargs)
@@ -58,8 +58,8 @@ class GremlinALFI(GremlinAPI):
     def get_alfi_experiment_details(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        *args,
-        **kwargs,
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "GET"
         guid: str = cls._error_if_not_param("guid", **kwargs)
@@ -73,8 +73,8 @@ class GremlinALFI(GremlinAPI):
     def halt_alfi_experiment(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        *args,
-        **kwargs,
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "DELETE"
         guid: str = cls._error_if_not_param("guid", **kwargs)
@@ -88,8 +88,8 @@ class GremlinALFI(GremlinAPI):
     def list_active_alfi_experiments(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        *args,
-        **kwargs,
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "GET"
         endpoint: str = cls._optional_team_endpoint("/experiments/active", **kwargs)
@@ -102,8 +102,8 @@ class GremlinALFI(GremlinAPI):
     def list_completed_alfi_experiments(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        *args,
-        **kwargs,
+        *args: tuple,
+        **kwargs: dict,
     ) -> dict:
         method: str = "GET"
         endpoint: str = cls._optional_team_endpoint("/experiments/completed", **kwargs)

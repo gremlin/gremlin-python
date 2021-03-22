@@ -29,7 +29,7 @@ class GremlinAPICompanies(GremlinAPI):
     def get_company(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        **kwargs,
+        **kwargs: dict,
     ) -> dict:
         method: str = "GET"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
@@ -43,7 +43,7 @@ class GremlinAPICompanies(GremlinAPI):
     def list_company_clients(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        **kwargs,
+        **kwargs: dict,
     ) -> dict:
         method: str = "GET"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
@@ -57,7 +57,7 @@ class GremlinAPICompanies(GremlinAPI):
     def invite_company_user(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        **kwargs,
+        **kwargs: dict,
     ) -> dict:
         method: str = "POST"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
@@ -74,7 +74,7 @@ class GremlinAPICompanies(GremlinAPI):
     def delete_company_invite(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        **kwargs,
+        **kwargs: dict,
     ) -> dict:
         method: str = "DELETE"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
@@ -97,7 +97,7 @@ class GremlinAPICompanies(GremlinAPI):
     def company_mfa_prefs(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        **kwargs,
+        **kwargs: dict,
     ) -> dict:
         method: str = "POST"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
@@ -119,7 +119,7 @@ class GremlinAPICompanies(GremlinAPI):
     def update_company_prefs(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        **kwargs,
+        **kwargs: dict,
     ) -> dict:
         method: str = "POST"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
@@ -139,7 +139,7 @@ class GremlinAPICompanies(GremlinAPI):
     def update_company_saml_props(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        **kwargs,
+        **kwargs: dict,
     ) -> dict:
         method: str = "POST"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
@@ -161,7 +161,7 @@ class GremlinAPICompanies(GremlinAPI):
     def list_company_users(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        **kwargs,
+        **kwargs: dict,
     ) -> dict:
         method: str = "GET"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
@@ -182,7 +182,7 @@ class GremlinAPICompanies(GremlinAPI):
     def update_company_user_role(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        **kwargs,
+        **kwargs: dict,
     ) -> dict:
         method: str = "PUT"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
@@ -205,7 +205,7 @@ class GremlinAPICompanies(GremlinAPI):
     def activate_company_user(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        **kwargs,
+        **kwargs: dict,
     ) -> dict:
         method: str = "POST"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
@@ -227,7 +227,7 @@ class GremlinAPICompanies(GremlinAPI):
     def deactivate_company_user(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
-        **kwargs,
+        **kwargs: dict,
     ) -> dict:
         method: str = "DELETE"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
