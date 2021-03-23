@@ -9,10 +9,15 @@ on:
 
 jobs:
   build:
+    - name: Execute Unit Tests
     runs-on: ${{ matrix.os }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: actions/checkout@v2
-      - name: Execute Unit Tests
-        run: python3 -m tests.test_all
+      - uses: actions/checkout@master
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Executes Unit Tests
+        run: python -m tests.test_all
