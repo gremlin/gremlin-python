@@ -30,3 +30,4 @@ class TestAPIKeys(unittest.TestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.json = mock_json
         self.assertEqual(GremlinAPIapikeys.revoke_apikey(**test_kwargs), mock_data)
+        self.assertEqual(GremlinAPIapikeys.revoke_apikey(**test_kwargs), {})
