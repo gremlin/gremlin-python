@@ -1,0 +1,17 @@
+name: Run and Validate Unit Tests
+
+on:
+  push:
+    branches: '**'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v2
+      - name: Execute Unit Tests
+        run: python3 -m tests.test_all
