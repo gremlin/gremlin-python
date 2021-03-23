@@ -11,6 +11,13 @@ jobs:
   build:
     name: Execute Unit Tests
     runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 1
+      matrix:
+        python-version:
+          - 3.8
+        os:
+          - ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
