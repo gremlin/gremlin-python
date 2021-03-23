@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    - name: Execute Unit Tests
+    name: Execute Unit Tests
     runs-on: ${{ matrix.os }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
