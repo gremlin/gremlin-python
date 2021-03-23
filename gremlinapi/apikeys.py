@@ -13,7 +13,11 @@ from gremlinapi.exceptions import (
 )
 
 from gremlinapi.gremlinapi import GremlinAPI
-from gremlinapi.http_clients import get_gremlin_httpclient
+from gremlinapi.http_clients import (
+    get_gremlin_httpclient,
+    GremlinAPIHttpClient,
+)
+from typing import Union, Type
 
 
 log = logging.getLogger("GremlinAPI.client")
@@ -29,32 +33,47 @@ class GremlinAPIapikeys(GremlinAPI):
         ),
         ("teamId",),
     )
-    def create_apikey(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
-        method = "POST"
-        data = {
+    def create_apikey(
+        cls,
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
+    ) -> dict:
+        method: str = "POST"
+        data: dict = {
             "description": cls._error_if_not_param("description", **kwargs),
             "identifier": cls._error_if_not_param("identifier", **kwargs),
         }
-        endpoint = cls._optional_team_endpoint(f"/apikeys", **kwargs)
-        payload = cls._payload(**{"headers": https_client.header(), "body": data})
+        endpoint: str = cls._optional_team_endpoint(f"/apikeys", **kwargs)
+        payload: dict = cls._payload(**{"headers": https_client.header(), "body": data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
     @register_cli_action("list_apikeys", ("",), ("teamId",))
-    def list_apikeys(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
-        method = "GET"
-        endpoint = cls._optional_team_endpoint(f"/apikeys", **kwargs)
-        payload = cls._payload(**{"headers": https_client.header()})
+    def list_apikeys(
+        cls,
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
+    ) -> dict:
+        method: str = "GET"
+        endpoint: str = cls._optional_team_endpoint(f"/apikeys", **kwargs)
+        payload: dict = cls._payload(**{"headers": https_client.header()})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
     @classmethod
     @register_cli_action("revoke_apikey", ("identifier",), ("teamId",))
-    def revoke_apikey(cls, https_client=get_gremlin_httpclient(), *args, **kwargs):
-        method = "DELETE"
-        identifier = cls._error_if_not_param("identifier", **kwargs)
-        endpoint = cls._optional_team_endpoint(f"/apikeys/{identifier}", **kwargs)
-        payload = cls._payload(**{"headers": https_client.header()})
+    def revoke_apikey(
+        cls,
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
+    ) -> dict:
+        method: str = "DELETE"
+        identifier: str = cls._error_if_not_param("identifier", **kwargs)
+        endpoint: str = cls._optional_team_endpoint(f"/apikeys/{identifier}", **kwargs)
+        payload: dict = cls._payload(**{"headers": https_client.header()})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body

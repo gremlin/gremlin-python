@@ -3,6 +3,7 @@
 # Copyright (C) 2020 Kyle Hultman <kyle@gremlin.com>, Gremlin Inc <sales@gremlin.com>
 
 import argparse
+from argparse import ArgumentParser
 import functools
 import importlib
 import logging
@@ -12,20 +13,23 @@ import sys
 from gremlinapi.config import GremlinAPIConfig
 from gremlinapi.exceptions import GremlinAuthError
 
+from typing import Callable, Union
+
 log = logging.getLogger("GremlinAPI.client")
 
+cli_actions: dict = dict()
 
-cli_actions = dict()
 
-
-def register_cli_action(cls_names, required=tuple(), optional=tuple()):
-    def wrap(f):
+def register_cli_action(
+    cls_names: str, required: tuple = tuple(), optional: tuple = tuple()
+) -> Callable:
+    def wrap(f) -> Callable:
         @functools.wraps(f)
-        def wrapped_f(*args, **kwargs):
+        def wrapped_f(*args: tuple, **kwargs: dict) -> Callable:
             return f(*args, **kwargs)
 
         in_obj = True
-        classes = cls_names
+        classes: Union[str, tuple] = cls_names
         if type(classes) != tuple:
             classes = (classes,)
 
@@ -40,8 +44,18 @@ def register_cli_action(cls_names, required=tuple(), optional=tuple()):
     return wrap
 
 
-def _base_args():
-    p = argparse.ArgumentParser(description="Gremlin API Command Line Interface")
+# class GremlinArgs(ArgumentParser):
+#     def __init__(self, *args, **kwargs) -> None:
+#         super().__init__(*args, **kwargs)
+#         self.gremlin_user = None
+#         self.gremlin_password = None
+#         self.gremlin_bearer = None
+#         self.gremlin_api_key = None
+#         self.bearer = None
+
+
+def _base_args() -> ArgumentParser:
+    p: ArgumentParser = ArgumentParser(description="Gremlin API Command Line Interface")
     p.add_argument(
         "--version",
         help="Display the version.",
@@ -148,45 +162,45 @@ def _get_parser(cli_module):
     return cli_module.extend_parser(parser)
 
 
-def _parse_args():
+def _parse_args() -> None:
     parser = _base_args()
     # args = parser.parse_known_args(sys.argv[1:])
     (options, args) = parser.parse_known_args(sys.argv)
     cli_module = importlib.import_module("gremlinapi.cli.cli")
     parser = _get_parser(cli_module)
     try:
-        import argcomplete
+        import argcomplete  # type: ignore
 
         argcomplete.autocomplete(parser)
     except Exception:
         pass
     # Sanity check input
     try:
-        if not (args.gremlin_user and args.gremlin_password) and not (
-            args.gremlin_bearer or args.gremlin_api_key
+        if not (args.gremlin_user and args.gremlin_password) and not (  # type: ignore
+            args.gremlin_bearer or args.gremlin_api_key  # type: ignore
         ):
-            error_msg = f"No form of API authentication provided: {args}"
-            log.fatal(error_msg)
+            error_msg: str = f"No form of API authentication provided: {args}"
+            log.error(error_msg)
             raise GremlinAuthError(error_msg)
-        elif args.gremlin_api_key:
+        elif args.gremlin_api_key:  # type: ignore
             if log.getEffectiveLevel() == logging.DEBUG:
-                log.debug(f"API authentication supplied: key {args.gremlin_api_key}")
-        elif args.bearer:
+                log.debug(f"API authentication supplied: key {args.gremlin_api_key}")  # type: ignore
+        elif args.bearer:  # type: ignore
             if log.getEffectiveLevel() == logging.DEBUG:
-                log.debug(f"Bearer supplied at CLI runtime: {args.bearer}")
-            GremlinAPIConfig.bearer_token = args.bearer
-        elif args.gremlin_user and args.gremlin_password:
+                log.debug(f"Bearer supplied at CLI runtime: {args.bearer}")  # type: ignore
+            GremlinAPIConfig.bearer_token = args.bearer  # type: ignore
+        elif args.gremlin_user and args.gremlin_password:  # type: ignore
             if log.getEffectiveLevel() == logging.DEBUG:
-                log.debug(f"User authentication provided for user: {args.gremlin_user}")
-            GremlinAPIConfig.user = args.gremlin_user
-            GremlinAPIConfig.password = args.gremlin_password
-            if args.gremlin_user_mfa_token:
+                log.debug(f"User authentication provided for user: {args.gremlin_user}")  # type: ignore
+            GremlinAPIConfig.user = args.gremlin_user  # type: ignore
+            GremlinAPIConfig.password = args.gremlin_password  # type: ignore
+            if args.gremlin_user_mfa_token:  # type: ignore
                 if log.getEffectiveLevel() == logging.DEBUG:
-                    log.debug(f"MFA token provided for user {args.gremlin_user}")
-                GremlinAPIConfig.user_mfa_token_value = args.gremlin_user_mfa_token
+                    log.debug(f"MFA token provided for user {args.gremlin_user}")  # type: ignore
+                GremlinAPIConfig.user_mfa_token_value = args.gremlin_user_mfa_token  # type: ignore
         else:
             error_msg = f"Unexpected state, authentication logic fallthrough: {args}"
-            log.fatal(error_msg)
+            log.error(error_msg)
             raise GremlinAuthError(error_msg)
     except GremlinAuthError:
         parser.print_help()

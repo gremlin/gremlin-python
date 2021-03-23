@@ -136,31 +136,31 @@ log.setLevel(
 _api_host = "https://api.gremlin.com"
 _api_version = "v1"
 
-_api_key = os.getenv("GREMLIN_API_KEY", "")
-_api_bearer_token = os.getenv("GREMLIN_BEARER_TOKEN", "")
-_bearer_token_timestamp = None
-_max_bearer_interval = os.getenv("GREMLIN_MAX_BEARER_INTERVAL", 86400)
-_api_user = os.getenv("GREMLIN_USER", "")
-_api_password = os.getenv("GREMLIN_PASSWORD", "")
-_api_user_mfa_token = os.getenv("GREMLIN_USER_MFA_TOKEN", None)
-_api_company = os.getenv("GREMLIN_COMPANY", "")
-_api_team_id = os.getenv("GREMLIN_TEAM_ID", "")
+_api_key: str = os.getenv("GREMLIN_API_KEY", "")
+_api_bearer_token: str = os.getenv("GREMLIN_BEARER_TOKEN", "")
+_bearer_token_timestamp: str = ""
+_max_bearer_interval: int = int(os.getenv("GREMLIN_MAX_BEARER_INTERVAL", 86400))
+_api_user: str = os.getenv("GREMLIN_USER", "")
+_api_password: str = os.getenv("GREMLIN_PASSWORD", "")
+_api_user_mfa_token: str = os.getenv("GREMLIN_USER_MFA_TOKEN", "")
+_api_company: str = os.getenv("GREMLIN_COMPANY", "")
+_api_team_id: str = os.getenv("GREMLIN_TEAM_ID", "")
 
 _http_proxy = os.getenv("GREMLIN_HTTP_PROXY", os.getenv("HTTP_PROXY", None))
 _https_proxy = os.getenv("GREMLIN_HTTPS_PROXY", os.getenv("HTTPS_PROXY", None))
 
 
-GremlinAPIConfig.user = _api_user
-GremlinAPIConfig.password = _api_password
-GremlinAPIConfig.user_mfa_token_value = _api_user_mfa_token
-GremlinAPIConfig.base_uri = f"{_api_host}/{_api_version}"
-GremlinAPIConfig.company_name = _api_company
-GremlinAPIConfig.api_key = _api_key
-GremlinAPIConfig.bearer_token = _api_bearer_token
-GremlinAPIConfig.bearer_timestamp = _bearer_token_timestamp
-GremlinAPIConfig.max_bearer_interval = _max_bearer_interval
-GremlinAPIConfig.http_proxy = _http_proxy
-GremlinAPIConfig.https_proxy = _https_proxy
+GremlinAPIConfig.user = _api_user  # type: ignore
+GremlinAPIConfig.password = _api_password  # type: ignore
+GremlinAPIConfig.user_mfa_token_value = _api_user_mfa_token  # type: ignore
+GremlinAPIConfig.base_uri = f"{_api_host}/{_api_version}"  # type: ignore
+GremlinAPIConfig.company_name = _api_company  # type: ignore
+GremlinAPIConfig.api_key = _api_key  # type: ignore
+GremlinAPIConfig.bearer_token = _api_bearer_token  # type: ignore
+GremlinAPIConfig.bearer_timestamp = _bearer_token_timestamp  # type: ignore
+GremlinAPIConfig.max_bearer_interval = _max_bearer_interval  # type: ignore
+GremlinAPIConfig.http_proxy = _http_proxy  # type: ignore
+GremlinAPIConfig.https_proxy = _https_proxy  # type: ignore
 
 
 def _auth_response_to_bearer_config(auth_response):

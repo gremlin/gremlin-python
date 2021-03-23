@@ -13,6 +13,16 @@ install:
 package:
 	python3 setup.py sdist bdist_wheel
 
+test:
+	python3 -m tests.test_all
+
+lint: typecheck
+	python3 -m black $(PWD)/gremlinapi
+	python3 -m black $(PWD)/tests
+
+typecheck:
+	mypy gremlinapi
+
 pypi-test: export TWINE_PASSWORD=$(PYPI_TEST)
 pypi-test: package
 	python3 -m twine upload --non-interactive --config-file ${HOME}/.pypirc --repository testpypi dist/*

@@ -1,0 +1,11 @@
+.dockerignore
+.git
+.cache
+.env
+examples/
+.idea
+.github
+Dockerfile
+.mypy_cache
+tmp/
+.tmp
