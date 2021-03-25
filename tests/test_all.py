@@ -28,7 +28,8 @@ from .test_scenario_graph_helpers import TestScenarioGraphHelpers
 from .test_scenario_helpers import TestScenarioHelpers
 from .test_scenarios import TestScenarios
 from .test_schedules import TestSchedules
-from .test_templates import TestTemplates
+
+# from .test_templates import TestTemplates
 from .test_users import TestUsers
 
 if __name__ == "__main__":

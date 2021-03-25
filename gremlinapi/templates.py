@@ -34,11 +34,9 @@ class GremlinAPITemplates(GremlinAPI):
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
-        method: str = "GET"
-        endpoint: str = cls._optional_team_endpoint(f"/templates", **kwargs)
-        payload: dict = cls._payload(**{"headers": https_client.header()})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        error_message: str = f"This function is now deprecated, please refactor around"
+        log.error(error_message)
+        raise NotImplementedError(error_message)
 
     @classmethod
     @register_cli_action("create_template", ("body",), ("teamId",))
@@ -48,12 +46,9 @@ class GremlinAPITemplates(GremlinAPI):
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
-        method: str = "POST"
-        data: dict = cls._error_if_not_json_body(**kwargs)
-        endpoint: str = cls._optional_team_endpoint(f"/templates", **kwargs)
-        payload: dict = cls._payload(**{"headers": https_client.header(), "body": data})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        error_message: str = f"This function is now deprecated, please refactor around"
+        log.error(error_message)
+        raise NotImplementedError(error_message)
 
     @classmethod
     @register_cli_action("get_template", ("guid",), ("teamId",))
@@ -63,12 +58,9 @@ class GremlinAPITemplates(GremlinAPI):
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
-        method: str = "GET"
-        guid: str = cls._error_if_not_param("guid", **kwargs)
-        endpoint: str = cls._optional_team_endpoint(f"/templates/{guid}", **kwargs)
-        payload: dict = cls._payload(**{"headers": https_client.header()})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        error_message: str = f"This function is now deprecated, please refactor around"
+        log.error(error_message)
+        raise NotImplementedError(error_message)
 
     @classmethod
     @register_cli_action("delete_template", ("guid",), ("teamId",))
@@ -78,12 +70,9 @@ class GremlinAPITemplates(GremlinAPI):
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
-        method: str = "DELETE"
-        guid: str = cls._error_if_not_param("guid", **kwargs)
-        endpoint: str = cls._optional_team_endpoint(f"/templates/{guid}", **kwargs)
-        payload: dict = cls._payload(**{"headers": https_client.header()})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        error_message: str = f"This function is now deprecated, please refactor around"
+        log.error(error_message)
+        raise NotImplementedError(error_message)
 
     @classmethod
     @register_cli_action("list_command_templates", ("",), ("teamId",))
@@ -93,11 +82,9 @@ class GremlinAPITemplates(GremlinAPI):
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
-        method: str = "GET"
-        endpoint: str = cls._optional_team_endpoint(f"/templates/command", **kwargs)
-        payload: dict = cls._payload(**{"headers": https_client.header()})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        error_message: str = f"This function is now deprecated, please refactor around"
+        log.error(error_message)
+        raise NotImplementedError(error_message)
 
     @classmethod
     @register_cli_action("list_target_templates", ("",), ("teamId",))
@@ -107,11 +94,9 @@ class GremlinAPITemplates(GremlinAPI):
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
-        method: str = "GET"
-        endpoint: str = cls._optional_team_endpoint(f"/templates/target", **kwargs)
-        payload: dict = cls._payload(**{"headers": https_client.header()})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        error_message: str = f"This function is now deprecated, please refactor around"
+        log.error(error_message)
+        raise NotImplementedError(error_message)
 
     @classmethod
     @register_cli_action("list_trigger_templates", ("",), ("teamId",))
@@ -121,8 +106,6 @@ class GremlinAPITemplates(GremlinAPI):
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
-        method: str = "GET"
-        endpoint: str = cls._optional_team_endpoint(f"/templates/trigger", **kwargs)
-        payload: dict = cls._payload(**{"headers": https_client.header()})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        error_message: str = f"This function is now deprecated, please refactor around"
+        log.error(error_message)
+        raise NotImplementedError(error_message)
