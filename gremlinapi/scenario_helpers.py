@@ -23,12 +23,11 @@ from gremlinapi.providers import GremlinAPIProviders as providers
 
 log = logging.getLogger("GremlinAPI.client")
 
-depreciation_message = f"This object is now deprecated, please refactor around"
-depreciation_version = f"0.10.13"
-
 
 class GremlinScenarioHelper(object):
-    @deprecated
+    @deprecated(
+        "GremlinScenarioHelper class is deprecated, plesae use GremlinScenarioGraphHelper instead"
+    )
     def __init__(
         self,
         *args: tuple,
@@ -42,7 +41,9 @@ class GremlinScenarioHelper(object):
         self.hypothesis: str = kwargs.get("hypothesis", self._hypothesis)  # type: ignore
         self.name: str = kwargs.get("name", self._name)  # type: ignore
 
-    @deprecated
+    @deprecated(
+        "GremlinScenarioHelper class is deprecated, plesae use GremlinScenarioGraphHelper instead"
+    )
     def add_step(self, _step: "GremlinScenarioStep") -> None:
         if not issubclass(type(_step), GremlinScenarioStep):
             error_msg: str = f"The step must extend from {type(GremlinScenarioStep)}"
@@ -124,7 +125,9 @@ class GremlinScenarioHelper(object):
         log.warning(error_msg)
         raise NotImplementedError(error_msg)
 
-    @deprecated
+    @deprecated(
+        "GremlinScenarioHelper class is deprecated, plesae use GremlinScenarioGraphHelper instead"
+    )
     def __repr__(self) -> str:
         model: dict = {
             "description": self.description,
@@ -136,7 +139,9 @@ class GremlinScenarioHelper(object):
 
 
 class GremlinScenarioStep(object):
-    @deprecated
+    @deprecated(
+        "GremlinScenarioStep class is deprecated, plesae use GremlinScenarioGraphHelper instead"
+    )
     def __init__(
         self,
         *args: tuple,
@@ -158,14 +163,18 @@ class GremlinScenarioStep(object):
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
 
-    @deprecated
+    @deprecated(
+        "GremlinScenarioStep class is deprecated, plesae use GremlinScenarioGraphHelper instead"
+    )
     def __repr__(self) -> str:
         model: dict = {"delay": self.delay}
         return json.dumps(model)
 
 
 class GremlinILFIStep(GremlinScenarioStep):
-    @deprecated
+    @deprecated(
+        "GremlinILFIStep class is deprecated, plesae use GremlinScenarioGraphHelper instead"
+    )
     def __init__(
         self,
         *args: tuple,
@@ -203,7 +212,9 @@ class GremlinILFIStep(GremlinScenarioStep):
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
 
-    @deprecated
+    @deprecated(
+        "GremlinILFIStep class is deprecated, plesae use GremlinScenarioGraphHelper instead"
+    )
     def __repr__(self) -> str:
         model: dict = json.loads(super().__repr__())
         model["attacks"] = [
@@ -218,7 +229,9 @@ class GremlinILFIStep(GremlinScenarioStep):
 
 
 class GremlinALFIStep(GremlinScenarioStep):
-    @deprecated
+    @deprecated(
+        "GremlinALFIStep class is deprecated, plesae use GremlinScenarioGraphHelper instead"
+    )
     def __init__(
         self,
         *args: tuple,
@@ -229,7 +242,9 @@ class GremlinALFIStep(GremlinScenarioStep):
         log.error(error_msg)
         raise NotImplementedError(error_msg)
 
-    @deprecated
+    @deprecated(
+        "GremlinALFIStep class is deprecated, plesae use GremlinScenarioGraphHelper instead"
+    )
     def __repr__(self) -> str:
         model: dict = json.loads(super().__repr__())
         return json.dumps(model)
