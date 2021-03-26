@@ -18,7 +18,7 @@ RUN apk add --no-cache --update  bash ca-certificates cargo curl gcc git go gzip
 
 RUN python3 -m ensurepip  && \
     rm -r /usr/lib/python*/ensurepip && \
-    pip3 install --upgrade pip setuptools twine wheel deprecated && \
+    pip3 install --upgrade pip setuptools twine wheel && \
     if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
     if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
     rm -r /root/.cache
