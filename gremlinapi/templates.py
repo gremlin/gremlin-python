@@ -24,6 +24,8 @@ from gremlinapi.http_clients import (
 
 log = logging.getLogger("GremlinAPI.client")
 
+depreciation_message = f"This function is now deprecated, please refactor around"
+
 
 class GremlinAPITemplates(GremlinAPI):
     @classmethod
@@ -34,7 +36,7 @@ class GremlinAPITemplates(GremlinAPI):
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
-        error_message: str = f"This function is now deprecated, please refactor around"
+        error_message: str = depreciation_message
         log.error(error_message)
         raise NotImplementedError(error_message)
 
@@ -46,7 +48,7 @@ class GremlinAPITemplates(GremlinAPI):
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
-        error_message: str = f"This function is now deprecated, please refactor around"
+        error_message: str = depreciation_message
         log.error(error_message)
         raise NotImplementedError(error_message)
 
@@ -58,7 +60,7 @@ class GremlinAPITemplates(GremlinAPI):
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
-        error_message: str = f"This function is now deprecated, please refactor around"
+        error_message: str = depreciation_message
         log.error(error_message)
         raise NotImplementedError(error_message)
 
@@ -70,7 +72,7 @@ class GremlinAPITemplates(GremlinAPI):
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
-        error_message: str = f"This function is now deprecated, please refactor around"
+        error_message: str = depreciation_message
         log.error(error_message)
         raise NotImplementedError(error_message)
 
@@ -82,7 +84,7 @@ class GremlinAPITemplates(GremlinAPI):
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
-        error_message: str = f"This function is now deprecated, please refactor around"
+        error_message: str = depreciation_message
         log.error(error_message)
         raise NotImplementedError(error_message)
 
@@ -94,7 +96,7 @@ class GremlinAPITemplates(GremlinAPI):
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
-        error_message: str = f"This function is now deprecated, please refactor around"
+        error_message: str = depreciation_message
         log.error(error_message)
         raise NotImplementedError(error_message)
 
@@ -106,6 +108,6 @@ class GremlinAPITemplates(GremlinAPI):
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
-        error_message: str = f"This function is now deprecated, please refactor around"
+        error_message: str = depreciation_message
         log.error(error_message)
         raise NotImplementedError(error_message)
