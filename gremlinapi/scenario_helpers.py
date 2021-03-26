@@ -5,6 +5,7 @@
 import json
 import logging
 import uuid
+from deprecated import deprecated
 
 from gremlinapi.exceptions import (
     GremlinCommandTargetError,
@@ -22,7 +23,11 @@ from gremlinapi.providers import GremlinAPIProviders as providers
 
 log = logging.getLogger("GremlinAPI.client")
 
+depreciation_message = f"This object is now deprecated, please refactor around"
+depreciation_version = f"0.10.13"
 
+
+@deprecated(version=depreciation_version, reason=depreciation_message)
 class GremlinScenarioHelper(object):
     def __init__(
         self,
@@ -128,6 +133,7 @@ class GremlinScenarioHelper(object):
         return json.dumps(model)
 
 
+@deprecated(version=depreciation_version, reason=depreciation_message)
 class GremlinScenarioStep(object):
     def __init__(
         self,
@@ -155,6 +161,7 @@ class GremlinScenarioStep(object):
         return json.dumps(model)
 
 
+@deprecated(version=depreciation_version, reason=depreciation_message)
 class GremlinILFIStep(GremlinScenarioStep):
     def __init__(
         self,
@@ -206,6 +213,7 @@ class GremlinILFIStep(GremlinScenarioStep):
         return json.dumps(model)
 
 
+@deprecated(version=depreciation_version, reason=depreciation_message)
 class GremlinALFIStep(GremlinScenarioStep):
     def __init__(
         self,
