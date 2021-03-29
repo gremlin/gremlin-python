@@ -29,8 +29,68 @@ class TestScenarioGraphHelpers(unittest.TestCase):
         self.assertNotEqual(helper._nodes.get_node(0), helper_node_2)
 
     def test_gremlin_scenario_graph_helper_repr_model(self) -> None:
-        helper = GremlinScenarioGraphHelper(**mock_scenario)
-        self.assertEqual(helper.repr_model(), mock_scenario)
+        status_check_description = "Check if Gremlin.com is Still Up"
+        endpoint_url = "https://www.google.com"
+        endpoint_headers = dict()
+        endpoint_headers = {"Authorization": "mock-auth"}
+        evaluation_ok_status_codes = ["404", "300"]
+        evaluation_ok_latency_max = 1000
+        evaluation_response_body_evaluation = {"op": "AND", "predicates": []}
+        delay_time = 5  # Time to delay between steps in seconds
+        my_scenario = GremlinScenarioGraphHelper(
+            name="code_created_scenario_6",
+            description="Three nodes now",
+            hypothesis="No Hypothesis",
+        )
+        my_scenario.add_node(
+            GremlinScenarioStatusCheckNode(
+                description=status_check_description,
+                endpoint_url=endpoint_url,
+                endpoint_headers=endpoint_headers,
+                evaluation_ok_status_codes=evaluation_ok_status_codes,
+                evaluation_ok_latency_max=evaluation_ok_latency_max,
+                evaluation_response_body_evaluation=evaluation_response_body_evaluation,
+            )
+        )
+        my_scenario.add_node(
+            GremlinScenarioStatusCheckNode(
+                description=status_check_description,
+                endpoint_url=endpoint_url,
+                endpoint_headers=endpoint_headers,
+                evaluation_ok_status_codes=evaluation_ok_status_codes,
+                evaluation_ok_latency_max=evaluation_ok_latency_max,
+                evaluation_response_body_evaluation=evaluation_response_body_evaluation,
+            )
+        )
+        my_scenario.add_node(
+            GremlinScenarioDelayNode(description="Add some delay", delay=delay_time)
+        )
+        my_scenario.add_node(
+            GremlinScenarioStatusCheckNode(
+                description=status_check_description,
+                endpoint_url=endpoint_url,
+                endpoint_headers=endpoint_headers,
+                evaluation_ok_status_codes=evaluation_ok_status_codes,
+                evaluation_ok_latency_max=evaluation_ok_latency_max,
+                evaluation_response_body_evaluation=evaluation_response_body_evaluation,
+            )
+        )
+        t_diff = self.maxDiff
+        self.maxDiff = None
+        expected_output = {
+            "description": "Three nodes now",
+            "graph": {
+                "nodes": {
+                    node.uuid: data
+                    for node, data in my_scenario._nodes.nodes_data_linear()
+                },
+                "start_id": my_scenario._nodes.head.uuid,
+            },
+            "hypothesis": "No Hypothesis",
+            "name": "code_created_scenario_6",
+        }
+        self.assertEqual(my_scenario.repr_model(), expected_output)
+        self.maxDiff = t_diff
 
     def test_add_edge(self) -> None:
         helper = GremlinScenarioNode(**mock_scenario)
