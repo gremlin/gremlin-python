@@ -28,6 +28,6 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install modules
         run: |
-          python -m pip install --upgrade requests deprecated
+          python -m pip install --upgrade requests
       - name: Executes Unit Tests
         run: python -m tests.test_all
