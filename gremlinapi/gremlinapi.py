@@ -57,9 +57,15 @@ class GremlinAPI(object):
             log.error(error_msg)
             raise (GremlinParameterError(error_msg))
         for param_name in params:
-            endpoint = cls._add_query_param(
-                endpoint, param_name, cls._error_if_not_param(param_name, **kwargs)
-            )
+            # maps pythonic param_name to API paramName
+            if param_name is "team_id":
+                endpoint = cls._add_query_param(
+                    endpoint, "teamId", cls._error_if_not_param(param_name, **kwargs)
+                )
+            else:
+                endpoint = cls._add_query_param(
+                    endpoint, param_name, cls._error_if_not_param(param_name, **kwargs)
+                )
         return endpoint
 
     @classmethod
@@ -86,7 +92,7 @@ class GremlinAPI(object):
         if not team_id and type(config.team_id) is str:
             team_id = config.team_id  # type: ignore
         if team_id:
-            endpoint = cls._add_query_param(endpoint, "team_id", team_id)
+            endpoint = cls._add_query_param(endpoint, "teamId", team_id)
         return endpoint
 
     @classmethod
@@ -98,7 +104,7 @@ class GremlinAPI(object):
             error_msg: str = f"Endpoint requires a team_id, none supplied"
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
-        endpoint = cls._add_query_param(endpoint, "team_id", team_id)
+        endpoint = cls._add_query_param(endpoint, "teamId", team_id)
         return endpoint
 
     @classmethod
