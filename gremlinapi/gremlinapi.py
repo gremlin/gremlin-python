@@ -30,6 +30,17 @@ class GremlinAPI(object):
         pass
 
     @classmethod
+    def param_remap(cls, param):
+        split_param = param.split("_")
+        new_param = ""
+        for s in split_param:
+            if s is split_param[0]:
+                new_param += s.lower()
+            else:
+                new_param += s.capitalize()
+        return new_param
+
+    @classmethod
     def _add_query_param(cls, endpoint: str, param_name: str, param_value: str) -> str:
         if endpoint and param_name and param_value:
             if "/?" in endpoint and not (
@@ -57,15 +68,11 @@ class GremlinAPI(object):
             log.error(error_msg)
             raise (GremlinParameterError(error_msg))
         for param_name in params:
-            # maps pythonic param_name to API paramName
-            if param_name is "team_id":
-                endpoint = cls._add_query_param(
-                    endpoint, "teamId", cls._error_if_not_param(param_name, **kwargs)
-                )
-            else:
-                endpoint = cls._add_query_param(
-                    endpoint, param_name, cls._error_if_not_param(param_name, **kwargs)
-                )
+            endpoint = cls._add_query_param(
+                endpoint,
+                cls.param_remap(param_name),
+                cls._error_if_not_param(param_name, **kwargs),
+            )
         return endpoint
 
     @classmethod
