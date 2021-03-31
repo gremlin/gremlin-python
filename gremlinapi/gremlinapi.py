@@ -30,6 +30,17 @@ class GremlinAPI(object):
         pass
 
     @classmethod
+    def param_remap(cls, param):
+        split_param = param.split("_")
+        new_param = ""
+        for s in split_param:
+            if s is split_param[0]:
+                new_param += s.lower()
+            else:
+                new_param += s.capitalize()
+        return new_param
+
+    @classmethod
     def _add_query_param(cls, endpoint: str, param_name: str, param_value: str) -> str:
         if endpoint and param_name and param_value:
             if "/?" in endpoint and not (
@@ -58,7 +69,9 @@ class GremlinAPI(object):
             raise (GremlinParameterError(error_msg))
         for param_name in params:
             endpoint = cls._add_query_param(
-                endpoint, param_name, cls._error_if_not_param(param_name, **kwargs)
+                endpoint,
+                cls.param_remap(param_name),
+                cls._error_if_not_param(param_name, **kwargs),
             )
         return endpoint
 
@@ -86,7 +99,7 @@ class GremlinAPI(object):
         if not team_id and type(config.team_id) is str:
             team_id = config.team_id  # type: ignore
         if team_id:
-            endpoint = cls._add_query_param(endpoint, "team_id", team_id)
+            endpoint = cls._add_query_param(endpoint, "teamId", team_id)
         return endpoint
 
     @classmethod
@@ -98,7 +111,7 @@ class GremlinAPI(object):
             error_msg: str = f"Endpoint requires a team_id, none supplied"
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
-        endpoint = cls._add_query_param(endpoint, "team_id", team_id)
+        endpoint = cls._add_query_param(endpoint, "teamId", team_id)
         return endpoint
 
     @classmethod

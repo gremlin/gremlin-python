@@ -55,7 +55,7 @@ class TestAPI(unittest.TestCase):
             test_kwargs[test_params[0]],
             test_params[1],
             test_kwargs[test_params[1]],
-            test_params[2],
+            "teamId",
             test_kwargs[test_params[2]],
         )
         self.assertEqual(
@@ -73,7 +73,7 @@ class TestAPI(unittest.TestCase):
             test_kwargs[test_params[0]],
             test_params[1],
             test_kwargs[test_params[1]],
-            test_params[2],
+            "teamId",
             test_kwargs[test_params[2]],
         )
         self.assertEqual(
@@ -91,7 +91,7 @@ class TestAPI(unittest.TestCase):
             test_kwargs[test_params[0]],
             test_params[1],
             test_kwargs[test_params[1]],
-            test_params[2],
+            "teamId",
             test_kwargs[test_params[2]],
         )
         self.assertEqual(
@@ -104,9 +104,8 @@ class TestAPI(unittest.TestCase):
     def test__optional_team_endpoint(self) -> None:
         test_endpoint = "%s" % test_base_endpoint
 
-        expected_output = "%s/?%s=%s" % (
+        expected_output = "%s/?teamId=%s" % (
             test_endpoint,
-            test_params[2],
             test_kwargs[test_params[2]],
         )
         self.assertEqual(
@@ -116,7 +115,8 @@ class TestAPI(unittest.TestCase):
 
         expected_output = "%s" % (test_endpoint)
         self.assertEqual(
-            GremlinAPI._optional_team_endpoint(test_endpoint), expected_output
+            GremlinAPI._optional_team_endpoint(test_endpoint),
+            expected_output,
         )
 
     def test__required_team_endpoint(self) -> None:
@@ -168,7 +168,10 @@ class TestAPI(unittest.TestCase):
             "body": mock_payload["body"],
             "data": mock_payload["data"],
         }
-        self.assertEqual(GremlinAPI._payload(**mock_payload), expected_output)
+        self.assertEqual(
+            GremlinAPI._payload(**mock_payload),
+            expected_output,
+        )
 
     def test__warn_if_not_json_body(self) -> None:
         self.assertEqual(GremlinAPI._warn_if_not_json_body(**mock_body), mock_data)
