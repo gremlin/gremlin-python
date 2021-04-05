@@ -20,7 +20,6 @@ from gremlinapi.http_clients import (
     get_gremlin_httpclient,
     GremlinAPIHttpClient,
 )
-from gremlinapi.scenario_helpers import GremlinScenarioHelper
 from gremlinapi.scenario_graph_helpers import GremlinScenarioGraphHelper
 
 
@@ -33,14 +32,12 @@ class GremlinAPIScenarios(GremlinAPI):
         cls,
         **kwargs: dict,
     ) -> str:
-        body: Union[GremlinScenarioGraphHelper, GremlinScenarioHelper] = cls._error_if_not_param("body", **kwargs)  # type: ignore
-        if issubclass(type(body), GremlinScenarioHelper) or issubclass(
-            type(body), GremlinScenarioGraphHelper
-        ):
+        body: GremlinScenarioGraphHelper = cls._error_if_not_param("body", **kwargs)  # type: ignore
+        if issubclass(type(body), GremlinScenarioGraphHelper):
             return str(body)
         else:
             error_msg: str = (
-                f"Body present but not of type {type(GremlinScenarioHelper)}"
+                f"Body present but not of type {type(GremlinScenarioGraphHelper)}"
             )
             log.warning(error_msg)
         return str(body)
