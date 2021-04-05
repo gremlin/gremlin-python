@@ -25,8 +25,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
         helper_node_2 = GremlinScenarioNode(**mock_scenario)
         helper.add_node(helper_node)
         helper.add_node(helper_node_2)
-        self.assertEqual(helper._nodes.get_node(0), helper_node)
-        self.assertNotEqual(helper._nodes.get_node(0), helper_node_2)
+        self.assertEqual(helper._nodes.get_node(helper_node.id), helper_node)
+        self.assertNotEqual(helper._nodes.get_node(helper_node.id), helper_node_2)
 
     def test_gremlin_scenario_graph_helper_repr_model(self) -> None:
         status_check_description = "Check if Gremlin.com is Still Up"
