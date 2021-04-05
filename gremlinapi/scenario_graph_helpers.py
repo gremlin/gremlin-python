@@ -36,9 +36,7 @@ class GremlinScenarioNode(object):
     ):
         self._edges: dict = dict()
         self._id: str = str()
-        # self._previous: "GremlinScenarioNode" = None  # type: ignore
         self._name: str = str()
-        # self._next: "GremlinScenarioNode" = None  # type: ignore
         self._node_type: str = str()
         self.id: str = str(uuid.uuid4())
         self.name: str = kwargs.get("name", None)  # type: ignore
@@ -82,20 +80,6 @@ class GremlinScenarioNode(object):
             raise GremlinParameterError(error_msg)
         self._name = _name
 
-    # @property
-    # def next(self) -> "GremlinScenarioNode":
-    #     return self._next
-
-    # @next.setter
-    # def next(self, _node: "GremlinScenarioNode") -> None:
-    #     if not issubclass(type(_node), GremlinScenarioNode):
-    #         error_msg: str = (
-    #             f"next expects a GremlinScenarioNode, received {type(_node)}"
-    #         )
-    #         log.error(error_msg)
-    #         raise GremlinParameterError(error_msg)
-    #     self._next = _node
-
     @property
     def node_type(self) -> str:
         return self._node_type
@@ -110,20 +94,6 @@ class GremlinScenarioNode(object):
             raise GremlinParameterError(error_msg)
         self._node_type = _node_type
 
-    # @property
-    # def previous(self) -> "GremlinScenarioNode":
-    #     return self._previous
-
-    # @previous.setter
-    # def previous(self, _node: "GremlinScenarioNode") -> None:
-    #     if not issubclass(type(_node), GremlinScenarioNode):
-    #         error_msg: str = (
-    #             f"previous expects a GremlinScenarioNode, received {type(_node)}"
-    #         )
-    #         log.error(error_msg)
-    #         raise GremlinParameterError(error_msg)
-    #     self._previous = _node
-
     @property
     def uuid(self) -> str:
         if not self.name:
@@ -133,10 +103,6 @@ class GremlinScenarioNode(object):
         return f"{self.name}-{self.id}"
 
     def repr_model(self) -> dict:
-        # if not self.next:
-        #     model = {"type": self.node_type, "id": self.uuid, "next": None}
-        # else:
-        #     model = {"type": self.node_type, "id": self.uuid, "next": self.next.uuid}
         model = {"type": self.node_type, "id": self.uuid}
         return model
 
@@ -160,9 +126,9 @@ class GremlinScenarioGraphHelper(object):
         self.name: str = kwargs.get("name", None)  # type: ignore
 
     def add_node(self, node: GremlinScenarioNode) -> None:
-        '''
+        """
         Adds the node to the graph as a loose leaf.
-        
+
         Parameters
         ----------
         node : GremlinScenarioNode
@@ -172,23 +138,48 @@ class GremlinScenarioGraphHelper(object):
         ------
         GremlinParameterError
             If the node is not of the type GremlinScenarioNode
-        '''
+        """
         if not issubclass(type(node), GremlinScenarioNode):
-            error_msg: str = f"add_node expects GremlinScenarioNode (or None), received {type(node)}"
+            error_msg: str = (
+                f"add_node expects GremlinScenarioNode (or None), received {type(node)}"
+            )
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._nodes.append(node)
+
+    def remove_node(self, node: GremlinScenarioNode) -> None:
+        """
+        Removes node from graph.
+
+        If the node to remove is the head node, Raises an error
+
+        Parameters
+        ----------
+        node : GremlinScenarioNode
+            Node to remove from the graph
+
+        Raises
+        ------
+        GremlinParameterError
+            If the _node to remove is the current head node
+        """
+        self._nodes.remove(node)
 
     def get_last_node(self) -> GremlinScenarioNode:
         print(self._nodes._nodes[-1].id)
         return self._nodes._nodes[-1]
 
-    def add_edge(self, dst_node: GremlinScenarioNode, _src_node: GremlinScenarioNode = None, _weight: int=None) -> None:
-        '''
+    def add_edge(
+        self,
+        dst_node: GremlinScenarioNode,
+        _src_node: GremlinScenarioNode = None,
+        _weight: int = None,
+    ) -> None:
+        """
         Helper function to add edges to source and destination nodes, with optional weight.
 
         If _src_node is not defined, the node with the highest id is used
-        
+
         Parameters
         ----------
         dst_node : GremlinScenarioNode
@@ -202,7 +193,7 @@ class GremlinScenarioGraphHelper(object):
         ------
         GremlinParameterError
             If the _src_node or dst_node are not of the type GremlinScenarioNode
-        '''
+        """
         if not issubclass(type(dst_node), GremlinScenarioNode):
             error_msg: str = f"add_edge expects GremlinScenarioNode (or None), received {type(dst_node)}"
             log.error(error_msg)
@@ -505,9 +496,9 @@ class _GremlinNodeGraph(object):
         node_right: GremlinScenarioNode,
         _weight=None,
     ) -> None:
-        '''
+        """
         Adds edges to left and right nodes, with optional weight
-        
+
         Parameters
         ----------
         node_left : GremlinScenarioNode
@@ -521,50 +512,47 @@ class _GremlinNodeGraph(object):
         ------
         GremlinParameterError
             If the node_left or node_right are not of the type GremlinScenarioNode
-        '''
+        """
         self._validate_type(node_left)
         self._validate_type(node_right)
         node_left.add_edge(node_right, _weight)
         node_right.add_edge(node_left, _weight)
 
     def append(self, new_node: GremlinScenarioNode) -> None:
-        '''
+        """
         Adds new_node to the graph.
 
         Duplicates the functionality of list.append() and ensures the `head` node is set.
-        
+
         Parameters
         ----------
         new_node : GremlinScenarioNode
             Node to add to the graph
-        
+
         Raises
         ------
         GremlinParameterError
             If the new_node are not of the type GremlinScenarioNode
-        '''
+        """
         self._validate_type(new_node)
         if self.head is None:
             self.head = new_node
         self._nodes.append(new_node)
 
     def get_node(self, uid: str) -> Optional[GremlinScenarioNode]:
-        for node in self.nodes:
+        """
+        Retrieves the GremlinScenarioNode, if it exists, with id `id`
+
+        Parameters
+        ----------
+        uid : str
+            Node id to retrieve from graph
+
+        """
+        for node in self._nodes:
             if node.id == uid:
                 return node
         return None
-        # if not isinstance(_index, int):
-        #     error_msg: str = (
-        #         f"get_node expects index as integer, received {type(_index)}"
-        #     )
-        #     log.error(error_msg)
-        #     raise GremlinParameterError(error_msg)
-        # node: GremlinScenarioNode = self.head  # type: ignore
-        # for idx in range(_index):
-        #     node = node.next
-        #     if node == self.head:
-        #         return None
-        # return node
 
     @deprecated("Use add_edge instead")
     def insert_after(
@@ -580,49 +568,65 @@ class _GremlinNodeGraph(object):
         self._validate_type(new_node)
         self.add_edge(ref_node, new_node)
 
-    # def next(self) -> None:
-    #     self.head = self.head.next
-
-    @property
-    def nodes(self) -> list():
+    @deprecated
+    def nodes(self) -> list:
         return self._nodes
-        # if self.head is None:
-        #     return
-        # node = self.head
-        # while True:
-        #     yield node
-        #     node = node.next
-        #     if node == self.head:
-        #         return
 
+    @deprecated
     def nodes_data_circular(self):
-        for node in self.nodes():
+        for node in self._nodes:
             data = node.data
             yield node, data
 
+    @deprecated
     def nodes_data_linear(self):
-        for node in self.nodes:
+        for node in self._nodes:
             data = node.data
-            # if node.next == self.head:
-            #     data.pop("next")
             yield node, data
 
+    @deprecated
     def previous(self) -> None:
-        self.head = self.head.previous
+        pass
 
     def push(self, new_node: GremlinScenarioNode) -> None:
+        """
+        Adds new_node to graph, replacing the `head` node
+
+        Parameters
+        ----------
+        new_node : GremlinScenarioNode
+            Node to add to the graph
+
+        """
         self._validate_type(new_node)
         self.append(new_node)
+        self.add_edge(new_node, self.head)
         self.head = new_node
 
     def remove(self, _node: GremlinScenarioNode) -> None:
-        if self.head.next == self.head:
-            self.head = None  # type: ignore
+        """
+        Removes _node from graph.
+
+        If the node to remove is the head node, Raises an error
+
+        Parameters
+        ----------
+        _node : GremlinScenarioNode
+            Node to remove from the graph
+
+        Raises
+        ------
+        GremlinParameterError
+            If the _node to remove is the current head node
+        """
+        if self.head == _node:
+            error_msg: str = f"Node to remove cannot be the current head node"
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
         else:
-            _node.previous.next = _node.next
-            _node.next.previous = _node.previous
-            if self.head == _node:
-                self.head = _node.next
+            for node_id in _node._edges:
+                _node._edges[node_id]["node"].edges.pop(_node.id)
+            self._nodes.remove(_node)
 
     @property
     def head(self) -> GremlinScenarioNode:

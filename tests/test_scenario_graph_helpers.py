@@ -180,7 +180,7 @@ class TestScenarioGraphHelpers(unittest.TestCase):
         helper_node_3 = GremlinScenarioNode(**mock_scenario)
         helper_node_4 = GremlinScenarioNode(**mock_scenario)
 
-        #TODO: validate proper functionality of get_last_node asserted as equal to manual edge adding
+        # TODO: validate proper functionality of get_last_node asserted as equal to manual edge adding
 
         # append
         self.assertEqual(helper.head, None)
