@@ -127,7 +127,8 @@ class GremlinScenarioGraphHelper(object):
 
     def add_node(self, node: GremlinScenarioNode) -> None:
         """
-        Adds the node to the graph as a loose leaf.
+        Adds the node to the graph as a loose leaf. If it is the first node, it becomes the HEAD
+        node.
 
         Parameters
         ----------
@@ -151,7 +152,7 @@ class GremlinScenarioGraphHelper(object):
         """
         Removes node from graph.
 
-        If the node to remove is the head node, Raises an error
+        If the node to remove is the head node, Raises an error.
 
         Parameters
         ----------
@@ -178,7 +179,8 @@ class GremlinScenarioGraphHelper(object):
         """
         Helper function to add edges to source and destination nodes, with optional weight.
 
-        If _src_node is not defined, the node with the highest id is used
+        If _src_node is not defined, the node with the highest id (the last added)
+        is used
 
         Parameters
         ----------
@@ -262,7 +264,26 @@ class GremlinScenarioGraphHelper(object):
         return json.dumps(model)
 
 
-class GremlinScenarioAttackNode(GremlinScenarioNode):
+class GremlinScenarioSerialNode(GremlinScenarioNode):
+    def __init(
+        self,
+        *args: tuple,
+        **kwargs: dict,
+    ):
+        super().__init__(*args, **kwargs)
+
+
+class GremlinScenarioParallelNode(GremlinScenarioNode):
+    def __init(
+        self,
+        *args: tuple,
+        **kwargs: dict,
+    ):
+        super().__init__(*args, **kwargs)
+        raise NotImplementedError("Parallel Scenario Nodes NOT IMPLEMENTED")
+
+
+class GremlinScenarioAttackNode(GremlinScenarioSerialNode):
     def __init__(
         self,
         *args: tuple,
@@ -287,7 +308,7 @@ class GremlinScenarioAttackNode(GremlinScenarioNode):
         self._attack_type = _attack_type
 
 
-class GremlinScenarioILFINode(GremlinScenarioAttackNode):
+class GremlinScenarioILFINode(GremlinScenarioSerialNode):
     def __init__(self, *args: tuple, **kwargs: dict):
         if not kwargs.get("name", None) and kwargs.get("command", None):  # type: ignore
             kwargs["name"] = (kwargs.get("command")).shortType  # type: ignore
@@ -329,7 +350,7 @@ class GremlinScenarioILFINode(GremlinScenarioAttackNode):
         self._target = _target
 
 
-class GremlinScenarioALFINode(GremlinScenarioAttackNode):
+class GremlinScenarioALFINode(GremlinScenarioSerialNode):
     def __init__(
         self,
         *args: tuple,
@@ -340,7 +361,7 @@ class GremlinScenarioALFINode(GremlinScenarioAttackNode):
         raise NotImplementedError("ALFI Scenarios NOT IMPLEMENTED")
 
 
-class GremlinScenarioDelayNode(GremlinScenarioNode):
+class GremlinScenarioDelayNode(GremlinScenarioSerialNode):
     def __init__(self, *args: tuple, **kwargs: dict):
         if not kwargs.get("name", None):
             kwargs["name"] = "Delay"  # type: ignore
@@ -369,7 +390,7 @@ class GremlinScenarioDelayNode(GremlinScenarioNode):
         self._delay = _duration
 
 
-class GremlinScenarioStatusCheckNode(GremlinScenarioNode):
+class GremlinScenarioStatusCheckNode(GremlinScenarioSerialNode):
     def __init__(
         self,
         *args: tuple,
@@ -547,7 +568,6 @@ class _GremlinNodeGraph(object):
         ----------
         uid : str
             Node id to retrieve from graph
-
         """
         for node in self._nodes:
             if node.id == uid:
@@ -596,7 +616,6 @@ class _GremlinNodeGraph(object):
         ----------
         new_node : GremlinScenarioNode
             Node to add to the graph
-
         """
         self._validate_type(new_node)
         self.append(new_node)
