@@ -644,7 +644,8 @@ class _GremlinNodeGraph(object):
             raise GremlinParameterError(error_msg)
         else:
             for node_id in _node._edges:
-                _node._edges[node_id]["node"].edges.pop(_node.id)
+                _node._edges[node_id]["node"]._edges.pop(_node.id)
+            _node._edges = {}
             self._nodes.remove(_node)
 
     @property

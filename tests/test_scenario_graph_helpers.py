@@ -182,41 +182,53 @@ class TestScenarioGraphHelpers(unittest.TestCase):
 
         # TODO: validate proper functionality of get_last_node asserted as equal to manual edge adding
 
-        # append
+        # append first node
+        # {helper_node}
         self.assertEqual(helper.head, None)
         helper.append(helper_node)
         self.assertEqual(helper.head, helper_node)
-        # self.assertEqual(helper_node.next, helper_node)
-        # self.assertEqual(helper_node.previous, helper_node)
 
-        # insert_after
-        # helper.append(helper_node_2)
-        # self.assertEqual(helper.head, helper_node)
-        # self.assertEqual(helper_node.next, helper_node_2)
-        # self.assertEqual(helper_node_2.previous, helper_node)
-        # self.assertEqual(helper_node_2.next, helper_node)
+        # append second node
+        # add_edge
+        # {helper_node} <-> {helper_node_2}
+        helper.append(helper_node_2)
+        helper.add_edge(helper_node, helper_node_2)
+        self.assertEqual(helper.head._edges[helper_node_2.id]["node"], helper_node_2)
+        self.assertEqual(helper_node_2._edges[helper.head.id]["node"], helper.head)
+        self.assertEqual(helper_node._edges[helper_node_2.id]["node"], helper_node_2)
+        self.assertEqual(helper_node_2._edges[helper_node.id]["node"], helper_node)
 
-        # insert before
-        # helper.insert_before(helper_node.next, helper_node_3)
-        # self.assertEqual(helper.head, helper_node)
-        # self.assertEqual(helper_node.next, helper_node_3)
-        # self.assertEqual(helper_node_3.previous, helper_node)
-        # self.assertEqual(helper_node_3.next, helper_node_2)
-        # self.assertEqual(helper_node_2.previous, helper_node_3)
-        # self.assertEqual(helper_node_2.next, helper_node)
+        # insert between
+        # {helper_node} <-> {helper_node_3} <-> {helper_node_2}
+        helper_node._edges.pop(helper_node_2.id)
+        helper_node_2._edges.pop(helper_node.id)
+        helper.append(helper_node_3)
+        helper.add_edge(helper_node, helper_node_3)
+        helper.add_edge(helper_node_3, helper_node_2)
+        self.assertFalse(helper_node_2.id in helper_node._edges)
+        self.assertFalse(helper_node.id in helper_node_2._edges)
+        self.assertTrue(helper_node.id in helper_node_3._edges)
+        self.assertTrue(helper_node_3.id in helper_node._edges)
+        self.assertTrue(helper_node_2.id in helper_node_3._edges)
+        self.assertTrue(helper_node_3.id in helper_node_2._edges)
 
         # get_node
-        # self.assertEqual(helper_node, helper.get_node(0))
-        # self.assertEqual(helper_node_3, helper.get_node(1))
-        # self.assertEqual(helper_node_2, helper.get_node(2))
+        self.assertEqual(helper_node, helper.get_node(helper_node.id))
+        self.assertEqual(helper_node_2, helper.get_node(helper_node_2.id))
 
         # push
-        # helper.push(helper_node_4)
-        # self.assertEqual(helper.head, helper_node_4)
-        # self.assertEqual(helper.head.next, helper_node)
-        # self.assertEqual(helper_node.previous, helper_node_4)
+        # {helper_node_4} <-> {helper_node} <-> {helper_node_3} <-> {helper_node_2}
+        helper.push(helper_node_4)
+        self.assertEqual(helper.head, helper_node_4)
+        self.assertTrue(helper_node.id in helper_node_4._edges)
+        self.assertTrue(helper_node_4.id in helper_node._edges)
 
         # remove
-        # self.assertEqual(helper.get_node(2), helper_node_3)
-        # helper.remove(helper_node_3)
-        # self.assertEqual(helper.get_node(2), helper_node_2)
+        # {helper_node_4} <-> {helper_node} <-> {helper_node_2}
+        self.assertEqual(helper.get_node(helper_node_3.id), helper_node_3)
+        helper.remove(helper_node_3)
+        self.assertEqual(helper.get_node(helper_node_3.id), None)
+        self.assertFalse(helper_node.id in helper_node_3._edges)
+        self.assertFalse(helper_node_3.id in helper_node._edges)
+        self.assertFalse(helper_node_2.id in helper_node_3._edges)
+        self.assertFalse(helper_node_3.id in helper_node_2._edges)
