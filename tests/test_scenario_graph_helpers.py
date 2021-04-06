@@ -173,14 +173,52 @@ class TestScenarioGraphHelpers(unittest.TestCase):
         self.assertEqual(helper_node_2._edges[helper_node.id]["node"], helper_node)
         self.assertEqual(helper_node._edges[helper_node_2.id]["node"], helper_node_2)
 
+    def test_gremlin_scenario_helper_remove_edge(self) -> None:
+        helper = GremlinScenarioGraphHelper(
+            name="code_created_scenario_6",
+            description="Three nodes now",
+            hypothesis="No Hypothesis",
+        )
+        helper_node = GremlinScenarioNode(**mock_scenario)
+        helper_node_2 = GremlinScenarioNode(**mock_scenario)
+        helper_node_3 = GremlinScenarioNode(**mock_scenario)
+
+        helper.add_node(helper_node)
+        helper.add_node(helper_node_2)
+        helper.add_node(helper_node_3)
+
+        # insert between
+        # remove_edge
+        # {helper_node} <-> {helper_node_2} <-> {helper_node_3}
+        helper.add_edge(helper_node, helper_node_2)
+        helper.add_edge(helper_node_2, helper_node_3)
+        self.assertFalse(helper_node.id in helper_node_3._edges)
+        self.assertFalse(helper_node_3.id in helper_node._edges)
+        self.assertTrue(helper_node.id in helper_node_2._edges)
+        self.assertTrue(helper_node_2.id in helper_node._edges)
+        self.assertTrue(helper_node_2.id in helper_node_3._edges)
+        self.assertTrue(helper_node_3.id in helper_node_2._edges)
+
+        helper.remove_edge(helper_node_2)
+        self.assertFalse(helper_node.id in helper_node_2._edges)
+        self.assertFalse(helper_node_2.id in helper_node._edges)
+        self.assertFalse(helper_node_2.id in helper_node_3._edges)
+        self.assertFalse(helper_node_3.id in helper_node_2._edges)
+
+        helper.add_edge(helper_node, helper_node_2)
+        self.assertTrue(helper_node.id in helper_node_2._edges)
+        self.assertTrue(helper_node_2.id in helper_node._edges)
+
+        helper.remove_edge(helper_node, helper_node_2)
+        self.assertFalse(helper_node.id in helper_node_2._edges)
+        self.assertFalse(helper_node_2.id in helper_node._edges)
+
     def test__gremlin_node_graph_functions(self) -> None:
         helper = _GremlinNodeGraph()
         helper_node = GremlinScenarioNode(**mock_scenario)
         helper_node_2 = GremlinScenarioNode(**mock_scenario)
         helper_node_3 = GremlinScenarioNode(**mock_scenario)
         helper_node_4 = GremlinScenarioNode(**mock_scenario)
-
-        # TODO: validate proper functionality of get_last_node asserted as equal to manual edge adding
 
         # append first node
         # {helper_node}
@@ -199,10 +237,10 @@ class TestScenarioGraphHelpers(unittest.TestCase):
         self.assertEqual(helper_node_2._edges[helper_node.id]["node"], helper_node)
 
         # insert between
+        # remove_edge
         # {helper_node} <-> {helper_node_3} <-> {helper_node_2}
-        helper_node._edges.pop(helper_node_2.id)
-        helper_node_2._edges.pop(helper_node.id)
         helper.append(helper_node_3)
+        helper.remove_edge(helper_node, helper_node_2)
         helper.add_edge(helper_node, helper_node_3)
         helper.add_edge(helper_node_3, helper_node_2)
         self.assertFalse(helper_node_2.id in helper_node._edges)

@@ -42,6 +42,23 @@ class GremlinScenarioNode(object):
         self.name: str = kwargs.get("name", None)  # type: ignore
 
     def add_edge(self, _node: "GremlinScenarioNode", _weight: str = None) -> None:
+        """
+        Adds an edge from this node to the value of _node.
+
+        This method contains the data structure for an edge.
+
+        Parameters
+        ----------
+        _node : GremlinScenarioNode
+            The node for which an edge needs to be added
+        _weight : int optional
+            The optional weight of the edge
+
+        Raises
+        ------
+        GremlinParameterError
+            If the _node is not of the type GremlinScenarioNode
+        """
         if not issubclass(type(_node), GremlinScenarioNode):
             error_msg: str = (
                 f"add_edge expects a GremlinScenarioNode, received {type(_node)}"
@@ -203,6 +220,40 @@ class GremlinScenarioGraphHelper(object):
         if not _src_node:
             _src_node = self.get_last_node()
         self._nodes.add_edge(_src_node, dst_node, _weight)
+
+    def remove_edge(
+        self,
+        src_node: GremlinScenarioNode,
+        _edge_node: GremlinScenarioNode = None,
+    ) -> None:
+        """
+        Helper function to remove edges from nodes
+
+        If _edge_node is not defined, all edges from src_node will be removed from the graph
+
+        Parameters
+        ----------
+        src_node : GremlinScenarioNode
+            One side of the edge to be removed
+        _edge_node : GremlinScenatioNode optional
+            The optional other side of the edge to be removed
+
+        Raises
+        ------
+        GremlinParameterError
+            If src_node is not of the type GremlinScenarioNode
+        """
+        if not issubclass(type(src_node), GremlinScenarioNode):
+            error_msg: str = f"remove_edge expects GremlinScenarioNode (or None), received {type(src_node)}"
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+
+        if not _edge_node:
+            src_edges = src_node._edges.copy()
+            for node_id in src_edges:
+                self._nodes.remove_edge(src_node, src_node._edges[node_id]["node"])
+        else:
+            self._nodes.remove_edge(src_node, _edge_node)
 
     @property
     def description(self) -> str:
@@ -538,6 +589,31 @@ class _GremlinNodeGraph(object):
         self._validate_type(node_right)
         node_left.add_edge(node_right, _weight)
         node_right.add_edge(node_left, _weight)
+
+    def remove_edge(
+        self,
+        node_left: GremlinScenarioNode,
+        node_right: GremlinScenarioNode,
+    ) -> None:
+        """
+        Removes edge to left and right nodes
+
+        Parameters
+        ----------
+        node_left : GremlinScenarioNode
+            One side of the edge
+        node_right : GremlinScenarioNode
+            One side of the edge
+
+        Raises
+        ------
+        GremlinParameterError
+            If the node_left or node_right are not of the type GremlinScenarioNode
+        """
+        self._validate_type(node_left)
+        self._validate_type(node_right)
+        node_left._edges.pop(node_right.id)
+        node_right._edges.pop(node_left.id)
 
     def append(self, new_node: GremlinScenarioNode) -> None:
         """
