@@ -304,9 +304,10 @@ class GremlinScenarioGraphHelper(object):
         if self._nodes.head is not None:
             model["graph"] = {
                 "start_id": self._nodes.head.uuid,
-                "nodes": {
-                    node.uuid: data for node, data in self._nodes.nodes_data_linear()
-                },
+                "nodes": self._nodes.get_nodes(),
+                # "nodes": {
+                #     node.uuid: data for node, data in self._nodes.get_nodes()
+                # },
             }
         return model
 
@@ -649,6 +650,31 @@ class _GremlinNodeGraph(object):
             if node.id == uid:
                 return node
         return None
+
+    def get_nodes(
+        self, node: GremlinScenarioNode = None, parent_id: str = None
+    ) -> dict:
+        """
+        Retrieves all nodes, ordered by their defined edges.
+
+        Parameters
+        ----------
+        node : GremlinScenarioNode optional
+            Optional root node from which to begin collecting ordered node list.
+            Defaults to the `head` node if none is supplied.
+        parent_id : str optional
+            The trailing node id to be skipped when enumerating a node's edges.
+            Prevents recursion loops
+        """
+        if not node:
+            return self.get_nodes(self.head)
+        self._validate_type(node)
+        nodes: dict = {node.uuid: node.data}
+        for node_id in node._edges:
+            if node_id == parent_id:
+                continue
+            nodes.update(self.get_nodes(node._edges[node_id]["node"], node.id))
+        return nodes
 
     @deprecated("Use add_edge instead")
     def insert_after(

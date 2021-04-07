@@ -42,39 +42,40 @@ class TestScenarioGraphHelpers(unittest.TestCase):
             description="Three nodes now",
             hypothesis="No Hypothesis",
         )
-        my_scenario.add_node(
-            GremlinScenarioStatusCheckNode(
-                description=status_check_description,
-                endpoint_url=endpoint_url,
-                endpoint_headers=endpoint_headers,
-                evaluation_ok_status_codes=evaluation_ok_status_codes,
-                evaluation_ok_latency_max=evaluation_ok_latency_max,
-                evaluation_response_body_evaluation=evaluation_response_body_evaluation,
-            )
+        new_node = GremlinScenarioStatusCheckNode(
+            description=status_check_description,
+            endpoint_url=endpoint_url,
+            endpoint_headers=endpoint_headers,
+            evaluation_ok_status_codes=evaluation_ok_status_codes,
+            evaluation_ok_latency_max=evaluation_ok_latency_max,
+            evaluation_response_body_evaluation=evaluation_response_body_evaluation,
         )
-        my_scenario.add_node(
-            GremlinScenarioStatusCheckNode(
-                description=status_check_description,
-                endpoint_url=endpoint_url,
-                endpoint_headers=endpoint_headers,
-                evaluation_ok_status_codes=evaluation_ok_status_codes,
-                evaluation_ok_latency_max=evaluation_ok_latency_max,
-                evaluation_response_body_evaluation=evaluation_response_body_evaluation,
-            )
+        my_scenario.add_node(new_node)
+        new_node_2 = GremlinScenarioStatusCheckNode(
+            description=status_check_description,
+            endpoint_url=endpoint_url,
+            endpoint_headers=endpoint_headers,
+            evaluation_ok_status_codes=evaluation_ok_status_codes,
+            evaluation_ok_latency_max=evaluation_ok_latency_max,
+            evaluation_response_body_evaluation=evaluation_response_body_evaluation,
         )
-        my_scenario.add_node(
-            GremlinScenarioDelayNode(description="Add some delay", delay=delay_time)
+        my_scenario.add_node(new_node_2)
+        new_node_3 = GremlinScenarioDelayNode(
+            description="Add some delay", delay=delay_time
         )
-        my_scenario.add_node(
-            GremlinScenarioStatusCheckNode(
-                description=status_check_description,
-                endpoint_url=endpoint_url,
-                endpoint_headers=endpoint_headers,
-                evaluation_ok_status_codes=evaluation_ok_status_codes,
-                evaluation_ok_latency_max=evaluation_ok_latency_max,
-                evaluation_response_body_evaluation=evaluation_response_body_evaluation,
-            )
+        my_scenario.add_node(new_node_3)
+        new_node_4 = GremlinScenarioStatusCheckNode(
+            description=status_check_description,
+            endpoint_url=endpoint_url,
+            endpoint_headers=endpoint_headers,
+            evaluation_ok_status_codes=evaluation_ok_status_codes,
+            evaluation_ok_latency_max=evaluation_ok_latency_max,
+            evaluation_response_body_evaluation=evaluation_response_body_evaluation,
         )
+        my_scenario.add_node(new_node_4)
+        my_scenario.add_edge(new_node, new_node_2)
+        my_scenario.add_edge(new_node_2, new_node_3)
+        my_scenario.add_edge(new_node_3, new_node_4)
         t_diff = self.maxDiff
         self.maxDiff = None
         expected_output = {
