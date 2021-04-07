@@ -304,10 +304,7 @@ class GremlinScenarioGraphHelper(object):
         if self._nodes.head is not None:
             model["graph"] = {
                 "start_id": self._nodes.head.uuid,
-                "nodes": self._nodes.get_nodes(),
-                # "nodes": {
-                #     node.uuid: data for node, data in self._nodes.get_nodes()
-                # },
+                "nodes": self._nodes.get_nodes_linear(),
             }
         return model
 
@@ -651,11 +648,16 @@ class _GremlinNodeGraph(object):
                 return node
         return None
 
-    def get_nodes(
-        self, node: GremlinScenarioNode = None, parent_id: str = None
+    def get_nodes_linear(
+        self,
+        node: GremlinScenarioNode = None,
+        parent_id: str = None,
+        next_index: int = 0,
     ) -> dict:
         """
         Retrieves all nodes, ordered by their defined edges.
+
+        Only will work for a linear-defined graph (node -> node_2 -> node_3)
 
         Parameters
         ----------
@@ -665,16 +667,25 @@ class _GremlinNodeGraph(object):
         parent_id : str optional
             The trailing node id to be skipped when enumerating a node's edges.
             Prevents recursion loops
+        next_index : int optional
+            The next index to use
         """
         if not node:
-            return self.get_nodes(self.head)
+            return self.get_nodes_linear(self.head)
         self._validate_type(node)
-        nodes: dict = {node.uuid: node.data}
+        nodes: dict = {str(next_index): node.data}
         for node_id in node._edges:
             if node_id == parent_id:
                 continue
-            nodes.update(self.get_nodes(node._edges[node_id]["node"], node.id))
+            nodes.update(
+                self.get_nodes_linear(
+                    node._edges[node_id]["node"], node.id, next_index + 1
+                )
+            )
         return nodes
+
+    def get_nodes_parallel(self):
+        raise NotImplementedError("Parallel Scenario Nodes NOT IMPLEMENTED")
 
     @deprecated("Use add_edge instead")
     def insert_after(

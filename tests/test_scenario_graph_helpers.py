@@ -73,19 +73,64 @@ class TestScenarioGraphHelpers(unittest.TestCase):
             evaluation_response_body_evaluation=evaluation_response_body_evaluation,
         )
         my_scenario.add_node(new_node_4)
-        my_scenario.add_edge(new_node, new_node_2)
-        my_scenario.add_edge(new_node_2, new_node_3)
-        my_scenario.add_edge(new_node_3, new_node_4)
+        my_scenario.add_edge(new_node, new_node_3)
+        my_scenario.add_edge(new_node_2, new_node_4)
+        my_scenario.add_edge(new_node_3, new_node_2)
         t_diff = self.maxDiff
         self.maxDiff = None
         expected_output = {
             "description": "Three nodes now",
             "graph": {
                 "nodes": {
-                    node.uuid: data
-                    for node, data in my_scenario._nodes.nodes_data_linear()
+                    "0": {
+                        "endpointConfiguration": {
+                            "headers": {"Authorization": "mock-auth"},
+                            "url": "https://www.google.com",
+                        },
+                        "evaluationConfiguration": {
+                            "okLatencyMaxMs": 1000,
+                            "okStatusCodes": ["404", "300"],
+                            "responseBodyEvaluation": {"op": "AND", "predicates": []},
+                        },
+                        "id": "status-check-%s" % new_node.id,
+                        "thirdPartyPresets": "PythonSDK",
+                        "type": "SynchronousStatusCheck",
+                    },
+                    "1": {
+                        "delay": 5,
+                        "id": "Delay-%s" % new_node_3.id,
+                        "type": "Delay",
+                    },
+                    "2": {
+                        "endpointConfiguration": {
+                            "headers": {"Authorization": "mock-auth"},
+                            "url": "https://www.google.com",
+                        },
+                        "evaluationConfiguration": {
+                            "okLatencyMaxMs": 1000,
+                            "okStatusCodes": ["404", "300"],
+                            "responseBodyEvaluation": {"op": "AND", "predicates": []},
+                        },
+                        "id": "status-check-%s" % new_node_2.id,
+                        "thirdPartyPresets": "PythonSDK",
+                        "type": "SynchronousStatusCheck",
+                    },
+                    "3": {
+                        "endpointConfiguration": {
+                            "headers": {"Authorization": "mock-auth"},
+                            "url": "https://www.google.com",
+                        },
+                        "evaluationConfiguration": {
+                            "okLatencyMaxMs": 1000,
+                            "okStatusCodes": ["404", "300"],
+                            "responseBodyEvaluation": {"op": "AND", "predicates": []},
+                        },
+                        "id": "status-check-%s" % new_node_4.id,
+                        "thirdPartyPresets": "PythonSDK",
+                        "type": "SynchronousStatusCheck",
+                    },
                 },
-                "start_id": my_scenario._nodes.head.uuid,
+                "start_id": "status-check-%s" % new_node.id,
             },
             "hypothesis": "No Hypothesis",
             "name": "code_created_scenario_6",
