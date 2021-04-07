@@ -142,7 +142,7 @@ class GremlinScenarioGraphHelper(object):
         self.hypothesis: str = kwargs.get("hypothesis", None)  # type: ignore
         self.name: str = kwargs.get("name", None)  # type: ignore
 
-    def add_node(self, node: GremlinScenarioNode) -> None:
+    def add_node(self, node: GremlinScenarioNode, _default_edge: bool = False) -> None:
         """
         Adds the node to the graph as a loose leaf. If it is the first node, it becomes the HEAD
         node.
@@ -151,6 +151,8 @@ class GremlinScenarioGraphHelper(object):
         ----------
         node : GremlinScenarioNode
             The node to add to the graph
+        _default_edge bool optional
+            Adds an edge from node to the last-added node in the graph
 
         Raises
         ------
@@ -163,7 +165,13 @@ class GremlinScenarioGraphHelper(object):
             )
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
+        if not self._nodes.head:
+            _default_edge = False
+        if _default_edge:
+            tail_node = self._nodes._nodes[-1]
         self._nodes.append(node)
+        if _default_edge:
+            self.add_edge(node, tail_node)
 
     def remove_node(self, node: GremlinScenarioNode) -> None:
         """
@@ -184,7 +192,6 @@ class GremlinScenarioGraphHelper(object):
         self._nodes.remove(node)
 
     def get_last_node(self) -> GremlinScenarioNode:
-        print(self._nodes._nodes[-1].id)
         return self._nodes._nodes[-1]
 
     def add_edge(

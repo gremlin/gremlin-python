@@ -49,64 +49,46 @@ evaluation_response_body_evaluation = {
 my_scenario = GremlinScenarioGraphHelper(name='test_scenario_1', description=description, hypothesis=hypothesis)
 
 # Add the status check to the start of the scenario
-my_scenario.add_node(
-    GremlinScenarioStatusCheckNode(
-        description=status_check_description,
-        endpoint_url=endpoint_url,
-        endpoint_headers=endpoint_headers,
-        evaluation_ok_status_codes=evaluation_ok_status_codes,
-        evaluation_ok_latency_max=evaluation_ok_latency_max,
-        evaluation_response_body_evaluation=evaluation_response_body_evaluation))
+status_check_node = GremlinScenarioStatusCheckNode(
+    description=status_check_description,
+    endpoint_url=endpoint_url,
+    endpoint_headers=endpoint_headers,
+    evaluation_ok_status_codes=evaluation_ok_status_codes,
+    evaluation_ok_latency_max=evaluation_ok_latency_max,
+    evaluation_response_body_evaluation=evaluation_response_body_evaluation
+)
+my_scenario.add_node(status_check_node)
 
 # Add a delay step between the status check and the attacks
-my_scenario.add_node(GremlinScenarioDelayNode(delay=delay_time))
+delay_node = GremlinScenarioDelayNode(delay=delay_time)
+
+#adds node to graph
+my_scenario.add_node(delay_node)
+
+#adds edge
+my_scenario.add_edge(status_check_node, delay_node)
 
 # Add latency attacks to the scenario
 for magnitude_idx, magnitude in enumerate(latency_magnitude_steps):
     for blast_radius_idx, blast_radius in enumerate(blast_radius_steps):
         print(f'Blast radius {blast_radius_idx+1} of {len(blast_radius_steps)} :: {blast_radius}%')
         print(f'Magnitude {magnitude_idx+1} of {len(latency_magnitude_steps)} :: {magnitude}ms')
-        my_scenario.add_node(
-            GremlinScenarioILFINode(
-                command=GremlinLatencyAttack(delay=magnitude),
-                target=GremlinTargetContainers(strategy_type='Random', labels={'owner': 'kyle'}, percent=blast_radius)))
+        new_node = GremlinScenarioILFINode(
+            command=GremlinLatencyAttack(delay=magnitude),
+            target=GremlinTargetContainers(strategy_type='Random', labels={'owner': 'kyle'}, percent=blast_radius)
+        )
+        # Passing True as the second variable adds an edge from the last node in the graph to the 
+        # node being added
+        my_scenario.add_node(new_node, True)
         # Add a delay step between attacks, skip this if it's the last step in the loop
         if not ((magnitude_idx+1 == len(latency_magnitude_steps)) and (blast_radius_idx+1 == len(blast_radius_steps))):
-            my_scenario.add_node(GremlinScenarioDelayNode(delay=delay_time))
+            my_scenario.add_node(GremlinScenarioDelayNode(delay=delay_time), True)
 
 # Let's view the json output
 print(my_scenario)
 
 # Send the scenario to Gremlin
 my_scenario_guid = scenarios.create_scenario(body=my_scenario)
-```
-
-### Step Scenarios (old)
-
-#### Example
-
-Create and run a scenario that targets 50% of the containers owned by `kyle` with an escalating magnitude of 
-100ms, 500ms, and 1000ms, then ramp the blast radius to 100% and repeat the magnitude escalation with a 5 second delay
-between attacks.
-```python
-from gremlinapi.attack_helpers import *
-from gremlinapi.scenario_helpers import *
-from gremlinapi.scenarios import GremlinAPIScenarios as scenarios
-
-my_scenario = GremlinScenarioHelper(name='test_scenario_1', description='My Test Scenario', hypothesis='No Hypothesis')
-
-for blast_radius in [50, 100]:
-    for magnitude in [100, 500, 1000]:
-        my_scenario.add_step(
-            GremlinILFIStep(
-                delay=5,
-                command=GremlinLatencyAttack(delay=magnitude),
-                target=GremlinTargetContainers(strategy_type='Random', labels={'owner': 'kyle'}, percent=blast_radius)
-            )
-        )
-
-my_scenario_guid = scenarios.create_scenario(body=my_scenario)
-my_scenario_run = scenarios.run_scenario(guid=my_scenario_guid)
 ```
 
 ## Halt Scenarios
