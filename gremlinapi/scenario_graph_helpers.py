@@ -87,7 +87,7 @@ class GremlinScenarioNode(object):
 
     @property
     def index(self) -> int:
-        return self.index
+        return self._index
 
     @index.setter
     def index(self, _index: int = 0) -> None:
@@ -136,7 +136,7 @@ class GremlinScenarioNode(object):
         return f"{self.name}-{self.id}"
 
     def repr_model(self) -> dict:
-        model = {"type": self.node_type, "guid": self.uuid}
+        model = {"type": self.node_type, "guid": self.uuid, "id": self.index}
         return model
 
     def __repr__(self) -> str:
