@@ -93,6 +93,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                             "responseBodyEvaluation": {"op": "AND", "predicates": []},
                         },
                         "guid": "status-check-%s" % new_node.id,
+                        "id": "0",
+                        "next": "1",
                         "thirdPartyPresets": "PythonSDK",
                         "type": "SynchronousStatusCheck",
                     },
@@ -100,6 +102,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                         "delay": 5,
                         "guid": "Delay-%s" % new_node_3.id,
                         "type": "Delay",
+                        "id": "1",
+                        "next": "2",
                     },
                     "2": {
                         "endpointConfiguration": {
@@ -112,6 +116,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                             "responseBodyEvaluation": {"op": "AND", "predicates": []},
                         },
                         "guid": "status-check-%s" % new_node_2.id,
+                        "id": "2",
+                        "next": "3",
                         "thirdPartyPresets": "PythonSDK",
                         "type": "SynchronousStatusCheck",
                     },
@@ -126,11 +132,13 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                             "responseBodyEvaluation": {"op": "AND", "predicates": []},
                         },
                         "guid": "status-check-%s" % new_node_4.id,
+                        "id": "3",
+                        "next": "4",
                         "thirdPartyPresets": "PythonSDK",
                         "type": "SynchronousStatusCheck",
                     },
                 },
-                "start_id": "status-check-%s" % new_node.id,
+                "start_id": "0",
             },
             "hypothesis": "No Hypothesis",
             "name": "code_created_scenario_6",
@@ -200,6 +208,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                             "responseBodyEvaluation": {"op": "AND", "predicates": []},
                         },
                         "guid": "status-check-%s" % new_node.id,
+                        "id": "0",
+                        "next": "1",
                         "thirdPartyPresets": "PythonSDK",
                         "type": "SynchronousStatusCheck",
                     },
@@ -214,12 +224,16 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                             "responseBodyEvaluation": {"op": "AND", "predicates": []},
                         },
                         "guid": "status-check-%s" % new_node_2.id,
+                        "id": "1",
+                        "next": "2",
                         "thirdPartyPresets": "PythonSDK",
                         "type": "SynchronousStatusCheck",
                     },
                     "2": {
                         "delay": 5,
                         "guid": "Delay-%s" % new_node_3.id,
+                        "id": "2",
+                        "next": "3",
                         "type": "Delay",
                     },
                     "3": {
@@ -233,11 +247,13 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                             "responseBodyEvaluation": {"op": "AND", "predicates": []},
                         },
                         "guid": "status-check-%s" % new_node_4.id,
+                        "id": "3",
+                        "next": "4",
                         "thirdPartyPresets": "PythonSDK",
                         "type": "SynchronousStatusCheck",
                     },
                 },
-                "start_id": "status-check-%s" % new_node.id,
+                "start_id": "0",
             },
             "hypothesis": "No Hypothesis",
             "name": "code_created_scenario_6",
@@ -260,6 +276,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
         helper = GremlinScenarioNode(**mock_scenario)
         expected_output = {
             "guid": "mock_scenario-%s" % helper.id,
+            "id": "0",
+            "next": "0",
             "type": helper.node_type,
         }
 
@@ -269,6 +287,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
         helper = GremlinScenarioILFINode(**mock_ilfi_node)
         expected_output = {
             "guid": "mock_scenario-%s" % helper.id,
+            "id": "0",
+            "next": "0",
             "impact_definition": {
                 "infra_command_args": {"cli_args": ["", "-l", "60"], "type": ""},
                 "infra_command_type": "",
@@ -288,7 +308,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
         expected_output = {
             "delay": "42",
             "guid": "Delay-%s" % helper.id,
-            # "next": None,
+            "id": "0",
+            "next": "0",
             "type": "Delay",
         }
 
@@ -309,7 +330,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                 ],
             },
             "guid": "status-check-%s" % helper.id,
-            # "next": None,
+            "id": "0",
+            "next": "0",
             "thirdPartyPresets": "PythonSDK",
             "type": "SynchronousStatusCheck",
         }

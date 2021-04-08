@@ -39,8 +39,10 @@ class GremlinScenarioNode(object):
         self._name: str = str()
         self._node_type: str = str()
         self.id: str = str(uuid.uuid4())
-        self._index: int = int()
-        self.index = 0
+        self._index: str = str()
+        self.index = "0"
+        self._next: str = str()
+        self.next = "0"
         self.name: str = kwargs.get("name", None)  # type: ignore
 
     def add_edge(self, _node: "GremlinScenarioNode", _weight: str = None) -> None:
@@ -86,18 +88,32 @@ class GremlinScenarioNode(object):
         self._id = _id
 
     @property
-    def index(self) -> int:
+    def index(self) -> str:
         return self._index
 
     @index.setter
-    def index(self, _index: int = 0) -> None:
-        if not isinstance(_index, int):
+    def index(self, _index: str = "0") -> None:
+        if not isinstance(_index, str):
             error_msg: str = (
-                f"index expects an integer {type(int)}, received {type(_index)}"
+                f"index expects an string {type(str)}, received {type(_index)}"
             )
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._index = _index
+
+    @property
+    def next(self) -> str:
+        return self._next
+
+    @next.setter
+    def next(self, _next: str = "0") -> None:
+        if not isinstance(_next, str):
+            error_msg: str = (
+                f"next expects an string {type(str)}, received {type(_next)}"
+            )
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._next = _next
 
     @property
     def name(self) -> str:
@@ -136,7 +152,12 @@ class GremlinScenarioNode(object):
         return f"{self.name}-{self.id}"
 
     def repr_model(self) -> dict:
-        model = {"type": self.node_type, "guid": self.uuid, "id": self.index}
+        model = {
+            "type": self.node_type,
+            "guid": self.uuid,
+            "id": self.index,
+            "next": self.next,
+        }
         return model
 
     def __repr__(self) -> str:
@@ -326,7 +347,7 @@ class GremlinScenarioGraphHelper(object):
         }
         if self._nodes.head is not None:
             model["graph"] = {
-                "start_id": self._nodes.head.uuid,
+                "start_id": "0",
                 "nodes": self._nodes.get_nodes_linear()
                 # "nodes": {
                 #     node.uuid: data for node, data in self._nodes.nodes_data_linear()
@@ -699,6 +720,8 @@ class _GremlinNodeGraph(object):
         if not node:
             return self.get_nodes_linear(self.head)
         self._validate_type(node)
+        node.index = str(next_index)
+        node.next = str(next_index + 1)
         nodes: dict = {str(next_index): node.data}
         print(node.id)
         for node_id in node._edges:
