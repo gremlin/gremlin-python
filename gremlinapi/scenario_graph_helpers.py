@@ -39,6 +39,8 @@ class GremlinScenarioNode(object):
         self._name: str = str()
         self._node_type: str = str()
         self.id: str = str(uuid.uuid4())
+        self._index: int = int()
+        self.index = 0
         self.name: str = kwargs.get("name", None)  # type: ignore
 
     def add_edge(self, _node: "GremlinScenarioNode", _weight: str = None) -> None:
@@ -78,10 +80,24 @@ class GremlinScenarioNode(object):
     @id.setter
     def id(self, _id: str = None) -> None:
         if not isinstance(_id, str):
-            error_msg: str = f"id expects a string {type(str)}, received {type(str)}"
+            error_msg: str = f"id expects a string {type(str)}, received {type(_id)}"
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._id = _id
+
+    @property
+    def index(self) -> int:
+        return self.index
+
+    @index.setter
+    def index(self, _index: int = 0) -> None:
+        if not isinstance(_index, int):
+            error_msg: str = (
+                f"index expects an integer {type(int)}, received {type(_index)}"
+            )
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._index = _index
 
     @property
     def name(self) -> str:
@@ -120,7 +136,7 @@ class GremlinScenarioNode(object):
         return f"{self.name}-{self.id}"
 
     def repr_model(self) -> dict:
-        model = {"type": self.node_type, "id": self.uuid}
+        model = {"type": self.node_type, "guid": self.uuid}
         return model
 
     def __repr__(self) -> str:
@@ -311,7 +327,10 @@ class GremlinScenarioGraphHelper(object):
         if self._nodes.head is not None:
             model["graph"] = {
                 "start_id": self._nodes.head.uuid,
-                "nodes": self._nodes.get_nodes_linear(),
+                "nodes": self._nodes.get_nodes_linear()
+                # "nodes": {
+                #     node.uuid: data for node, data in self._nodes.nodes_data_linear()
+                # }
             }
         return model
 
@@ -681,6 +700,7 @@ class _GremlinNodeGraph(object):
             return self.get_nodes_linear(self.head)
         self._validate_type(node)
         nodes: dict = {str(next_index): node.data}
+        print(node.id)
         for node_id in node._edges:
             if node_id == parent_id:
                 continue
