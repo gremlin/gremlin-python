@@ -6,7 +6,7 @@ import inspect
 import json
 import logging
 import uuid
-from typing import Union, Optional
+from typing import Union, Optional, Tuple
 
 from gremlinapi.exceptions import (
     GremlinCommandTargetError,
@@ -693,6 +693,20 @@ class _GremlinNodeGraph(object):
 
     def get_nodes_parallel(self):
         raise NotImplementedError("Parallel Scenario Nodes NOT IMPLEMENTED")
+
+    def insert_between(
+        self,
+        node: GremlinScenarioNode,
+        node_left: GremlinScenarioNode,
+        node_right: GremlinScenarioNode,
+    ) -> None:
+        raise NotImplementedError("insert_between NOT IMPLEMENTED")
+
+    def total_nodes(self) -> int:
+        raise NotImplementedError("total_nodes NOT IMPLEMENTED")
+
+    def longest_path(self) -> Tuple[str, str, int]:
+        raise NotImplementedError("longest_path NOT IMPLEMENTED")
 
     @deprecated("Use add_edge instead")
     def insert_after(
