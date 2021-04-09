@@ -532,18 +532,27 @@ pprint.pprint(scenarios_list)
 #### Create scenario
 ```python
 from gremlinapi.config import GremlinAPIConfig as config
+from gremlinapi.attack_helpers import (
+    GremlinBlackholeAttack,
+    GremlinTargetContainers,
+)
 from gremlinapi.scenarios import GremlinAPIScenarios as scenarios
 from gremlinapi.scenario_graph_helpers import (
     GremlinScenarioGraphHelper,
     GremlinScenarioILFINode,
+    GremlinScenarioDelayNode
 )
-config.bearer_token = 'Bearer MU3...ZiTk...Lo...4zO..c='
-config.team_id = 'e7352a6b-a9a0-513c-81e4-980f680a70c4'
+# config.bearer_token = 'Bearer MU3...ZiTk...Lo...4zO..c='
+config.api_key = "" #TODO: populate
+config.team_id = "" #TODO: populate
+
+blast_radius = 100
+delay_time = 5
 
 #create scenario
 new_scenario = GremlinScenarioGraphHelper(
-    name="code_created_scenario",
-    description="Python Code updated scenario for testing namespace changes",
+    name="A Code-Created Scenario",
+    description="Python SDK created scenario",
     hypothesis="No Hypothesis",
 )
 
@@ -569,7 +578,7 @@ new_scenario.add_node(delay_node_1)
 
 #add node edges
 new_scenario.add_edge(black_hole_node_1, delay_node_1)
-new_scenario.add_edge(delay_node_1, black_hole_node_2
+new_scenario.add_edge(delay_node_1, black_hole_node_2)
 
 #submit scenario to api
 scenarios.create_scenario(body=new_scenario)
