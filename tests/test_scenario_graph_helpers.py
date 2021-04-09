@@ -25,12 +25,241 @@ class TestScenarioGraphHelpers(unittest.TestCase):
         helper_node_2 = GremlinScenarioNode(**mock_scenario)
         helper.add_node(helper_node)
         helper.add_node(helper_node_2)
-        self.assertEqual(helper._nodes.get_node(0), helper_node)
-        self.assertNotEqual(helper._nodes.get_node(0), helper_node_2)
+        self.assertEqual(helper._nodes.get_node(helper_node.id), helper_node)
+        self.assertNotEqual(helper._nodes.get_node(helper_node.id), helper_node_2)
 
     def test_gremlin_scenario_graph_helper_repr_model(self) -> None:
-        helper = GremlinScenarioGraphHelper(**mock_scenario)
-        self.assertEqual(helper.repr_model(), mock_scenario)
+        status_check_description = "Check if Gremlin.com is Still Up"
+        endpoint_url = "https://www.google.com"
+        endpoint_headers = dict()
+        endpoint_headers = {"Authorization": "mock-auth"}
+        evaluation_ok_status_codes = ["404", "300"]
+        evaluation_ok_latency_max = 1000
+        evaluation_response_body_evaluation = {"op": "AND", "predicates": []}
+        delay_time = 5  # Time to delay between steps in seconds
+        my_scenario = GremlinScenarioGraphHelper(
+            name="code_created_scenario_6",
+            description="Three nodes now",
+            hypothesis="No Hypothesis",
+        )
+        new_node = GremlinScenarioStatusCheckNode(
+            description=status_check_description,
+            endpoint_url=endpoint_url,
+            endpoint_headers=endpoint_headers,
+            evaluation_ok_status_codes=evaluation_ok_status_codes,
+            evaluation_ok_latency_max=evaluation_ok_latency_max,
+            evaluation_response_body_evaluation=evaluation_response_body_evaluation,
+        )
+        my_scenario.add_node(new_node)
+        new_node_2 = GremlinScenarioStatusCheckNode(
+            description=status_check_description,
+            endpoint_url=endpoint_url,
+            endpoint_headers=endpoint_headers,
+            evaluation_ok_status_codes=evaluation_ok_status_codes,
+            evaluation_ok_latency_max=evaluation_ok_latency_max,
+            evaluation_response_body_evaluation=evaluation_response_body_evaluation,
+        )
+        my_scenario.add_node(new_node_2)
+        new_node_3 = GremlinScenarioDelayNode(
+            description="Add some delay", delay=delay_time
+        )
+        my_scenario.add_node(new_node_3)
+        new_node_4 = GremlinScenarioStatusCheckNode(
+            description=status_check_description,
+            endpoint_url=endpoint_url,
+            endpoint_headers=endpoint_headers,
+            evaluation_ok_status_codes=evaluation_ok_status_codes,
+            evaluation_ok_latency_max=evaluation_ok_latency_max,
+            evaluation_response_body_evaluation=evaluation_response_body_evaluation,
+        )
+        my_scenario.add_node(new_node_4)
+        my_scenario.add_edge(new_node, new_node_3)
+        my_scenario.add_edge(new_node_2, new_node_4)
+        my_scenario.add_edge(new_node_3, new_node_2)
+        t_diff = self.maxDiff
+        self.maxDiff = None
+        expected_output = {
+            "description": "Three nodes now",
+            "graph": {
+                "nodes": {
+                    "0": {
+                        "endpointConfiguration": {
+                            "headers": {"Authorization": "mock-auth"},
+                            "url": "https://www.google.com",
+                        },
+                        "evaluationConfiguration": {
+                            "okLatencyMaxMs": 1000,
+                            "okStatusCodes": ["404", "300"],
+                            "responseBodyEvaluation": {"op": "AND", "predicates": []},
+                        },
+                        "guid": "status-check-%s" % new_node.id,
+                        "id": "0",
+                        "next": "1",
+                        "thirdPartyPresets": "PythonSDK",
+                        "type": "SynchronousStatusCheck",
+                    },
+                    "1": {
+                        "delay": 5,
+                        "guid": "Delay-%s" % new_node_3.id,
+                        "type": "Delay",
+                        "id": "1",
+                        "next": "2",
+                    },
+                    "2": {
+                        "endpointConfiguration": {
+                            "headers": {"Authorization": "mock-auth"},
+                            "url": "https://www.google.com",
+                        },
+                        "evaluationConfiguration": {
+                            "okLatencyMaxMs": 1000,
+                            "okStatusCodes": ["404", "300"],
+                            "responseBodyEvaluation": {"op": "AND", "predicates": []},
+                        },
+                        "guid": "status-check-%s" % new_node_2.id,
+                        "id": "2",
+                        "next": "3",
+                        "thirdPartyPresets": "PythonSDK",
+                        "type": "SynchronousStatusCheck",
+                    },
+                    "3": {
+                        "endpointConfiguration": {
+                            "headers": {"Authorization": "mock-auth"},
+                            "url": "https://www.google.com",
+                        },
+                        "evaluationConfiguration": {
+                            "okLatencyMaxMs": 1000,
+                            "okStatusCodes": ["404", "300"],
+                            "responseBodyEvaluation": {"op": "AND", "predicates": []},
+                        },
+                        "guid": "status-check-%s" % new_node_4.id,
+                        "id": "3",
+                        "next": "4",
+                        "thirdPartyPresets": "PythonSDK",
+                        "type": "SynchronousStatusCheck",
+                    },
+                },
+                "start_id": "0",
+            },
+            "hypothesis": "No Hypothesis",
+            "name": "code_created_scenario_6",
+        }
+        self.assertEqual(my_scenario.repr_model(), expected_output)
+        self.maxDiff = t_diff
+
+    def test_gremlin_scenario_graph_helper_repr_model_default_add_node(self) -> None:
+        status_check_description = "Check if Gremlin.com is Still Up"
+        endpoint_url = "https://www.google.com"
+        endpoint_headers = dict()
+        endpoint_headers = {"Authorization": "mock-auth"}
+        evaluation_ok_status_codes = ["404", "300"]
+        evaluation_ok_latency_max = 1000
+        evaluation_response_body_evaluation = {"op": "AND", "predicates": []}
+        delay_time = 5  # Time to delay between steps in seconds
+        my_scenario = GremlinScenarioGraphHelper(
+            name="code_created_scenario_6",
+            description="Three nodes now",
+            hypothesis="No Hypothesis",
+        )
+        new_node = GremlinScenarioStatusCheckNode(
+            description=status_check_description,
+            endpoint_url=endpoint_url,
+            endpoint_headers=endpoint_headers,
+            evaluation_ok_status_codes=evaluation_ok_status_codes,
+            evaluation_ok_latency_max=evaluation_ok_latency_max,
+            evaluation_response_body_evaluation=evaluation_response_body_evaluation,
+        )
+        my_scenario.add_node(new_node, True)
+        new_node_2 = GremlinScenarioStatusCheckNode(
+            description=status_check_description,
+            endpoint_url=endpoint_url,
+            endpoint_headers=endpoint_headers,
+            evaluation_ok_status_codes=evaluation_ok_status_codes,
+            evaluation_ok_latency_max=evaluation_ok_latency_max,
+            evaluation_response_body_evaluation=evaluation_response_body_evaluation,
+        )
+        my_scenario.add_node(new_node_2, True)
+        new_node_3 = GremlinScenarioDelayNode(
+            description="Add some delay", delay=delay_time
+        )
+        my_scenario.add_node(new_node_3, True)
+        new_node_4 = GremlinScenarioStatusCheckNode(
+            description=status_check_description,
+            endpoint_url=endpoint_url,
+            endpoint_headers=endpoint_headers,
+            evaluation_ok_status_codes=evaluation_ok_status_codes,
+            evaluation_ok_latency_max=evaluation_ok_latency_max,
+            evaluation_response_body_evaluation=evaluation_response_body_evaluation,
+        )
+        my_scenario.add_node(new_node_4, True)
+        t_diff = self.maxDiff
+        self.maxDiff = None
+        expected_output = {
+            "description": "Three nodes now",
+            "graph": {
+                "nodes": {
+                    "0": {
+                        "endpointConfiguration": {
+                            "headers": {"Authorization": "mock-auth"},
+                            "url": "https://www.google.com",
+                        },
+                        "evaluationConfiguration": {
+                            "okLatencyMaxMs": 1000,
+                            "okStatusCodes": ["404", "300"],
+                            "responseBodyEvaluation": {"op": "AND", "predicates": []},
+                        },
+                        "guid": "status-check-%s" % new_node.id,
+                        "id": "0",
+                        "next": "1",
+                        "thirdPartyPresets": "PythonSDK",
+                        "type": "SynchronousStatusCheck",
+                    },
+                    "1": {
+                        "endpointConfiguration": {
+                            "headers": {"Authorization": "mock-auth"},
+                            "url": "https://www.google.com",
+                        },
+                        "evaluationConfiguration": {
+                            "okLatencyMaxMs": 1000,
+                            "okStatusCodes": ["404", "300"],
+                            "responseBodyEvaluation": {"op": "AND", "predicates": []},
+                        },
+                        "guid": "status-check-%s" % new_node_2.id,
+                        "id": "1",
+                        "next": "2",
+                        "thirdPartyPresets": "PythonSDK",
+                        "type": "SynchronousStatusCheck",
+                    },
+                    "2": {
+                        "delay": 5,
+                        "guid": "Delay-%s" % new_node_3.id,
+                        "id": "2",
+                        "next": "3",
+                        "type": "Delay",
+                    },
+                    "3": {
+                        "endpointConfiguration": {
+                            "headers": {"Authorization": "mock-auth"},
+                            "url": "https://www.google.com",
+                        },
+                        "evaluationConfiguration": {
+                            "okLatencyMaxMs": 1000,
+                            "okStatusCodes": ["404", "300"],
+                            "responseBodyEvaluation": {"op": "AND", "predicates": []},
+                        },
+                        "guid": "status-check-%s" % new_node_4.id,
+                        "id": "3",
+                        "next": "4",
+                        "thirdPartyPresets": "PythonSDK",
+                        "type": "SynchronousStatusCheck",
+                    },
+                },
+                "start_id": "0",
+            },
+            "hypothesis": "No Hypothesis",
+            "name": "code_created_scenario_6",
+        }
+        self.assertEqual(my_scenario.repr_model(), expected_output)
+        self.maxDiff = t_diff
 
     def test_add_edge(self) -> None:
         helper = GremlinScenarioNode(**mock_scenario)
@@ -46,8 +275,9 @@ class TestScenarioGraphHelpers(unittest.TestCase):
     def test_gremlin_scenario_node_repr_model(self) -> None:
         helper = GremlinScenarioNode(**mock_scenario)
         expected_output = {
-            "id": "mock_scenario-%s" % helper.id,
-            "next": None,
+            "guid": "mock_scenario-%s" % helper.id,
+            "id": "0",
+            "next": "0",
             "type": helper.node_type,
         }
 
@@ -56,12 +286,14 @@ class TestScenarioGraphHelpers(unittest.TestCase):
     def test_gremlin_scenario_ilfi_node_repr_node(self) -> None:
         helper = GremlinScenarioILFINode(**mock_ilfi_node)
         expected_output = {
-            "id": "mock_scenario-%s" % helper.id,
+            "guid": "mock_scenario-%s" % helper.id,
+            "id": "0",
+            "next": "0",
             "impact_definition": {
                 "infra_command_args": {"cli_args": ["", "-l", "60"], "type": ""},
                 "infra_command_type": "",
             },
-            "next": None,
+            # "next": None,
             "target_definition": {
                 "strategy": {"percentage": 10, "type": "RandomPercent"},
                 "strategy_type": "Random",
@@ -75,8 +307,9 @@ class TestScenarioGraphHelpers(unittest.TestCase):
         helper = GremlinScenarioDelayNode(**mock_delay_node)
         expected_output = {
             "delay": "42",
-            "id": "Delay-%s" % helper.id,
-            "next": None,
+            "guid": "Delay-%s" % helper.id,
+            "id": "0",
+            "next": "0",
             "type": "Delay",
         }
 
@@ -96,8 +329,9 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                     "evaluation_response_body_evaluation"
                 ],
             },
-            "id": "status-check-%s" % helper.id,
-            "next": None,
+            "guid": "status-check-%s" % helper.id,
+            "id": "0",
+            "next": "0",
             "thirdPartyPresets": "PythonSDK",
             "type": "SynchronousStatusCheck",
         }
@@ -114,6 +348,46 @@ class TestScenarioGraphHelpers(unittest.TestCase):
         self.assertEqual(helper_node_2._edges[helper_node.id]["node"], helper_node)
         self.assertEqual(helper_node._edges[helper_node_2.id]["node"], helper_node_2)
 
+    def test_gremlin_scenario_helper_remove_edge(self) -> None:
+        helper = GremlinScenarioGraphHelper(
+            name="code_created_scenario_6",
+            description="Three nodes now",
+            hypothesis="No Hypothesis",
+        )
+        helper_node = GremlinScenarioNode(**mock_scenario)
+        helper_node_2 = GremlinScenarioNode(**mock_scenario)
+        helper_node_3 = GremlinScenarioNode(**mock_scenario)
+
+        helper.add_node(helper_node)
+        helper.add_node(helper_node_2)
+        helper.add_node(helper_node_3)
+
+        # insert between
+        # remove_edge
+        # {helper_node} <-> {helper_node_2} <-> {helper_node_3}
+        helper.add_edge(helper_node, helper_node_2)
+        helper.add_edge(helper_node_2, helper_node_3)
+        self.assertFalse(helper_node.id in helper_node_3._edges)
+        self.assertFalse(helper_node_3.id in helper_node._edges)
+        self.assertTrue(helper_node.id in helper_node_2._edges)
+        self.assertTrue(helper_node_2.id in helper_node._edges)
+        self.assertTrue(helper_node_2.id in helper_node_3._edges)
+        self.assertTrue(helper_node_3.id in helper_node_2._edges)
+
+        helper.remove_edge(helper_node_2)
+        self.assertFalse(helper_node.id in helper_node_2._edges)
+        self.assertFalse(helper_node_2.id in helper_node._edges)
+        self.assertFalse(helper_node_2.id in helper_node_3._edges)
+        self.assertFalse(helper_node_3.id in helper_node_2._edges)
+
+        helper.add_edge(helper_node, helper_node_2)
+        self.assertTrue(helper_node.id in helper_node_2._edges)
+        self.assertTrue(helper_node_2.id in helper_node._edges)
+
+        helper.remove_edge(helper_node, helper_node_2)
+        self.assertFalse(helper_node.id in helper_node_2._edges)
+        self.assertFalse(helper_node_2.id in helper_node._edges)
+
     def test__gremlin_node_graph_functions(self) -> None:
         helper = _GremlinNodeGraph()
         helper_node = GremlinScenarioNode(**mock_scenario)
@@ -121,41 +395,53 @@ class TestScenarioGraphHelpers(unittest.TestCase):
         helper_node_3 = GremlinScenarioNode(**mock_scenario)
         helper_node_4 = GremlinScenarioNode(**mock_scenario)
 
-        # append
+        # append first node
+        # {helper_node}
         self.assertEqual(helper.head, None)
         helper.append(helper_node)
         self.assertEqual(helper.head, helper_node)
-        self.assertEqual(helper_node.next, helper_node)
-        self.assertEqual(helper_node.previous, helper_node)
 
-        # insert_after
+        # append second node
+        # add_edge
+        # {helper_node} <-> {helper_node_2}
         helper.append(helper_node_2)
-        self.assertEqual(helper.head, helper_node)
-        self.assertEqual(helper_node.next, helper_node_2)
-        self.assertEqual(helper_node_2.previous, helper_node)
-        self.assertEqual(helper_node_2.next, helper_node)
+        helper.add_edge(helper_node, helper_node_2)
+        self.assertEqual(helper.head._edges[helper_node_2.id]["node"], helper_node_2)
+        self.assertEqual(helper_node_2._edges[helper.head.id]["node"], helper.head)
+        self.assertEqual(helper_node._edges[helper_node_2.id]["node"], helper_node_2)
+        self.assertEqual(helper_node_2._edges[helper_node.id]["node"], helper_node)
 
-        # insert before
-        helper.insert_before(helper_node.next, helper_node_3)
-        self.assertEqual(helper.head, helper_node)
-        self.assertEqual(helper_node.next, helper_node_3)
-        self.assertEqual(helper_node_3.previous, helper_node)
-        self.assertEqual(helper_node_3.next, helper_node_2)
-        self.assertEqual(helper_node_2.previous, helper_node_3)
-        self.assertEqual(helper_node_2.next, helper_node)
+        # insert between
+        # remove_edge
+        # {helper_node} <-> {helper_node_3} <-> {helper_node_2}
+        helper.append(helper_node_3)
+        helper.remove_edge(helper_node, helper_node_2)
+        helper.add_edge(helper_node, helper_node_3)
+        helper.add_edge(helper_node_3, helper_node_2)
+        self.assertFalse(helper_node_2.id in helper_node._edges)
+        self.assertFalse(helper_node.id in helper_node_2._edges)
+        self.assertTrue(helper_node.id in helper_node_3._edges)
+        self.assertTrue(helper_node_3.id in helper_node._edges)
+        self.assertTrue(helper_node_2.id in helper_node_3._edges)
+        self.assertTrue(helper_node_3.id in helper_node_2._edges)
 
         # get_node
-        self.assertEqual(helper_node, helper.get_node(0))
-        self.assertEqual(helper_node_3, helper.get_node(1))
-        self.assertEqual(helper_node_2, helper.get_node(2))
+        self.assertEqual(helper_node, helper.get_node(helper_node.id))
+        self.assertEqual(helper_node_2, helper.get_node(helper_node_2.id))
 
         # push
+        # {helper_node_4} <-> {helper_node} <-> {helper_node_3} <-> {helper_node_2}
         helper.push(helper_node_4)
         self.assertEqual(helper.head, helper_node_4)
-        self.assertEqual(helper.head.next, helper_node)
-        self.assertEqual(helper_node.previous, helper_node_4)
+        self.assertTrue(helper_node.id in helper_node_4._edges)
+        self.assertTrue(helper_node_4.id in helper_node._edges)
 
         # remove
-        self.assertEqual(helper.get_node(2), helper_node_3)
+        # {helper_node_4} <-> {helper_node} <-> {helper_node_2}
+        self.assertEqual(helper.get_node(helper_node_3.id), helper_node_3)
         helper.remove(helper_node_3)
-        self.assertEqual(helper.get_node(2), helper_node_2)
+        self.assertEqual(helper.get_node(helper_node_3.id), None)
+        self.assertFalse(helper_node.id in helper_node_3._edges)
+        self.assertFalse(helper_node_3.id in helper_node._edges)
+        self.assertFalse(helper_node_2.id in helper_node_3._edges)
+        self.assertFalse(helper_node_3.id in helper_node_2._edges)

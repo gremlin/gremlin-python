@@ -529,6 +529,60 @@ pprint.pprint(scenarios_list)
 ]
 ```
 
+#### Create scenario
+```python
+from gremlinapi.config import GremlinAPIConfig as config
+from gremlinapi.attack_helpers import (
+    GremlinBlackholeAttack,
+    GremlinTargetContainers,
+)
+from gremlinapi.scenarios import GremlinAPIScenarios as scenarios
+from gremlinapi.scenario_graph_helpers import (
+    GremlinScenarioGraphHelper,
+    GremlinScenarioILFINode,
+    GremlinScenarioDelayNode
+)
+# config.bearer_token = 'Bearer MU3...ZiTk...Lo...4zO..c='
+config.api_key = "" #TODO: populate
+config.team_id = "" #TODO: populate
+
+blast_radius = 100
+delay_time = 5
+
+#create scenario
+new_scenario = GremlinScenarioGraphHelper(
+    name="A Code-Created Scenario",
+    description="Python SDK created scenario",
+    hypothesis="No Hypothesis",
+)
+
+#create scenario nodes
+black_hole_node_1 = GremlinScenarioILFINode(
+    command=GremlinBlackholeAttack(),
+    target=GremlinTargetContainers(
+        strategy_type="Random", labels={"owner": "kyle"}, percent=blast_radius
+    ),
+)
+delay_node_1 = GremlinScenarioDelayNode(description="Add some delay", delay=delay_time)
+black_hole_node_2 = GremlinScenarioILFINode(
+    command=GremlinBlackholeAttack(),
+    target=GremlinTargetContainers(
+        strategy_type="Random", labels={"owner": "kyle"}, percent=blast_radius
+    ),
+)
+
+#add scenario nodes
+new_scenario.add_node(black_hole_node_1)
+new_scenario.add_node(black_hole_node_2)
+new_scenario.add_node(delay_node_1)
+
+#add node edges
+new_scenario.add_edge(black_hole_node_1, delay_node_1)
+new_scenario.add_edge(delay_node_1, black_hole_node_2)
+
+#submit scenario to api
+scenarios.create_scenario(body=new_scenario)
+```
 
 ## Support
 
