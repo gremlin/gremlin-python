@@ -34,6 +34,7 @@ class GremlinAPIOAUTH(GremlinAPI):
     @classmethod
     def configure(
         cls,
+        company_id: str = "",
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
@@ -57,7 +58,11 @@ class GremlinAPIOAUTH(GremlinAPI):
             default, the scope provided must be able to read the email of the user.
         """
         method: str = "POST"
-        company_id = cls._error_if_not_param("companyId", **kwargs)
+        if not company_id:
+            error_msg: str = f"Company ID Required"
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+
         endpoint: str = (
             f"https://api.gremlin.com/v1/companies/{company_id}/oauth/settings"
         )
@@ -67,9 +72,9 @@ class GremlinAPIOAUTH(GremlinAPI):
             "userInfoUri": cls._error_if_not_param("userInfoUri", **kwargs),
             "clientId": cls._error_if_not_param("clientId", **kwargs),
             "clientSecret": cls._error_if_not_param("clientSecret", **kwargs),
-            "scope": cls._error_if_not_param("scope", **kwargs),
+            "scope": cls._warn_if_not_param("scope", **kwargs),
         }
-        payload: dict = cls._payload(**{"headers": https_client.header(), "data": data})
+        payload: dict = cls._payload(**{"headers": https_client.header(), "body": data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return resp
 
