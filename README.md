@@ -47,7 +47,7 @@ are short lived, the user may chose to use the login function instead of directl
 to this is that user credentials are directly exposed, and may end up in logs. When using the login function, the Gremlin API will return a bearer token which will be used on the users behalf to
 execute API actions.
 
-#### Authentication Methods
+#### Authentication Method Toggles
 
 TBD
 
@@ -125,7 +125,32 @@ bearer_token = GremlinAPIOAUTH.authenticate(**auth_args)
 
 #### OAUTH Configuration
 
-TBD
+OAUTH can be configured through an API endpoint per the following configuration dictionary and code example.
+
+You must previous be logged in or otherwise authenticated for the below code to succeed.
+
+```python
+from gremlinapi.oauth import GremlinAPIOAUTH
+
+GREMLIN_TEAM_ID = "your-team-id"
+
+config_body = {
+    # Used to authenticate against the OAuth provider. We will redirect the user to this URL when they initate a OAuth login.
+    "authorizationUri": "your-authorization-uri",
+    # Used to exchange an OAuth code, obtained after logging into the OAuth provider, for an access token.
+    "tokenUri": "your-token-uri",
+    # Used to query for the email of the user..
+    "userInfoUri": "your-userinfo-uri",
+    # The public identifier obtained when registering Gremlin with your OAuth provider.
+    "clientId": "mocklab_oauth2",
+    # The secret obtained when registering Gremlin with your OAuth provider.
+    "clientSecret": "foo",
+    # Define what level of access the access token will have that Gremlin obtains during the OAuth login. The default is `email`. If you change it from the default, the scope provided <strong>must</strong> be able to read the email of the user.
+    "scope":"email",
+}
+
+GremlinAPIOAUTH.configure(GREMLIN_TEAM_ID, **config_body)
+```
 
 ## Proxy Support
 
