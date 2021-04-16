@@ -49,7 +49,19 @@ execute API actions.
 
 #### Authentication Method Toggles
 
-TBD
+```python
+toggles_body = {
+    "companyId" : hooli_id,
+    "passwordEnabled" : True,
+    "mfaRequired" : True,
+    "googleEnabled" : True,
+    "oauthEnabled" : True,
+    "samlEnabled" : True,
+    "claimsRequired" : True,
+}
+
+GremlinAPIOAUTH.toggles(**toggles_body)
+```
 
 #### API User Keys
 
