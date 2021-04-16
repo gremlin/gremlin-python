@@ -47,6 +47,10 @@ are short lived, the user may chose to use the login function instead of directl
 to this is that user credentials are directly exposed, and may end up in logs. When using the login function, the Gremlin API will return a bearer token which will be used on the users behalf to
 execute API actions.
 
+#### Authentication Methods
+
+TBD
+
 #### API User Keys
 
 ```python
@@ -93,6 +97,35 @@ you may supply this globally via the `GremlinAPIConfig` module:
 from gremlinapi.config import GremlinAPIConfig as config
 config.team_id = team_id
 ```
+
+### OAUTH
+
+#### Authentication with OAUTH
+
+To authentication through a desired OAUTH workflow, the required information is similar to `gremlinapi.login()`.
+
+When successfully authenticated through OAUTH, the bearer token, used later in the API workflow, is returned.
+
+```python
+from gremlinapi.oauth import GremlinAPIOAUTH
+
+GREMLIN_COMPANY = "Hooli"
+GREMLIN_USER = "your.login.email@domain.com"
+GREMLIN_PASSWORD = "y0urPa$$w0rd"
+
+auth_args = {
+    "email":GREMLIN_USER,
+    "password": GREMLIN_PASSWORD,
+    "clientId": "mocklab_oauth2",
+    "companyName": GREMLIN_COMPANY,
+}
+
+bearer_token = GremlinAPIOAUTH.authenticate(**auth_args)
+```
+
+#### OAUTH Configuration
+
+TBD
 
 ## Proxy Support
 
