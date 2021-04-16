@@ -21,6 +21,7 @@ from .test_kubernetes import TestKubernetesAttacks, TestKubernetesTargets
 from .test_metadata import TestMetadata
 from .test_metrics import TestMetrics
 from .test_orgs import TestOrgs
+from .test_oauth import TestOAUTH
 from .test_providers import TestProviders
 from .test_reports import TestReports
 from .test_saml import TestSaml
