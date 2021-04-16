@@ -6,11 +6,19 @@ import unittest
 from unittest.mock import patch
 
 # import logging
-# import requests
+import requests
 from gremlinapi.gremlinapi import GremlinAPI
 import gremlinapi.exceptions as g_exceptions
 
-from .util import mock_data, mock_team_id, mock_body, mock_identifier, mock_payload
+from .util import (
+    mock_data,
+    mock_team_id,
+    mock_body,
+    mock_identifier,
+    mock_payload,
+    hooli_id,
+    mock_json,
+)
 
 test_param = "myparam"
 test_value = "paramval"
@@ -186,3 +194,19 @@ class TestAPI(unittest.TestCase):
             GremlinAPI._warn_if_not_param("fakeparam", test_param, **mock_identifier),
             test_param,
         )
+
+    @patch("requests.post")
+    def test_toggles_with_decorator(self, mock_get) -> None:
+        toggles_body = {
+            "companyId": hooli_id,
+            "passwordEnabled": True,
+            "mfaRequired": True,
+            "googleEnabled": True,
+            "oauthEnabled": True,
+            "samlEnabled": True,
+            "claimsRequired": True,
+        }
+        mock_get.return_value = requests.Response()
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json = mock_json
+        self.assertEqual(GremlinAPI.auth_toggles(**toggles_body), mock_get.return_value)

@@ -53,19 +53,3 @@ class TestOAUTH(unittest.TestCase):
             #     GremlinAPIOAUTH.authenticate(hooli_id, **auth_args),
             #     mock_post.return_value,
             # )
-
-    @patch("requests.post")
-    def test_toggles_with_decorator(self, mock_get) -> None:
-        toggles_body = {
-            "companyId": hooli_id,
-            "passwordEnabled": True,
-            "mfaRequired": True,
-            "googleEnabled": True,
-            "oauthEnabled": True,
-            "samlEnabled": True,
-            "claimsRequired": True,
-        }
-        mock_get.return_value = requests.Response()
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json = mock_json
-        self.assertEqual(GremlinAPIOAUTH.toggles(**toggles_body), mock_get.return_value)
