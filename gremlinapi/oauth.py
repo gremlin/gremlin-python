@@ -42,24 +42,38 @@ class GremlinAPIOAUTH(GremlinAPI):
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
-    ) -> Union[HTTPResponse, Any]:
+    ) -> int:
         """
         Configuration of Gremlin OAUTH
 
-        Arguments:
+        Parameters
+        ----------
+        company_id : str
+            The company for which the oauth authentication should commence
 
-        `companyId` : Defines the Company ID for OAUTH
-        `authorizationUri` : Used to authenticate against the OAuth provider.
-            We will redirect the user to this URL when they initate a OAuth login.
-        `tokenUri` : Used to exchange an OAuth code.
-            This is obtained after logging into the OAuth provider, for an access token.
-        `userInfoUri` : Used to query for the email of the user.
-        `clientId` : The public identifier obtained when registering Gremlin with your OAuth
-            provider.
-        `clientSecret` : The secret obtained when registering Gremlin with your OAuth provider.
-        `scope` : (OPTIONAL) Define what level of access the access token will have that Gremlin
-            obtains during the OAuth login. The default is `email`. If you change it from the
-            default, the scope provided must be able to read the email of the user.
+        kwargs : dict
+            The variables required for configuration.
+
+            `kwargs` is required in the following format:
+            {
+                companyId : Defines the Company ID for OAUTH
+                authorizationUri : Used to authenticate against the OAuth provider.
+                    We will redirect the user to this URL when they initate a OAuth login.
+                tokenUri : Used to exchange an OAuth code.
+                    This is obtained after logging into the OAuth provider, for an access token.
+                userInfoUri : Used to query for the email of the user.
+                clientId : The public identifier obtained when registering Gremlin with your OAuth
+                    provider.
+                clientSecret : The secret obtained when registering Gremlin with your OAuth provider.
+                scope : (OPTIONAL) Define what level of access the access token will have that Gremlin
+                    obtains during the OAuth login. The default is `email`. If you change it from the
+                    default, the scope provided must be able to read the email of the user.
+            }
+
+        Returns
+        -------
+        int : the HTTP status code of the API request
+
         """
         method: str = "POST"
         if not company_id:
@@ -80,7 +94,7 @@ class GremlinAPIOAUTH(GremlinAPI):
         }
         payload: dict = cls._payload(**{"headers": https_client.header(), "body": data})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return resp
+        return resp.status_code
 
     @classmethod
     @experimental

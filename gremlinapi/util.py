@@ -19,7 +19,7 @@ string_types = (type(b""), type(""), type(f""))
 
 def experimental(func):
     """
-    This is a decorator that will be used on in-progress or 
+    This is a decorator that will be used on in-progress or
     otherwise incomplete functions and objects.
     """
 

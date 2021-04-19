@@ -200,11 +200,11 @@ class TestAPI(unittest.TestCase):
         toggles_body = {
             "companyId": hooli_id,
             "passwordEnabled": True,
-            "mfaRequired": True,
+            "mfaRequired": False,
             "googleEnabled": True,
             "oauthEnabled": True,
             "samlEnabled": True,
-            "claimsRequired": True,
+            "claimsRequired": False,
         }
         mock_get.return_value = requests.Response()
         mock_get.return_value.status_code = 200

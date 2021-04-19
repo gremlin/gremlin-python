@@ -49,7 +49,7 @@ execute API actions.
 
 #### Authentication Method Toggles
 
-**Experimental**
+***Experimental - Improper use can lock you out of your account***
 
 ```python
 toggles_body = {
@@ -116,7 +116,7 @@ config.team_id = team_id
 
 #### Authentication with OAUTH
 
-**Experimental**
+***Experimental - not fully implemented***
 
 To authentication through a desired OAUTH workflow, the required information is similar to `gremlinapi.login()`.
 
@@ -141,7 +141,7 @@ bearer_token = GremlinAPIOAUTH.authenticate(**auth_args)
 
 #### OAUTH Configuration
 
-**Experimental**
+***Experimental - not fully implemented***
 
 OAUTH can be configured through an API endpoint per the following configuration dictionary and code example.
 

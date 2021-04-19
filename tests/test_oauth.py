@@ -22,7 +22,8 @@ class TestOAUTH(unittest.TestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.json = mock_json
         self.assertEqual(
-            GremlinAPIOAUTH.configure(hooli_id, **config_body), mock_get.return_value
+            GremlinAPIOAUTH.configure(hooli_id, **config_body),
+            mock_get.return_value.status_code,
         )
 
     @patch("requests.get")
