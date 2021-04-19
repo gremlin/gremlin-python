@@ -3,7 +3,6 @@
 # Copyright (C) 2020 Kyle Bouchard <kyle.bouchard@gremlin.com>, Gremlin Inc <sales@gremlin.com>
 
 import logging
-import requests
 import json
 
 from gremlinapi.util import experimental
@@ -24,8 +23,6 @@ from gremlinapi.http_clients import (
     get_gremlin_httpclient,
     GremlinAPIHttpClient,
 )
-
-from http.client import HTTPResponse
 
 from typing import Union, Type, Any, Tuple
 
@@ -123,11 +120,12 @@ class GremlinAPIOAUTH(GremlinAPI):
         # Initiates OAUTH login with Gremlin
         # `allow_redirects` = False enables capture of the response to extract the state cookie
         # `status_code` 307 is a redirect to the OAUTH provider
-        login_response = requests.get(endpoint, allow_redirects=False)
-        assert login_response.status_code == 307
+        payload: dict = cls._payload(**{"headers": https_client.header()})
+        (resp, body) = https_client.api_call("GET", endpoint, **payload)
+        assert resp.status_code == 307
 
-        state_cookie = login_response.cookies["oauth_state"]
-        oauth_provider_login_url = login_response.headers["Location"]
+        state_cookie = resp.cookies["oauth_state"]
+        oauth_provider_login_url = resp.headers["Location"]
         assert state_cookie != None
         assert oauth_provider_login_url != None
 
@@ -166,19 +164,19 @@ class GremlinAPIOAUTH(GremlinAPI):
         gremlin_callback_url : str
 
         """
-        # Do not follow redirect as we need to add the state cookie to the next request.
-        oauth_provider_login_response = requests.post(
-            oauth_provider_login_url, data=data, allow_redirects=False
+        payload: dict = cls._payload(**{"headers": https_client.header(), "body": data})
+        (resp, body) = https_client.api_call(
+            "POST", oauth_provider_login_url, **payload
         )
 
         # You have now successfully authenticted with your OAuth provider,
         # now continue the flow by following the redirect your OAuth provider
         # created back to Gremlins /oauth/callback endpoint
-        log.info(str(oauth_provider_login_response.headers))
-        gremlin_callback_url = oauth_provider_login_response.headers["Location"]
+        # log.info(str(resp.headers))
+        gremlin_callback_url = resp.headers["Location"]
         # gremlin_callback_url = auth_body["redirectUri"]
         assert gremlin_callback_url != None
-        # NOTE TO SELF: the `location` key is nonexistant on the login_response, and the
+        # NOTE TO SELF: the `location` key is nonexistant on the resp, and the
         #   redirectUri is `null` in the original state cookie as returned from the mock endpoint
         return gremlin_callback_url
 
@@ -211,13 +209,17 @@ class GremlinAPIOAUTH(GremlinAPI):
         # redirect URL you are following and it needs to match the
         # value in the cookie. This helps prevent CSRF attacks.
         cookie = {"oauth_state": state_cookie}
-        gremlin_callback_response = requests.get(gremlin_callback_url, cookies=cookie)
-        log.info(str(gremlin_callback_response))
+        payload: dict = cls._payload(
+            **{"headers": https_client.header(), "cookies": cookie}
+        )
+        (resp, body) = https_client.api_call("GET", gremlin_callback_url, **payload)
+
+        # gremlin_callback_response = requests.get(gremlin_callback_url, cookies=cookie)
         # The response from the callback endpoint will contain the `access_token` in JSON
         # This is the end of the OAuth specific flow. This `access_token` can
         # now be exchanged for a Gremlin session.
-        assert gremlin_callback_response.status_code == 200
-        access_token = gremlin_callback_response.json()["access_token"]
+        assert resp.status_code == 200
+        access_token = resp.json()["access_token"]
         assert access_token != None
 
         return access_token
@@ -250,17 +252,16 @@ class GremlinAPIOAUTH(GremlinAPI):
             "accessToken": access_token,
             "provider": "oauth",
         }
-        sso_response = requests.post(
-            f"https://api.gremlin.com/v1/users/auth/sso?getCompanySession=true",
-            data=body,
-        )
-        assert sso_response.status_code == 200
+        payload: dict = cls._payload(**{"headers": https_client.header(), "body": body})
+        endpoint = f"https://api.gremlin.com/v1/users/auth/sso?getCompanySession=true"
+        (resp, body) = https_client.api_call("POST", endpoint, **payload)
+        assert resp.status_code == 200
 
         # The response is a JSON representation of the session.
         # In this JSON response is the `header` field which contains a
         # Bearer token that can be used in the `Authorization` header
         # when making requests to the Gremlin API.
-        bearer_token = sso_response.json()["header"]
+        bearer_token = resp.json()["header"]
         assert bearer_token != None
 
         return bearer_token

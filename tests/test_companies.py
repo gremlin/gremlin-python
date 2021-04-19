@@ -4,7 +4,7 @@ import logging
 import requests
 from gremlinapi.companies import GremlinAPICompanies
 
-from .util import mock_json, mock_data, mock_identifier
+from .util import mock_json, mock_data, mock_identifier, hooli_id
 
 
 class TestCompanies(unittest.TestCase):
@@ -103,4 +103,23 @@ class TestCompanies(unittest.TestCase):
         mock_get.return_value.json = mock_json
         self.assertEqual(
             GremlinAPICompanies.deactivate_company_user(**mock_identifier), mock_data
+        )
+
+    @patch("requests.post")
+    def test_auth_toggles_with_decorator(self, mock_get) -> None:
+        toggles_body = {
+            "companyId": hooli_id,
+            "passwordEnabled": True,
+            "mfaRequired": False,
+            "googleEnabled": True,
+            "oauthEnabled": True,
+            "samlEnabled": True,
+            "claimsRequired": False,
+        }
+        mock_get.return_value = requests.Response()
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json = mock_json
+        self.assertEqual(
+            GremlinAPICompanies.auth_toggles(**toggles_body),
+            mock_get.return_value.status_code,
         )
