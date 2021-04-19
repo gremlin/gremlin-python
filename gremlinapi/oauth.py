@@ -32,7 +32,7 @@ log = logging.getLogger("GremlinAPI.client")
 
 class GremlinAPIOAUTH(GremlinAPI):
     @classmethod
-    @experimental
+    @experimental("`configure` method not fully implemented")
     def configure(
         cls,
         company_id: str = "",
