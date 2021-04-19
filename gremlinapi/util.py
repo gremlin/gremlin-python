@@ -17,10 +17,29 @@ def get_version():
 string_types = (type(b""), type(""), type(f""))
 
 
+def experimental(func):
+    """
+    This is a decorator that will be used on in-progress or 
+    otherwise incomplete functions and objects.
+    """
+
+    @functools.wraps(func)
+    def new_func(*args, **kwargs):
+        message = "Call to experimental function `{}` ** Please proceed with caution **".format(
+            func.__name__
+        )
+        warnings.warn(message)
+        return func(*args, **kwargs)
+
+    return new_func
+
+
 def deprecated(reason):
-    """This is a decorator which can be used to mark functions
+    """
+    This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
-    when the function is used."""
+    when the function is used.
+    """
 
     if inspect.isclass(reason) or inspect.isfunction(reason):
 

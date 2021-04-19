@@ -49,15 +49,17 @@ execute API actions.
 
 #### Authentication Method Toggles
 
+**Experimental**
+
 ```python
 toggles_body = {
     "companyId" : hooli_id,
     "passwordEnabled" : True,
-    "mfaRequired" : True,
+    "mfaRequired" : False,
     "googleEnabled" : True,
     "oauthEnabled" : True,
     "samlEnabled" : True,
-    "claimsRequired" : True,
+    "claimsRequired" : False,
 }
 
 GremlinAPIOAUTH.toggles(**toggles_body)
@@ -114,6 +116,8 @@ config.team_id = team_id
 
 #### Authentication with OAUTH
 
+**Experimental**
+
 To authentication through a desired OAUTH workflow, the required information is similar to `gremlinapi.login()`.
 
 When successfully authenticated through OAUTH, the bearer token, used later in the API workflow, is returned.
@@ -136,6 +140,8 @@ bearer_token = GremlinAPIOAUTH.authenticate(**auth_args)
 ```
 
 #### OAUTH Configuration
+
+**Experimental**
 
 OAUTH can be configured through an API endpoint per the following configuration dictionary and code example.
 

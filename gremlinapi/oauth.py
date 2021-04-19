@@ -6,6 +6,8 @@ import logging
 import requests
 import json
 
+from gremlinapi.util import experimental
+
 from gremlinapi.cli import register_cli_action
 from gremlinapi.config import GremlinAPIConfig
 from gremlinapi.exceptions import (
@@ -33,6 +35,7 @@ log = logging.getLogger("GremlinAPI.client")
 
 class GremlinAPIOAUTH(GremlinAPI):
     @classmethod
+    @experimental
     def configure(
         cls,
         company_id: str = "",
@@ -80,6 +83,7 @@ class GremlinAPIOAUTH(GremlinAPI):
         return resp
 
     @classmethod
+    @experimental
     def initiate_oauth(
         cls,
         company_name: str,
@@ -116,6 +120,7 @@ class GremlinAPIOAUTH(GremlinAPI):
         return state_cookie, oauth_provider_login_url
 
     @classmethod
+    @experimental
     def get_callback_url(
         cls,
         oauth_provider_login_url: str,
@@ -164,6 +169,7 @@ class GremlinAPIOAUTH(GremlinAPI):
         return gremlin_callback_url
 
     @classmethod
+    @experimental
     def get_access_token(
         cls,
         state_cookie: str,
@@ -203,6 +209,7 @@ class GremlinAPIOAUTH(GremlinAPI):
         return access_token
 
     @classmethod
+    @experimental
     def get_bearer_token(
         cls,
         company_name: str,
@@ -245,6 +252,7 @@ class GremlinAPIOAUTH(GremlinAPI):
         return bearer_token
 
     @classmethod
+    @experimental
     def authenticate(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
