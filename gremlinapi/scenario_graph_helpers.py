@@ -73,7 +73,7 @@ class GremlinScenarioNode(object):
 
     @property
     def data(self) -> dict:
-        return self.repr_model()
+        return self.api_model()
 
     @property
     def id(self) -> str:
@@ -151,7 +151,7 @@ class GremlinScenarioNode(object):
             raise GremlinParameterError(error_msg)
         return f"{self.name}-{self.id}"
 
-    def repr_model(self) -> dict:
+    def api_model(self) -> dict:
         model = {
             "type": self.node_type,
             "guid": self.uuid,
@@ -161,7 +161,7 @@ class GremlinScenarioNode(object):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.repr_model)
+        return json.dumps(self.api_model)
 
 
 class GremlinScenarioGraphHelper(object):
@@ -339,7 +339,7 @@ class GremlinScenarioGraphHelper(object):
             raise GremlinParameterError(error_msg)
         self._name = _name
 
-    def repr_model(self) -> dict:
+    def api_model(self) -> dict:
         model: dict = {
             "description": self.description,
             "hypothesis": self.hypothesis,
@@ -356,7 +356,7 @@ class GremlinScenarioGraphHelper(object):
         return model
 
     def __repr__(self) -> str:
-        model: dict = self.repr_model()
+        model: dict = self.api_model()
         return json.dumps(model)
 
 
@@ -427,8 +427,8 @@ class GremlinScenarioILFINode(GremlinScenarioSerialNode):
             raise GremlinParameterError(error_msg)
         self._command = _command
 
-    def repr_model(self) -> dict:
-        model: dict = super().repr_model()
+    def api_model(self) -> dict:
+        model: dict = super().api_model()
         model["impact_definition"] = self.command.impact_definition_graph()
         model["target_definition"] = self.target.target_definition_graph()
         return model
@@ -466,8 +466,8 @@ class GremlinScenarioDelayNode(GremlinScenarioSerialNode):
         self._delay: int = kwargs.get("delay", None)  # type: ignore
         self.node_type: str = "Delay"
 
-    def repr_model(self) -> dict:
-        model: dict = super().repr_model()
+    def api_model(self) -> dict:
+        model: dict = super().api_model()
         model["delay"] = self.delay
         return model
 
@@ -513,8 +513,8 @@ class GremlinScenarioStatusCheckNode(GremlinScenarioSerialNode):
             "evaluation_response_body_evaluation", ""
         )  # type: ignore
 
-    def repr_model(self) -> dict:
-        model: dict = super().repr_model()
+    def api_model(self) -> dict:
+        model: dict = super().api_model()
         model["endpointConfiguration"] = {
             "url": self.endpoint_url,
             "headers": self.endpoint_headers,
