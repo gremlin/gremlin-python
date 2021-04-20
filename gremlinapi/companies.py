@@ -236,3 +236,39 @@ class GremlinAPICompanies(GremlinAPI):
         payload: dict = cls._payload(**{"headers": https_client.header()})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
+
+    @classmethod
+    def auth_toggles(
+        cls,
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
+    ) -> int:
+        """
+        Authentication Toggles
+
+        Functional arguments toggle Gremlin Authentication settings on or off:
+
+        Argument value must be a `boolean`
+
+        `passwordEnabled` : Is a password required for login
+        `mfaRequired` : Is multi factor authentication (mfa) required for login
+        `googleEnabled` : Is Google authentication enabled
+        `oauthEnabled` : Is OAUTH authentication enabled
+        `samlEnabled` : Is SAML authentication enabled
+        `claimsRequired` : Are SAML claims required
+        """
+        method: str = "POST"
+        company_id = cls._error_if_not_param("companyId", **kwargs)
+        endpoint: str = f"https://api.gremlin.com/v1/companies/{company_id}/auth/prefs"
+        data: dict = {
+            "passwordEnabled": kwargs.get("passwordEnabled", False),
+            "mfaRequired": kwargs.get("mfaRequired", False),
+            "googleEnabled": kwargs.get("googleEnabled", False),
+            "oauthEnabled": kwargs.get("oauthEnabled", False),
+            "samlEnabled": kwargs.get("samlEnabled", False),
+            "claimsRequired": kwargs.get("claimsRequired", False),
+        }
+        payload: dict = cls._payload(**{"headers": https_client.header(), "body": data})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return resp.status_code

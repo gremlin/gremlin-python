@@ -17,9 +17,9 @@ from gremlinapi.exceptions import (
     HTTPError,
 )
 
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Union, Type
 
-from gremlinapi.http_clients import get_gremlin_httpclient
+from gremlinapi.http_clients import get_gremlin_httpclient, GremlinAPIHttpClient
 from gremlinapi.exceptions import GremlinParameterError
 
 log = logging.getLogger("GremlinAPI.client")

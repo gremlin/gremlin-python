@@ -6,11 +6,19 @@ import unittest
 from unittest.mock import patch
 
 # import logging
-# import requests
+import requests
 from gremlinapi.gremlinapi import GremlinAPI
 import gremlinapi.exceptions as g_exceptions
 
-from .util import mock_data, mock_team_id, mock_body, mock_identifier, mock_payload
+from .util import (
+    mock_data,
+    mock_team_id,
+    mock_body,
+    mock_identifier,
+    mock_payload,
+    hooli_id,
+    mock_json,
+)
 
 test_param = "myparam"
 test_value = "paramval"

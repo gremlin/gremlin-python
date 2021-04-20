@@ -1,7 +1,7 @@
 api_key: str = "api-key-string"
 bearer_token: str = "bearer-token-string"
 mock_data = {"testkey": "testval"}
-
+hooli_id = "9676868b-60d2-5ebe-aa66-c1de8162ff9d"
 from gremlinapi.attack_helpers import (
     GremlinAttackTargetHelper,
     GremlinAttackCommandHelper,
