@@ -52,12 +52,26 @@ class TestAttackHelpers(unittest.TestCase):
         helper = GremlinAttackHelper()
         helper_output = helper.api_model()
         self.assertEqual(helper_output, expected_output)
-    
+
     def test_attack_helper_repr_str(self) -> None:
         # defaults
-        expected_output = 'GremlinAttackHelper({"exact": 0, "percent": 10, "strategy_type": "Random"})'
+        expected_output = 'GremlinAttackHelper({\'target\': \'GremlinTargetHosts({"exact": 0, "percent": 10, "strategy_type": "Random", "target_all_hosts": true})\', \'command\': \'GremlinCPUAttack({"all_cores": false, "capacity": 100, "cores": 1, "length": 60})\'})'
         helper = GremlinAttackHelper(
-            
+            GremlinAttackHelper(
+                {
+                    "target": GremlinTargetHosts(
+                        {
+                            "exact": 0,
+                            "percent": 10,
+                            "strategy_type": "Random",
+                            "target_all_hosts": True,
+                        }
+                    ),
+                    "command": GremlinCPUAttack(
+                        {"all_cores": False, "capacity": 100, "cores": 1, "length": 60}
+                    ),
+                }
+            )
         )
         helper_output = repr(helper)
         self.assertEqual(expected_output, helper_output)
@@ -151,7 +165,12 @@ class TestAttackHelpers(unittest.TestCase):
         # defaults
         expected_output = 'GremlinTargetHosts({"exact": 0, "percent": 10, "strategy_type": "Random", "target_all_hosts": true})'
         helper = GremlinTargetHosts(
-            {"exact": 0, "percent": 10, "strategy_type": "Random", "target_all_hosts": True}
+            {
+                "exact": 0,
+                "percent": 10,
+                "strategy_type": "Random",
+                "target_all_hosts": True,
+            }
         )
         helper_output = repr(helper)
         self.assertEqual(expected_output, helper_output)
@@ -264,6 +283,17 @@ class TestAttackHelpers(unittest.TestCase):
         helper = GremlinCPUAttack()
         helper_output = helper.api_model()
         self.assertEqual(helper_output, expected_output)
+
+    def test_cpu_attack_repr_str(self) -> None:
+        # defaults
+        expected_output = 'GremlinCPUAttack({"all_cores": false, "capacity": 100, "cores": 1, "length": 60})'
+        helper = GremlinCPUAttack(
+            {"all_cores": False, "capacity": 100, "cores": 1, "length": 60}
+        )
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
 
     def test_memory_attack_api_model(self) -> None:
         # defaults

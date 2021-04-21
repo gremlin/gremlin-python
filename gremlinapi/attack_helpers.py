@@ -337,10 +337,11 @@ class GremlinAttackHelper(object):
         kwargs: dict = {}
         kwargs["target"] = repr(self.target)
         kwargs["command"] = repr(self.command)
-        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
+        return "%s(%s)" % (self.__class__.__name__, kwargs)
 
     def __str__(self) -> str:
         return repr(self)
+
 
 class GremlinTargetHosts(GremlinAttackTargetHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
@@ -1017,10 +1018,15 @@ class GremlinCPUAttack(GremlinResourceAttackHelper):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["all_cores"] = self.all_cores
+        kwargs["capacity"] = self.capacity
+        kwargs["cores"] = self.cores
+        kwargs["length"] = self.length
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinMemoryAttack(GremlinResourceAttackHelper):
