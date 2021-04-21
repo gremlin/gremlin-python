@@ -158,10 +158,14 @@ class GremlinAttackTargetHelper(object):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["exact"] = self.exact
+        kwargs["percent"] = self.percent
+        kwargs["strategy_type"] = self.strategy_type
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinAttackCommandHelper(object):

@@ -100,6 +100,15 @@ class TestAttackHelpers(unittest.TestCase):
         helper_output = helper.api_model()
         self.assertEqual(helper_output, expected_output)
 
+    def test_attack_target_helper_repr_str(self) -> None:
+        # defaults
+        expected_output = 'GremlinAttackTargetHelper({"exact": 0, "percent": 10, "strategy_type": "Random"})'
+        helper = GremlinAttackTargetHelper()
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
+
     @patch("requests.get")
     def test_filter_active_tags_with_decorator(self, mock_get) -> None:
         expected_output = {
