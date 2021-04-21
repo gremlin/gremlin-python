@@ -52,6 +52,17 @@ class TestAttackHelpers(unittest.TestCase):
         helper = GremlinAttackHelper()
         helper_output = helper.api_model()
         self.assertEqual(helper_output, expected_output)
+    
+    def test_attack_helper_repr_str(self) -> None:
+        # defaults
+        expected_output = 'GremlinAttackHelper({"exact": 0, "percent": 10, "strategy_type": "Random"})'
+        helper = GremlinAttackHelper(
+            
+        )
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
 
     def test_target_helper_target_definition(self) -> None:
         helper = GremlinAttackTargetHelper(**attack_helper_params_custom)
@@ -135,6 +146,17 @@ class TestAttackHelpers(unittest.TestCase):
         helper = GremlinTargetHosts()
         helper_output = helper.api_model()
         self.assertEqual(helper_output, expected_output)
+
+    def test_target_hosts_repr_str(self) -> None:
+        # defaults
+        expected_output = 'GremlinTargetHosts({"exact": 0, "percent": 10, "strategy_type": "Random", "target_all_hosts": true})'
+        helper = GremlinTargetHosts(
+            {"exact": 0, "percent": 10, "strategy_type": "Random", "target_all_hosts": True}
+        )
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
 
     @patch("requests.get")
     def test_filter_active_labels_with_decorator(self, mock_get) -> None:

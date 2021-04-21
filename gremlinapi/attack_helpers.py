@@ -328,17 +328,19 @@ class GremlinAttackHelper(object):
 
     def api_model(self) -> dict:
         model: dict = {
-            "target": json.loads(str(self.target)),
-            "command": json.loads(str(self.command)),
+            "target": self.target.api_model(),
+            "command": self.command.api_model(),
         }
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["target"] = repr(self.target)
+        kwargs["command"] = repr(self.command)
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
-
+        return repr(self)
 
 class GremlinTargetHosts(GremlinAttackTargetHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
@@ -474,10 +476,15 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["exact"] = self.exact
+        kwargs["percent"] = self.percent
+        kwargs["strategy_type"] = self.strategy_type
+        kwargs["target_all_hosts"] = self.target_all_hosts
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinTargetContainers(GremlinAttackTargetHelper):
