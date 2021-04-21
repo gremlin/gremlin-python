@@ -103,7 +103,9 @@ class TestAttackHelpers(unittest.TestCase):
     def test_attack_target_helper_repr_str(self) -> None:
         # defaults
         expected_output = 'GremlinAttackTargetHelper({"exact": 0, "percent": 10, "strategy_type": "Random"})'
-        helper = GremlinAttackTargetHelper()
+        helper = GremlinAttackTargetHelper(
+            {"exact": 0, "percent": 10, "strategy_type": "Random"}
+        )
         helper_output = repr(helper)
         self.assertEqual(expected_output, helper_output)
         helper_output = str(helper)
@@ -190,6 +192,15 @@ class TestAttackHelpers(unittest.TestCase):
         helper = GremlinAttackCommandHelper()
         helper_output = helper.api_model()
         self.assertEqual(helper_output, expected_output)
+
+    def test_attack_command_helper_repr_str(self) -> None:
+        # defaults
+        expected_output = 'GremlinAttackCommandHelper({"length": 60})'
+        helper = GremlinAttackCommandHelper({"length": 60})
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
 
     def test_resource_attack_helper_api_model(self) -> None:
         # defaults
