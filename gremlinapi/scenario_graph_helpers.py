@@ -161,7 +161,10 @@ class GremlinScenarioNode(object):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model)
+        return json.dumps(self.api_model())
+
+    def __str__(self) -> str:
+        return json.dumps(self.api_model())
 
 
 class GremlinScenarioGraphHelper(object):
@@ -356,8 +359,10 @@ class GremlinScenarioGraphHelper(object):
         return model
 
     def __repr__(self) -> str:
-        model: dict = self.api_model()
-        return json.dumps(model)
+        return json.dumps(self.api_model())
+
+    def __str__(self) -> str:
+        return json.dumps(self.api_model())
 
 
 class GremlinScenarioSerialNode(GremlinScenarioNode):
@@ -368,6 +373,16 @@ class GremlinScenarioSerialNode(GremlinScenarioNode):
     ):
         super().__init__(*args, **kwargs)
 
+    def api_model(self) -> dict:
+        model: dict = super().api_model()
+        return model
+
+    def __repr__(self) -> str:
+        return json.dumps(self.api_model())
+
+    def __str__(self) -> str:
+        return json.dumps(self.api_model())
+
 
 class GremlinScenarioParallelNode(GremlinScenarioNode):
     def __init(
@@ -377,6 +392,16 @@ class GremlinScenarioParallelNode(GremlinScenarioNode):
     ):
         super().__init__(*args, **kwargs)
         raise NotImplementedError("Parallel Scenario Nodes NOT IMPLEMENTED")
+
+    def api_model(self) -> dict:
+        model: dict = super().api_model()
+        return model
+
+    def __repr__(self) -> str:
+        return json.dumps(self.api_model())
+
+    def __str__(self) -> str:
+        return json.dumps(self.api_model())
 
 
 class GremlinScenarioAttackNode(GremlinScenarioSerialNode):
@@ -402,6 +427,16 @@ class GremlinScenarioAttackNode(GremlinScenarioSerialNode):
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._attack_type = _attack_type
+
+    def api_model(self) -> dict:
+        model: dict = super().api_model()
+        return model
+
+    def __repr__(self) -> str:
+        return json.dumps(self.api_model())
+
+    def __str__(self) -> str:
+        return json.dumps(self.api_model())
 
 
 class GremlinScenarioILFINode(GremlinScenarioSerialNode):
@@ -445,6 +480,12 @@ class GremlinScenarioILFINode(GremlinScenarioSerialNode):
             raise GremlinParameterError(error_msg)
         self._target = _target
 
+    def __repr__(self) -> str:
+        return json.dumps(self.api_model())
+
+    def __str__(self) -> str:
+        return json.dumps(self.api_model())
+
 
 class GremlinScenarioALFINode(GremlinScenarioSerialNode):
     def __init__(
@@ -455,6 +496,16 @@ class GremlinScenarioALFINode(GremlinScenarioSerialNode):
         super().__init__(*args, **kwargs)
         self.attack_type = "ALFI"
         raise NotImplementedError("ALFI Scenarios NOT IMPLEMENTED")
+
+    def api_model(self) -> dict:
+        model: dict = super().api_model()
+        return model
+
+    def __repr__(self) -> str:
+        return json.dumps(self.api_model())
+
+    def __str__(self) -> str:
+        return json.dumps(self.api_model())
 
 
 class GremlinScenarioDelayNode(GremlinScenarioSerialNode):
@@ -484,6 +535,12 @@ class GremlinScenarioDelayNode(GremlinScenarioSerialNode):
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._delay = _duration
+
+    def __repr__(self) -> str:
+        return json.dumps(self.api_model())
+
+    def __str__(self) -> str:
+        return json.dumps(self.api_model())
 
 
 class GremlinScenarioStatusCheckNode(GremlinScenarioSerialNode):
@@ -600,6 +657,12 @@ class GremlinScenarioStatusCheckNode(GremlinScenarioSerialNode):
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._evaluation_response_body_evaluation = _evaluation_response_body_evaluation
+
+    def __repr__(self) -> str:
+        return json.dumps(self.api_model())
+
+    def __str__(self) -> str:
+        return json.dumps(self.api_model())
 
 
 class _GremlinNodeGraph(object):
@@ -843,3 +906,13 @@ class _GremlinNodeGraph(object):
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         return True
+
+    def api_model(self) -> dict:
+        model: dict = {}
+        return model
+
+    def __repr__(self) -> str:
+        return json.dumps(self.api_model())
+
+    def __str__(self) -> str:
+        return json.dumps(self.api_model())
