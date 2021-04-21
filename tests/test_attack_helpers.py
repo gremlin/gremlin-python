@@ -55,24 +55,19 @@ class TestAttackHelpers(unittest.TestCase):
 
     def test_attack_helper_repr_str(self) -> None:
         # defaults
-        expected_output = 'GremlinAttackHelper({\'target\': \'GremlinTargetHosts({"exact": 0, "percent": 10, "strategy_type": "Random", "target_all_hosts": true})\', \'command\': \'GremlinCPUAttack({"all_cores": false, "capacity": 100, "cores": 1, "length": 60})\'})'
-        helper = GremlinAttackHelper(
-            GremlinAttackHelper(
-                {
-                    "target": GremlinTargetHosts(
-                        {
-                            "exact": 0,
-                            "percent": 10,
-                            "strategy_type": "Random",
-                            "target_all_hosts": True,
-                        }
-                    ),
-                    "command": GremlinCPUAttack(
-                        {"all_cores": False, "capacity": 100, "cores": 1, "length": 60}
-                    ),
-                }
-            )
-        )
+        expected_output = 'GremlinAttackHelper({\'target\': \'GremlinTargetHosts({"exact": 0, "percent": 25, "strategy_type": "Random", "target_all_hosts": true})\', \'command\': \'GremlinCPUAttack({"all_cores": false, "capacity": 90, "cores": 1, "length": 60})\'})'
+        kwargs_th = {
+            "exact": 0,
+            "percent": 25,
+            "strategy_type": "Random",
+            "target_all_hosts": True,
+        }
+        kwargs_cpua = {"all_cores": False, "capacity": 90, "cores": 1, "length": 60}
+        kwargs = {
+            "target": GremlinTargetHosts(**kwargs_th),
+            "command": GremlinCPUAttack(**kwargs_cpua),
+        }
+        helper = GremlinAttackHelper(**kwargs)
         helper_output = repr(helper)
         self.assertEqual(expected_output, helper_output)
         helper_output = str(helper)
@@ -127,10 +122,9 @@ class TestAttackHelpers(unittest.TestCase):
 
     def test_attack_target_helper_repr_str(self) -> None:
         # defaults
-        expected_output = 'GremlinAttackTargetHelper({"exact": 0, "percent": 10, "strategy_type": "Random"})'
-        helper = GremlinAttackTargetHelper(
-            {"exact": 0, "percent": 10, "strategy_type": "Random"}
-        )
+        expected_output = 'GremlinAttackTargetHelper({"exact": 0, "percent": 15, "strategy_type": "Random"})'
+        kwargs = {"exact": 0, "percent": 15, "strategy_type": "Random"}
+        helper = GremlinAttackTargetHelper(**kwargs)
         helper_output = repr(helper)
         self.assertEqual(expected_output, helper_output)
         helper_output = str(helper)
@@ -163,15 +157,14 @@ class TestAttackHelpers(unittest.TestCase):
 
     def test_target_hosts_repr_str(self) -> None:
         # defaults
-        expected_output = 'GremlinTargetHosts({"exact": 0, "percent": 10, "strategy_type": "Random", "target_all_hosts": true})'
-        helper = GremlinTargetHosts(
-            {
-                "exact": 0,
-                "percent": 10,
-                "strategy_type": "Random",
-                "target_all_hosts": True,
-            }
-        )
+        expected_output = 'GremlinTargetHosts({"exact": 0, "percent": 25, "strategy_type": "Random", "target_all_hosts": true})'
+        kwargs = {
+            "exact": 0,
+            "percent": 25,
+            "strategy_type": "Random",
+            "target_all_hosts": True,
+        }
+        helper = GremlinTargetHosts(**kwargs)
         helper_output = repr(helper)
         self.assertEqual(expected_output, helper_output)
         helper_output = str(helper)
@@ -199,6 +192,23 @@ class TestAttackHelpers(unittest.TestCase):
         helper = GremlinTargetContainers()
         helper_output = helper.api_model()
         self.assertEqual(helper_output, expected_output)
+
+    def test_target_containers_repr_str(self) -> None:
+        # defaults
+        expected_output = 'GremlinTargetContainers({"exact": 0, "percent": 35, "strategy_type": "Random", "target_all_containers": false, "ids": [], "labels": {}})'
+        kwargs = {
+            "exact": 0,
+            "percent": 35,
+            "strategy_type": "Random",
+            "target_all_containers": False,
+            "ids": [],
+            "labels": {},
+        }
+        helper = GremlinTargetContainers(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
 
     def test_impact_definition(self) -> None:
         expected_output = {
@@ -235,9 +245,9 @@ class TestAttackHelpers(unittest.TestCase):
         self.assertEqual(helper_output, expected_output)
 
     def test_attack_command_helper_repr_str(self) -> None:
-        # defaults
-        expected_output = 'GremlinAttackCommandHelper({"length": 60})'
-        helper = GremlinAttackCommandHelper({"length": 60})
+        expected_output = 'GremlinAttackCommandHelper({"length": 70})'
+        kwargs = {"length": 70}
+        helper = GremlinAttackCommandHelper(**kwargs)
         helper_output = repr(helper)
         self.assertEqual(expected_output, helper_output)
         helper_output = str(helper)
@@ -286,10 +296,9 @@ class TestAttackHelpers(unittest.TestCase):
 
     def test_cpu_attack_repr_str(self) -> None:
         # defaults
-        expected_output = 'GremlinCPUAttack({"all_cores": false, "capacity": 100, "cores": 1, "length": 60})'
-        helper = GremlinCPUAttack(
-            {"all_cores": False, "capacity": 100, "cores": 1, "length": 60}
-        )
+        expected_output = 'GremlinCPUAttack({"all_cores": false, "capacity": 90, "cores": 2, "length": 60})'
+        kwargs = {"all_cores": False, "capacity": 90, "cores": 2, "length": 60}
+        helper = GremlinCPUAttack(**kwargs)
         helper_output = repr(helper)
         self.assertEqual(expected_output, helper_output)
         helper_output = str(helper)
