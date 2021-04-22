@@ -524,6 +524,25 @@ class TestAttackHelpers(unittest.TestCase):
         helper_output = helper.api_model()
         self.assertEqual(helper_output, expected_output)
 
+    def test_black_hole_attack_repr_str(self) -> None:
+        expected_output = 'GremlinBlackholeAttack({"length": 65, "device": "", "ips": [], "protocol": "", "providers": [], "tags": [], "egress_ports": ["^533"], "hostnames": "^api2.gremlin.com", "ingress_ports": []})'
+        kwargs = {
+            "length": 65,
+            "device": "",
+            "ips": [],
+            "protocol": "",
+            "providers": [],
+            "tags": [],
+            "egress_ports": ["^533"],
+            "hostnames": ["^api2.gremlin.com"],
+            "ingress_ports": [],
+        }
+        helper = GremlinBlackholeAttack(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
+
     def test_dns_attack_api_model(self) -> None:
         # defaults
         expected_output = {"args": ["-l", "60"], "commandType": "DNS", "type": "dns"}
