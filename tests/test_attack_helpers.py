@@ -375,6 +375,21 @@ class TestAttackHelpers(unittest.TestCase):
         helper_output = helper.api_model()
         self.assertEqual(helper_output, expected_output)
 
+    def test_disk_space_attack_repr_str(self) -> None:
+        expected_output = 'GremlinDiskSpaceAttack({"length": 75, "blocksize": 4, "directory": "/tmp", "percent": 95, "workers": 1})'
+        kwargs = {
+            "length": 75,
+            "blocksize": 4,
+            "directory": "/tmp",
+            "percent": 95,
+            "workers": 1,
+        }
+        helper = GremlinDiskSpaceAttack(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
+
     def test_disk_io_api_model(self) -> None:
         # defaults
         expected_output = {

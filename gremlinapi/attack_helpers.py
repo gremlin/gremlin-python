@@ -1145,10 +1145,16 @@ class GremlinDiskSpaceAttack(GremlinResourceAttackHelper):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["length"] = self.length
+        kwargs["blocksize"] = self.blocksize
+        kwargs["directory"] = self.directory
+        kwargs["percent"] = self.percent
+        kwargs["workers"] = self.workers
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinDiskIOAttack(GremlinResourceAttackHelper):
@@ -1199,10 +1205,12 @@ class GremlinDiskIOAttack(GremlinResourceAttackHelper):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["length"] = self.length
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinShutdownAttack(GremlinStateAttackHelper):
