@@ -161,10 +161,12 @@ class GremlinScenarioNode(object):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinScenarioGraphHelper(object):
@@ -359,10 +361,14 @@ class GremlinScenarioGraphHelper(object):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        kwargs["description"] = self.description
+        kwargs["hypothesis"] = self.hypothesis
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinScenarioSerialNode(GremlinScenarioNode):
@@ -378,10 +384,12 @@ class GremlinScenarioSerialNode(GremlinScenarioNode):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinScenarioParallelNode(GremlinScenarioNode):
@@ -398,10 +406,12 @@ class GremlinScenarioParallelNode(GremlinScenarioNode):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinScenarioAttackNode(GremlinScenarioSerialNode):
@@ -433,10 +443,12 @@ class GremlinScenarioAttackNode(GremlinScenarioSerialNode):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinScenarioILFINode(GremlinScenarioSerialNode):
@@ -447,8 +459,8 @@ class GremlinScenarioILFINode(GremlinScenarioSerialNode):
         self._command: GremlinAttackCommandHelper = None  # type: ignore
         self._target: GremlinAttackTargetHelper = None  # type: ignore
         self.node_type: str = "InfraAttack"
-        self.command: GremlinAttackCommandHelper = kwargs.get("command", self._command)  # type: ignore
-        self.target: GremlinAttackTargetHelper = kwargs.get("target", self._target)  # type: ignore
+        self.command: GremlinAttackCommandHelper = kwargs.get("command", GremlinAttackCommandHelper())  # type: ignore
+        self.target: GremlinAttackTargetHelper = kwargs.get("target", GremlinAttackTargetHelper())  # type: ignore
 
     @property
     def command(self) -> GremlinAttackCommandHelper:
@@ -481,10 +493,14 @@ class GremlinScenarioILFINode(GremlinScenarioSerialNode):
         self._target = _target
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        kwargs["command"] = repr(self.command)
+        kwargs["target"] = repr(self.target)
+        return "%s(%s)" % (self.__class__.__name__, kwargs)
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinScenarioALFINode(GremlinScenarioSerialNode):
@@ -502,10 +518,12 @@ class GremlinScenarioALFINode(GremlinScenarioSerialNode):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinScenarioDelayNode(GremlinScenarioSerialNode):
@@ -537,10 +555,13 @@ class GremlinScenarioDelayNode(GremlinScenarioSerialNode):
         self._delay = _duration
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        kwargs["delay"] = self.delay
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinScenarioStatusCheckNode(GremlinScenarioSerialNode):
@@ -659,10 +680,20 @@ class GremlinScenarioStatusCheckNode(GremlinScenarioSerialNode):
         self._evaluation_response_body_evaluation = _evaluation_response_body_evaluation
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        kwargs["description"] = self.description
+        kwargs["endpoint_url"] = self.endpoint_url
+        kwargs["endpoint_headers"] = self.endpoint_headers
+        kwargs["evaluation_ok_status_codes"] = self.evaluation_ok_status_codes
+        kwargs["evaluation_ok_latency_max"] = self.evaluation_ok_latency_max
+        kwargs[
+            "evaluation_response_body_evaluation"
+        ] = self.evaluation_response_body_evaluation
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class _GremlinNodeGraph(object):
@@ -912,7 +943,8 @@ class _GremlinNodeGraph(object):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        return "%s()" % (self.__class__.__name__)
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
