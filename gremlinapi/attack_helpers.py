@@ -1441,10 +1441,21 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["length"] = self.length
+        kwargs["exact"] = self.exact
+        kwargs["full_match"] = self.full_match
+        kwargs["group"] = self.group
+        kwargs["interval"] = self.interval
+        kwargs["kill_children"] = self.kill_children
+        kwargs["process"] = self.process
+        kwargs["target_newest"] = self.target_newest
+        kwargs["target_oldest"] = self.target_oldest
+        kwargs["user"] = self.user
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinTimeTravelAttack(GremlinStateAttackHelper):

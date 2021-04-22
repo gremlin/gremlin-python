@@ -469,6 +469,26 @@ class TestAttackHelpers(unittest.TestCase):
         helper_output = helper.api_model()
         self.assertEqual(helper_output, expected_output)
 
+    def test_process_killer_attack_repr_str(self) -> None:
+        expected_output = 'GremlinProcessKillerAttack({"length": 65, "exact": false, "full_match": true, "group": "", "interval": 1, "kill_children": false, "process": "", "target_newest": false, "target_oldest": false, "user": "unittestuser"})'
+        kwargs = {
+            "length": 65,
+            "exact": False,
+            "full_match": True,
+            "group": "",
+            "interval": 1,
+            "kill_children": False,
+            "process": "",
+            "target_newest": False,
+            "target_oldest": False,
+            "user": "unittestuser",
+        }
+        helper = GremlinProcessKillerAttack(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
+
     def test_time_travel_attack_api_model(self) -> None:
         # defaults
         expected_output = {
