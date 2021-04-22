@@ -550,6 +550,22 @@ class TestAttackHelpers(unittest.TestCase):
         helper_output = helper.api_model()
         self.assertEqual(helper_output, expected_output)
 
+    def test_dns_attack_repr_str(self) -> None:
+        expected_output = 'GremlinDNSAttack({"length": 75, "device": "", "ips": [], "protocol": "", "providers": [], "tags": []})'
+        kwargs = {
+            "length": 75,
+            "device": "",
+            "ips": [],
+            "protocol": "",
+            "providers": [],
+            "tags": [],
+        }
+        helper = GremlinDNSAttack(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
+
     def test_latency_attack_api_model(self) -> None:
         # defaults
         expected_output = {
