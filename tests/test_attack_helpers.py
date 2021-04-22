@@ -441,6 +441,21 @@ class TestAttackHelpers(unittest.TestCase):
         helper_output = helper.api_model()
         self.assertEqual(helper_output, expected_output)
 
+    def test_shutdown_attack_repr_str(self) -> None:
+        expected_output = (
+            'GremlinShutdownAttack({"length": 85, "delay": 20, "reboot": false})'
+        )
+        kwargs = {
+            "length": 85,
+            "delay": 20,
+            "reboot": False,
+        }
+        helper = GremlinShutdownAttack(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
+
     def test_process_killer_attack_api_model(self) -> None:
         test_process = "ls"
         kwargs = {"process": test_process}
