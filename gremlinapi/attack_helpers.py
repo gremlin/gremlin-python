@@ -966,10 +966,17 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["length"] = self.length
+        kwargs["device"] = self.device
+        kwargs["ips"] = self.ips
+        kwargs["protocol"] = self.protocol
+        kwargs["providers"] = self.providers
+        kwargs["tags"] = self.tags
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinCPUAttack(GremlinResourceAttackHelper):
