@@ -21,6 +21,7 @@ from gremlinapi.attack_helpers import (
     GremlinDNSAttack,
     GremlinLatencyAttack,
     GremlinPacketLossAttack,
+    GremlinStateAttackHelper,
 )
 
 from .util import mock_data
@@ -259,6 +260,23 @@ class TestAttackHelpers(unittest.TestCase):
         helper = GremlinResourceAttackHelper()
         helper_output = helper.api_model()
         self.assertEqual(helper_output, expected_output)
+
+    def test_resource_attack_helper_repr_str(self) -> None:
+        expected_output = 'GremlinResourceAttackHelper({"length": 70})'
+        kwargs = {"length": 70}
+        helper = GremlinResourceAttackHelper(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
+
+    def test_state_attack_helper_repr_str(self) -> None:
+        expected_output = "GremlinStateAttackHelper()"
+        helper = GremlinStateAttackHelper()
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
 
     def test__port_maker(self) -> None:
         expected_output = []
