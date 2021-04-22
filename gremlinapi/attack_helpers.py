@@ -1117,10 +1117,14 @@ class GremlinMemoryAttack(GremlinResourceAttackHelper):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.api_model())
+        kwargs: dict = {}
+        kwargs["length"] = self.length
+        kwargs["amount"] = self.amount
+        kwargs["amountType"] = self.amountType
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
-        return json.dumps(self.api_model())
+        return repr(self)
 
 
 class GremlinDiskSpaceAttack(GremlinResourceAttackHelper):
