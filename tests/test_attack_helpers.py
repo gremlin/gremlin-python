@@ -610,3 +610,27 @@ class TestAttackHelpers(unittest.TestCase):
         helper = GremlinPacketLossAttack()
         helper_output = helper.api_model()
         self.assertEqual(helper_output, expected_output)
+
+    def test_packet_loss_attack_repr_str(self) -> None:
+        expected_output = 'GremlinPacketLossAttack({"length": 85, "device": "", "ips": [], "protocol": "", "providers": [], "tags": [], "corrupt": false, "egress_ports": ["^543"], "hostnames": "^api3.gremlin.com", "percent": 1, "source_ports": []})'
+        kwargs = {
+            "length": 85,
+            "device": "",
+            "ips": [],
+            "protocol": "",
+            "providers": [],
+            "tags": [],
+            "corrupt": False,
+            "egress_ports": ["^543"],
+            "hostnames": ["^api3.gremlin.com"],
+            "percent": 1,
+            "source_ports": [],
+        }
+        helper = GremlinPacketLossAttack(**kwargs)
+        helper_output = repr(helper)
+        max_diff = self.maxDiff = None
+        self.maxDiff = None
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
+        self.maxDiff = max_diff

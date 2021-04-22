@@ -1682,6 +1682,11 @@ class GremlinPacketLossAttack(GremlinNetworkAttackHelper):
         kwargs["protocol"] = self.protocol
         kwargs["providers"] = self.providers
         kwargs["tags"] = self.tags
+        kwargs["corrupt"] = self.corrupt
+        kwargs["egress_ports"] = self.egress_ports
+        kwargs["hostnames"] = self.hostnames
+        kwargs["percent"] = self.percent
+        kwargs["source_ports"] = self.source_ports
         return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:
