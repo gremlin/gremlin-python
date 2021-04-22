@@ -7,7 +7,7 @@ import functools, warnings, inspect
 
 log = logging.getLogger("GremlinAPI.client")
 
-_version = "0.13.13"
+_version = "0.13.14"
 
 
 def get_version():
