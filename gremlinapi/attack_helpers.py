@@ -1207,6 +1207,11 @@ class GremlinDiskIOAttack(GremlinResourceAttackHelper):
     def __repr__(self) -> str:
         kwargs: dict = {}
         kwargs["length"] = self.length
+        kwargs["blockcount"] = self.blockcount
+        kwargs["blocksize"] = self.blocksize
+        kwargs["directory"] = self.directory
+        kwargs["mode"] = self.mode
+        kwargs["workers"] = self.workers
         return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
 
     def __str__(self) -> str:

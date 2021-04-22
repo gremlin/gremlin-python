@@ -414,6 +414,22 @@ class TestAttackHelpers(unittest.TestCase):
         helper_output = helper.api_model()
         self.assertEqual(helper_output, expected_output)
 
+    def test_disk_io_repr_str(self) -> None:
+        expected_output = 'GremlinDiskIOAttack({"length": 85, "blockcount": 1, "blocksize": 4, "directory": "/tmp/usr", "mode": "rw", "workers": 2})'
+        kwargs = {
+            "length": 85,
+            "blockcount": 1,
+            "blocksize": 4,
+            "directory": "/tmp/usr",
+            "mode": "rw",
+            "workers": 2,
+        }
+        helper = GremlinDiskIOAttack(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
+
     def test_shutdown_attack_api_model(self) -> None:
         # defaults
         expected_output = {
