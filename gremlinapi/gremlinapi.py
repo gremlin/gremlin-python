@@ -31,11 +31,22 @@ class GremlinAPI(object):
 
     @classmethod
     def param_remap(cls, param):
+        '''
+        Remaps parameters into API format from pythonic format.
+
+        e.g. 
+
+        "pythonic_parameter" -> "pythonicParameter"
+        "mixed_pythonicParameter" -> "mixedPythonicParameter"
+        "apiParameter" -> "apiParameter"
+        "APIParameter" -> "APIParameter"
+
+        '''
         split_param = param.split("_")
         new_param = ""
         for s in split_param:
             if s is split_param[0]:
-                new_param += s.lower()
+                new_param += s
             else:
                 new_param += s.capitalize()
         return new_param
