@@ -116,8 +116,6 @@ config.team_id = team_id
 
 #### Authentication with OAUTH
 
-***Experimental - not fully implemented***
-
 To authentication through a desired OAUTH workflow, the required information is similar to `gremlinapi.login()`.
 
 When successfully authenticated through OAUTH, the bearer token, used later in the API workflow, is returned.
@@ -125,23 +123,23 @@ When successfully authenticated through OAUTH, the bearer token, used later in t
 ```python
 from gremlinapi.oauth import GremlinAPIOAUTH
 
-GREMLIN_COMPANY = "Hooli"
-GREMLIN_USER = "your.login.email@domain.com"
-GREMLIN_PASSWORD = "y0urPa$$w0rd"
+GREMLIN_COMPANY = "Your Company Name"
+USERNAME = "your.login.email@domain.com"
+PASSWORD = "y0urPa$$w0rd"
+OAUTH_LOGIN = "http://your.oauth.provider/login"
 
 auth_args = {
-    "email":GREMLIN_USER,
-    "password": GREMLIN_PASSWORD,
-    "clientId": "mocklab_oauth2",
-    "companyName": GREMLIN_COMPANY,
+    "email":USERNAME,
+    "password": PASSWORD,
+    "client_id": "mocklab_oauth2",
+    "company_name": GREMLIN_COMPANY,
+    "oauth_login_uri": OAUTH_LOGIN,
 }
 
 bearer_token = GremlinAPIOAUTH.authenticate(**auth_args)
 ```
 
 #### OAUTH Configuration
-
-***Experimental - not fully implemented***
 
 OAUTH can be configured through an API endpoint per the following configuration dictionary and code example.
 
@@ -154,15 +152,15 @@ GREMLIN_TEAM_ID = "your-team-id"
 
 config_body = {
     # Used to authenticate against the OAuth provider. We will redirect the user to this URL when they initate a OAuth login.
-    "authorizationUri": "your-authorization-uri",
+    "authorizationUri": "http://your.oauth.provider/authorize",
     # Used to exchange an OAuth code, obtained after logging into the OAuth provider, for an access token.
-    "tokenUri": "your-token-uri",
+    "tokenUri": "http://your.oauth.provider/oauth/token",
     # Used to query for the email of the user..
-    "userInfoUri": "your-userinfo-uri",
+    "userInfoUri": "http://your.oauth.provider/userinfo",
     # The public identifier obtained when registering Gremlin with your OAuth provider.
-    "clientId": "mocklab_oauth2",
+    "clientId": "your_client_id",
     # The secret obtained when registering Gremlin with your OAuth provider.
-    "clientSecret": "foo",
+    "clientSecret": "your_client_secret",
     # Define what level of access the access token will have that Gremlin obtains during the OAuth login. The default is `email`. If you change it from the default, the scope provided <strong>must</strong> be able to read the email of the user.
     "scope":"email",
 }
