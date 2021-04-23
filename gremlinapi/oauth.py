@@ -118,7 +118,6 @@ class GremlinAPIOAUTH(GremlinAPI):
         )
 
         # Initiates OAUTH login with Gremlin
-        # `allow_redirects` = False enables capture of the response to extract the state cookie
         # `status_code` 307 is a redirect to the OAUTH provider
         payload: dict = cls._payload(**{"headers": https_client.header()})
         (resp, body) = https_client.api_call("GET", endpoint, **payload)
@@ -164,7 +163,29 @@ class GremlinAPIOAUTH(GremlinAPI):
         gremlin_callback_url : str
 
         """
-        payload: dict = cls._payload(**{"headers": https_client.header(), "body": data})
+# body = {
+            #     "email": USERNAME,
+            #     "password": PASSWORD,
+            #     "state": state_cookie,
+            #     "redirectUri": "https://api.gremlin.com/v1/oauth/callback",
+            #     "clientId": "clientId"
+            # }
+
+            # # Don't follow redirect as we need to add the state cookie to the request
+            # # oauth_provider_login_response = requests.post("http://doshmajhan.mocklab.io/login", data=body, allow_redirects=False)
+            # payload: dict = cls._payload(**{"headers": https_client.header(), "data": body})
+            # (oauth_provider_login_response, body) = https_client.api_call(
+            #     "POST", "http://doshmajhan.mocklab.io/login", **payload
+            # )
+            # assert oauth_provider_login_response.status_code == 302
+
+
+            # # We've successfully authenticted with our OAuth provider, now we continue the flow by following
+            # # the redirect our OAuth provider created back to Gremlins /oauth/callback endpoint
+            # gremlin_callback_url = oauth_provider_login_response.headers['Location']
+            # assert gremlin_callback_url != None
+
+        payload: dict = cls._payload(**{"headers": https_client.header(), "data": data})
         (resp, body) = https_client.api_call(
             "POST", oauth_provider_login_url, **payload
         )
@@ -208,12 +229,13 @@ class GremlinAPIOAUTH(GremlinAPI):
         # added the request will fail. There is a state parameter in the
         # redirect URL you are following and it needs to match the
         # value in the cookie. This helps prevent CSRF attacks.
-        cookie = {"oauth_state": state_cookie}
-        payload: dict = cls._payload(
-            **{"headers": https_client.header(), "cookies": cookie}
+        cookie = {
+            'oauth_state': state_cookie
+        }
+        # gremlin_callback_response = requests.get(gremlin_callback_url, cookies=cookie)
+        (resp, body) = https_client.api_call(
+            "GET", gremlin_callback_url, **{"cookies":cookie}
         )
-        (resp, body) = https_client.api_call("GET", gremlin_callback_url, **payload)
-
         # gremlin_callback_response = requests.get(gremlin_callback_url, cookies=cookie)
         # The response from the callback endpoint will contain the `access_token` in JSON
         # This is the end of the OAuth specific flow. This `access_token` can
@@ -252,7 +274,7 @@ class GremlinAPIOAUTH(GremlinAPI):
             "accessToken": access_token,
             "provider": "oauth",
         }
-        payload: dict = cls._payload(**{"headers": https_client.header(), "body": body})
+        payload: dict = cls._payload(**{"data": body})
         endpoint = f"https://api.gremlin.com/v1/users/auth/sso?getCompanySession=true"
         (resp, body) = https_client.api_call("POST", endpoint, **payload)
         assert resp.status_code == 200
@@ -298,6 +320,7 @@ class GremlinAPIOAUTH(GremlinAPI):
 
         COMPANY_NAME = "Hooli"
         LOGIN_ENDPOINT = "https://api.gremlin.com/v1/oauth/login"
+        OAUTH_LOGIN = "http://doshmajhan.mocklab.io/login"
         SSO_ENDPOINT = "https://api.gremlin.com/v1/users/auth/sso"
 
         GREMLIN_COMPANY = "Hooli"
@@ -306,104 +329,6 @@ class GremlinAPIOAUTH(GremlinAPI):
         PASSWORD = "***REMOVED***"
         GREMLIN_PASSWORD_MOCK = "qwertyuiopoiuytrewq"
 
-        # USERNAME = "test@gremlin.com"
-        # PASSWORD = "*********"
-
-        # Initiates OAuth login with Gremlin
-        payload: dict = cls._payload(**{"headers": https_client.header()})
-        (login_response, body) = https_client.api_call(
-            "GET", f"{LOGIN_ENDPOINT}?companyName={COMPANY_NAME}", **payload
-        )
-        print(str(login_response))
-        assert login_response.status_code == 307
-
-        # Response contains redirect to customers OAuth provider and OAuth state in cookie
-        # Extract cookie to be used later and then follow redirect and finish authentication.
-        state_cookie = login_response.cookies['oauth_state']
-        oauth_provider_login_url = login_response.headers['Location']
-
-        assert state_cookie != None
-        assert oauth_provider_login_url != None
-
-
-        # This part is implementation specific depending on customer.
-        # Different OAuth providers may require different things when authenticating the user.
-        # Also for the first time they auth, a browser may be required so that they can grant 
-        # gremlin access based on the scope we request. 
-
-        # In this example I'm using a hosted mock oauth provider `doshmajhan.mocklab.io`, 
-        # so I just make a post request to the login endpoint
-        # with my credentials and it gives me a redirect back to Gremlin with the oauth code
-        # oauth_provider_login_page = requests.get(oauth_provider_login_url)
-        # payload: dict = {}
-        # (oauth_provider_login_page, body) = https_client.api_call(
-        #     "GET", oauth_provider_login_url, **payload
-        # )
-
-        body = {
-            "email": USERNAME,
-            "password": PASSWORD,
-            "state": state_cookie,
-            "redirectUri": "https://api.gremlin.com/v1/oauth/callback",
-            "clientId": "clientId"
-        }
-
-        # Don't follow redirect as we need to add the state cookie to the request
-        # oauth_provider_login_response = requests.post("http://doshmajhan.mocklab.io/login", data=body, allow_redirects=False)
-        payload: dict = cls._payload(**{"headers": https_client.header(), "data": body})
-        (oauth_provider_login_response, body) = https_client.api_call(
-            "POST", "http://doshmajhan.mocklab.io/login", **payload
-        )
-        assert oauth_provider_login_response.status_code == 302
-
-
-        # We've successfully authenticted with our OAuth provider, now we continue the flow by following
-        # the redirect our OAuth provider created back to Gremlins /oauth/callback endpoint
-        gremlin_callback_url = oauth_provider_login_response.headers['Location']
-        assert gremlin_callback_url != None
-        log.info(gremlin_callback_url)
-        # Add state cookie and then follow redirecet to gremlins /oauth/callback endpoint
-        # If the state cookie is not added the request will fail. Theres a state parameter in the 
-        # rediect URL we're following and it needs to match the cookie. This helps prevent CSRF attacks.
-        cookie = {
-            'oauth_state': state_cookie
-        }
-        # gremlin_callback_response = requests.get(gremlin_callback_url, cookies=cookie)
-        (gremlin_callback_response, body) = https_client.api_call(
-            "GET", gremlin_callback_url, **{"cookies":cookie}
-        )
-
-        # The response from the callback endpoint will contain the access_token in JSON
-        # This is the end of the OAuth specific flow. This access_token can now be exchanged
-        # for a gremlin session.
-        assert gremlin_callback_response.status_code == 200
-
-        access_token = gremlin_callback_response.json()['access_token']
-        assert access_token != None
-
-        # Make request to /users/auth/sso to exchange access_token for a Gremlin session
-        body = {
-            "companyName": COMPANY_NAME,
-            "accessToken": access_token,
-            "provider": "oauth",
-        }
-        # sso_response = requests.post(f"{SSO_ENDPOINT}?getCompanySession=true", data=body)
-        payload: dict = cls._payload(**{"data": body})
-        (sso_response, body) = https_client.api_call(
-            "POST", f"{SSO_ENDPOINT}?getCompanySession=true", **payload
-        )
-        print(str(sso_response))
-        assert sso_response.status_code == 200
-
-        # Get bearer token from session
-        bearer_token = sso_response.json()['header']
-        assert bearer_token != None
-
-        print(bearer_token)
-        return bearer_token
-
-
-        
         company_name = cls._error_if_not_param("companyName", **kwargs)
         (state_cookie, oauth_provider_login_url) = cls.initiate_oauth(
             company_name, https_client
@@ -415,7 +340,8 @@ class GremlinAPIOAUTH(GremlinAPI):
             "redirectUri": "https://api.gremlin.com/v1/oauth/callback",
             "clientId": cls._error_if_not_param("clientId", **kwargs),
         }
-        gremlin_callback_url = cls.get_callback_url(oauth_provider_login_url, auth_body)
+        gremlin_callback_url = cls.get_callback_url(OAUTH_LOGIN, auth_body)
         access_token = cls.get_access_token(state_cookie, gremlin_callback_url)
-        bearer_token = cls.get_bearer_token(company_name, access_token)
+        bearer_token = cls.get_bearer_token(COMPANY_NAME, access_token)
+        print(bearer_token)
         return bearer_token
