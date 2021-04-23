@@ -7,6 +7,17 @@ from gremlinapi.attack_helpers import (
     GremlinAttackCommandHelper,
 )
 
+mock_access_token = "asdf976asdf9786"
+mock_bearer_token = "kjhg2345kjhg234"
+
+
+def access_token_json():
+    return {"access_token": mock_access_token}
+
+
+def bearer_token_json():
+    return {"header": mock_bearer_token}
+
 
 def mock_json():
     return mock_data

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 Kyle Bouchard <kyle.bouchard@gremlin.com>, Gremlin Inc <sales@gremlin.com>
+# Copyright (C) 2021 Kyle Bouchard <kyle.bouchard@gremlin.com>, Gremlin Inc <sales@gremlin.com>
 
 import logging
 import json
@@ -58,16 +58,16 @@ class GremlinAPIOAUTH(GremlinAPI):
 
             `kwargs` is required in the following format:
             {
-                companyId : Defines the Company ID for OAUTH
-                authorizationUri : Used to authenticate against the OAuth provider.
+                'companyId' : Defines the Company ID for OAUTH
+                'authorizationUri' : Used to authenticate against the OAuth provider.
                     We will redirect the user to this URL when they initate a OAuth login.
-                tokenUri : Used to exchange an OAuth code.
+                'tokenUri' : Used to exchange an OAuth code.
                     This is obtained after logging into the OAuth provider, for an access token.
-                userInfoUri : Used to query for the email of the user.
-                clientId : The public identifier obtained when registering Gremlin with your OAuth
+                'userInfoUri' : Used to query for the email of the user.
+                'clientId' : The public identifier obtained when registering Gremlin with your OAuth
                     provider.
-                clientSecret : The secret obtained when registering Gremlin with your OAuth provider.
-                scope : (OPTIONAL) Define what level of access the access token will have that Gremlin
+                'clientSecret' : The secret obtained when registering Gremlin with your OAuth provider.
+                'scope' : (OPTIONAL) Define what level of access the access token will have that Gremlin
                     obtains during the OAuth login. The default is `email`. If you change it from the
                     default, the scope provided must be able to read the email of the user.
             }
@@ -149,12 +149,12 @@ class GremlinAPIOAUTH(GremlinAPI):
 
             `data` is in the following format:
             {
-                email: Login email for your user,
-                password: Login password for your user,
-                state: Value of the state cookie obtained in the previous step,
-                redirectUri: URL where your provider should redirect you to after authenticating.
+                'email': Login email for your user,
+                'password': Login password for your user,
+                'state': Value of the state cookie obtained in the previous step,
+                'redirectUri': URL where your provider should redirect you to after authenticating.
                     It should be https://api.gremlin.com/v1/oauth/callback,
-                clientId: Client Id obtained when registering Gremlin with your OAuth provider,
+                'clientId': Client Id obtained when registering Gremlin with your OAuth provider,
             }
 
         Returns
@@ -272,11 +272,11 @@ class GremlinAPIOAUTH(GremlinAPI):
 
             `kwargs` is required in the following format:
             {
-                company_name : The company for which the oauth authentication should commence,
-                email: Login email for your user,
-                password: Login password for your user,
-                client_id: Client Id obtained when registering Gremlin with your OAuth provider,
-                oauth_login_uri: The login Uri from your OAUTH provider,
+                'company_name' : The company for which the oauth authentication should commence,
+                'email': Login email for your user,
+                'password': Login password for your user,
+                'client_id': Client Id obtained when registering Gremlin with your OAuth provider,
+                'oauth_login_uri': The login Uri from your OAUTH provider,
             }
 
         Returns
