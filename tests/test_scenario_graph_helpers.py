@@ -4,10 +4,19 @@ import logging
 from gremlinapi.scenario_graph_helpers import (
     GremlinScenarioGraphHelper,
     GremlinScenarioNode,
+    GremlinScenarioSerialNode,
+    GremlinScenarioParallelNode,
+    GremlinScenarioAttackNode,
     GremlinScenarioILFINode,
+    GremlinScenarioALFINode,
     GremlinScenarioDelayNode,
     GremlinScenarioStatusCheckNode,
     _GremlinNodeGraph,
+)
+
+from gremlinapi.attack_helpers import (
+    GremlinAttackTargetHelper,
+    GremlinAttackCommandHelper,
 )
 
 from .util import (
@@ -28,7 +37,7 @@ class TestScenarioGraphHelpers(unittest.TestCase):
         self.assertEqual(helper._nodes.get_node(helper_node.id), helper_node)
         self.assertNotEqual(helper._nodes.get_node(helper_node.id), helper_node_2)
 
-    def test_gremlin_scenario_graph_helper_repr_model(self) -> None:
+    def test_gremlin_scenario_graph_helper_api_model(self) -> None:
         status_check_description = "Check if Gremlin.com is Still Up"
         endpoint_url = "https://www.google.com"
         endpoint_headers = dict()
@@ -143,10 +152,23 @@ class TestScenarioGraphHelpers(unittest.TestCase):
             "hypothesis": "No Hypothesis",
             "name": "code_created_scenario_6",
         }
-        self.assertEqual(my_scenario.repr_model(), expected_output)
+        self.assertEqual(my_scenario.api_model(), expected_output)
         self.maxDiff = t_diff
 
-    def test_gremlin_scenario_graph_helper_repr_model_default_add_node(self) -> None:
+    def test_gremlin_scenario_graph_helper_repr_str(self) -> None:
+        expected_output = 'GremlinScenarioGraphHelper({"name": "code_created_scenario_6", "description": "Three nodes now", "hypothesis": "No Hypothesis"})'
+        kwargs = {
+            "name": "code_created_scenario_6",
+            "description": "Three nodes now",
+            "hypothesis": "No Hypothesis",
+        }
+        helper = GremlinScenarioGraphHelper(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
+
+    def test_gremlin_scenario_graph_helper_api_model_default_add_node(self) -> None:
         status_check_description = "Check if Gremlin.com is Still Up"
         endpoint_url = "https://www.google.com"
         endpoint_headers = dict()
@@ -258,7 +280,7 @@ class TestScenarioGraphHelpers(unittest.TestCase):
             "hypothesis": "No Hypothesis",
             "name": "code_created_scenario_6",
         }
-        self.assertEqual(my_scenario.repr_model(), expected_output)
+        self.assertEqual(my_scenario.api_model(), expected_output)
         self.maxDiff = t_diff
 
     def test_add_edge(self) -> None:
@@ -272,7 +294,7 @@ class TestScenarioGraphHelpers(unittest.TestCase):
         self.assertEqual(len(helper._edges), 1)
         self.assertEqual(helper._edges[helper_2.id]["node"], helper_2)
 
-    def test_gremlin_scenario_node_repr_model(self) -> None:
+    def test_gremlin_scenario_node_api_model(self) -> None:
         helper = GremlinScenarioNode(**mock_scenario)
         expected_output = {
             "guid": "mock_scenario-%s" % helper.id,
@@ -281,7 +303,53 @@ class TestScenarioGraphHelpers(unittest.TestCase):
             "type": helper.node_type,
         }
 
-        self.assertEqual(helper.repr_model(), expected_output)
+        self.assertEqual(helper.api_model(), expected_output)
+
+    def test_gremlin_scenario_node_repr_str(self) -> None:
+        expected_output = 'GremlinScenarioNode({"name": "a mock node"})'
+        kwargs = {
+            "name": "a mock node",
+        }
+        helper = GremlinScenarioNode(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
+
+    def test_gremlin_scenario_serial_node_repr_str(self) -> None:
+        expected_output = 'GremlinScenarioSerialNode({"name": "a mock serial node"})'
+        kwargs = {
+            "name": "a mock serial node",
+        }
+        helper = GremlinScenarioSerialNode(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
+
+    def test_gremlin_scenario_parallel_node_repr_str(self) -> None:
+        expected_output = (
+            'GremlinScenarioParallelNode({"name": "a mock parallel node"})'
+        )
+        kwargs = {
+            "name": "a mock parallel node",
+        }
+        helper = GremlinScenarioParallelNode(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
+
+    def test_gremlin_scenario_attack_node_repr_str(self) -> None:
+        expected_output = 'GremlinScenarioAttackNode({"name": "a mock attack node"})'
+        kwargs = {
+            "name": "a mock attack node",
+        }
+        helper = GremlinScenarioAttackNode(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
 
     def test_gremlin_scenario_ilfi_node_repr_node(self) -> None:
         helper = GremlinScenarioILFINode(**mock_ilfi_node)
@@ -301,7 +369,64 @@ class TestScenarioGraphHelpers(unittest.TestCase):
             "type": "InfraAttack",
         }
 
-        self.assertEqual(helper.repr_model(), expected_output)
+        self.assertEqual(helper.api_model(), expected_output)
+
+    def test_gremlin_scenario_ilfi_node_repr_str(self) -> None:
+        expected_output = "GremlinScenarioILFINode({'name': 'mock_scenario', 'command': 'GremlinAttackCommandHelper({\"length\": 70})', 'target': 'GremlinAttackTargetHelper({\"exact\": 0, \"percent\": 15, \"strategy_type\": \"Random\"})'})"
+        kwargs_ch = {"length": 70}
+        kwargs_th = {"exact": 0, "percent": 15, "strategy_type": "Random"}
+        kwargs = {
+            "name": "mock_scenario",
+            "command": GremlinAttackCommandHelper(**kwargs_ch),
+            "target": GremlinAttackTargetHelper(**kwargs_th),
+        }
+        helper = GremlinScenarioILFINode(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
+
+    # def test_gremlin_scenario_alfi_node_repr_str(self) -> None:
+    #     expected_output = 'GremlinScenarioALFINode({"name": "a mock alfi node"})'
+    #     kwargs = {
+    #         "name": "a mock alfi node",
+    #     }
+    #     helper = GremlinScenarioALFINode(**kwargs)
+    #     helper_output = repr(helper)
+    #     self.assertEqual(expected_output, helper_output)
+    #     helper_output = str(helper)
+    #     self.assertEqual(expected_output, helper_output)
+
+    def test_gremlin_scenario_delay_node_repr_str(self) -> None:
+        expected_output = (
+            'GremlinScenarioDelayNode({"name": "a mock delay node", "delay": 100})'
+        )
+        kwargs = {
+            "name": "a mock delay node",
+            "delay": 100,
+        }
+        helper = GremlinScenarioDelayNode(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
+
+    def test_gremlin_scenario_status_check_node_repr_str(self) -> None:
+        expected_output = 'GremlinScenarioStatusCheckNode({"name": "a mock status check node", "description": "A mock description", "endpoint_url": "www.example.com", "endpoint_headers": {}, "evaluation_ok_status_codes": ["300-400"], "evaluation_ok_latency_max": 1000, "evaluation_response_body_evaluation": "a mock resposne body"})'
+        kwargs = {
+            "name": "a mock status check node",
+            "description": "A mock description",
+            "endpoint_url": "www.example.com",
+            "endpoint_headers": {},
+            "evaluation_ok_status_codes": ["300-400"],
+            "evaluation_ok_latency_max": 1000,
+            "evaluation_response_body_evaluation": "a mock resposne body",
+        }
+        helper = GremlinScenarioStatusCheckNode(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
 
     def test_gremlin_scenario_delay_node_repr_node(self) -> None:
         helper = GremlinScenarioDelayNode(**mock_delay_node)
@@ -313,9 +438,9 @@ class TestScenarioGraphHelpers(unittest.TestCase):
             "type": "Delay",
         }
 
-        self.assertEqual(helper.repr_model(), expected_output)
+        self.assertEqual(helper.api_model(), expected_output)
 
-    def test_gremlin_scenario_status_check_node_repr_model(self) -> None:
+    def test_gremlin_scenario_status_check_node_api_model(self) -> None:
         helper = GremlinScenarioStatusCheckNode(**mock_status_check_node)
         expected_output = {
             "endpointConfiguration": {
@@ -335,7 +460,16 @@ class TestScenarioGraphHelpers(unittest.TestCase):
             "thirdPartyPresets": "PythonSDK",
             "type": "SynchronousStatusCheck",
         }
-        self.assertEqual(helper.repr_model(), expected_output)
+        self.assertEqual(helper.api_model(), expected_output)
+
+    def test_node_graph_repr_str(self) -> None:
+        expected_output = "_GremlinNodeGraph()"
+        kwargs = {}
+        helper = _GremlinNodeGraph(**kwargs)
+        helper_output = repr(helper)
+        self.assertEqual(expected_output, helper_output)
+        helper_output = str(helper)
+        self.assertEqual(expected_output, helper_output)
 
     def test_node_graph_add_edge(self) -> None:
         helper = _GremlinNodeGraph()

@@ -73,7 +73,7 @@ class GremlinScenarioNode(object):
 
     @property
     def data(self) -> dict:
-        return self.repr_model()
+        return self.api_model()
 
     @property
     def id(self) -> str:
@@ -151,7 +151,7 @@ class GremlinScenarioNode(object):
             raise GremlinParameterError(error_msg)
         return f"{self.name}-{self.id}"
 
-    def repr_model(self) -> dict:
+    def api_model(self) -> dict:
         model = {
             "type": self.node_type,
             "guid": self.uuid,
@@ -161,7 +161,12 @@ class GremlinScenarioNode(object):
         return model
 
     def __repr__(self) -> str:
-        return json.dumps(self.repr_model)
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
+
+    def __str__(self) -> str:
+        return repr(self)
 
 
 class GremlinScenarioGraphHelper(object):
@@ -339,7 +344,7 @@ class GremlinScenarioGraphHelper(object):
             raise GremlinParameterError(error_msg)
         self._name = _name
 
-    def repr_model(self) -> dict:
+    def api_model(self) -> dict:
         model: dict = {
             "description": self.description,
             "hypothesis": self.hypothesis,
@@ -356,8 +361,14 @@ class GremlinScenarioGraphHelper(object):
         return model
 
     def __repr__(self) -> str:
-        model: dict = self.repr_model()
-        return json.dumps(model)
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        kwargs["description"] = self.description
+        kwargs["hypothesis"] = self.hypothesis
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
+
+    def __str__(self) -> str:
+        return repr(self)
 
 
 class GremlinScenarioSerialNode(GremlinScenarioNode):
@@ -368,6 +379,18 @@ class GremlinScenarioSerialNode(GremlinScenarioNode):
     ):
         super().__init__(*args, **kwargs)
 
+    def api_model(self) -> dict:
+        model: dict = super().api_model()
+        return model
+
+    def __repr__(self) -> str:
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
+
+    def __str__(self) -> str:
+        return repr(self)
+
 
 class GremlinScenarioParallelNode(GremlinScenarioNode):
     def __init(
@@ -377,6 +400,18 @@ class GremlinScenarioParallelNode(GremlinScenarioNode):
     ):
         super().__init__(*args, **kwargs)
         raise NotImplementedError("Parallel Scenario Nodes NOT IMPLEMENTED")
+
+    def api_model(self) -> dict:
+        model: dict = super().api_model()
+        return model
+
+    def __repr__(self) -> str:
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
+
+    def __str__(self) -> str:
+        return repr(self)
 
 
 class GremlinScenarioAttackNode(GremlinScenarioSerialNode):
@@ -403,6 +438,18 @@ class GremlinScenarioAttackNode(GremlinScenarioSerialNode):
             raise GremlinParameterError(error_msg)
         self._attack_type = _attack_type
 
+    def api_model(self) -> dict:
+        model: dict = super().api_model()
+        return model
+
+    def __repr__(self) -> str:
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
+
+    def __str__(self) -> str:
+        return repr(self)
+
 
 class GremlinScenarioILFINode(GremlinScenarioSerialNode):
     def __init__(self, *args: tuple, **kwargs: dict):
@@ -412,8 +459,8 @@ class GremlinScenarioILFINode(GremlinScenarioSerialNode):
         self._command: GremlinAttackCommandHelper = None  # type: ignore
         self._target: GremlinAttackTargetHelper = None  # type: ignore
         self.node_type: str = "InfraAttack"
-        self.command: GremlinAttackCommandHelper = kwargs.get("command", self._command)  # type: ignore
-        self.target: GremlinAttackTargetHelper = kwargs.get("target", self._target)  # type: ignore
+        self.command: GremlinAttackCommandHelper = kwargs.get("command", GremlinAttackCommandHelper())  # type: ignore
+        self.target: GremlinAttackTargetHelper = kwargs.get("target", GremlinAttackTargetHelper())  # type: ignore
 
     @property
     def command(self) -> GremlinAttackCommandHelper:
@@ -427,8 +474,8 @@ class GremlinScenarioILFINode(GremlinScenarioSerialNode):
             raise GremlinParameterError(error_msg)
         self._command = _command
 
-    def repr_model(self) -> dict:
-        model: dict = super().repr_model()
+    def api_model(self) -> dict:
+        model: dict = super().api_model()
         model["impact_definition"] = self.command.impact_definition_graph()
         model["target_definition"] = self.target.target_definition_graph()
         return model
@@ -445,6 +492,16 @@ class GremlinScenarioILFINode(GremlinScenarioSerialNode):
             raise GremlinParameterError(error_msg)
         self._target = _target
 
+    def __repr__(self) -> str:
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        kwargs["command"] = repr(self.command)
+        kwargs["target"] = repr(self.target)
+        return "%s(%s)" % (self.__class__.__name__, kwargs)
+
+    def __str__(self) -> str:
+        return repr(self)
+
 
 class GremlinScenarioALFINode(GremlinScenarioSerialNode):
     def __init__(
@@ -456,6 +513,18 @@ class GremlinScenarioALFINode(GremlinScenarioSerialNode):
         self.attack_type = "ALFI"
         raise NotImplementedError("ALFI Scenarios NOT IMPLEMENTED")
 
+    def api_model(self) -> dict:
+        model: dict = super().api_model()
+        return model
+
+    def __repr__(self) -> str:
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
+
+    def __str__(self) -> str:
+        return repr(self)
+
 
 class GremlinScenarioDelayNode(GremlinScenarioSerialNode):
     def __init__(self, *args: tuple, **kwargs: dict):
@@ -466,8 +535,8 @@ class GremlinScenarioDelayNode(GremlinScenarioSerialNode):
         self._delay: int = kwargs.get("delay", None)  # type: ignore
         self.node_type: str = "Delay"
 
-    def repr_model(self) -> dict:
-        model: dict = super().repr_model()
+    def api_model(self) -> dict:
+        model: dict = super().api_model()
         model["delay"] = self.delay
         return model
 
@@ -484,6 +553,15 @@ class GremlinScenarioDelayNode(GremlinScenarioSerialNode):
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._delay = _duration
+
+    def __repr__(self) -> str:
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        kwargs["delay"] = self.delay
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
+
+    def __str__(self) -> str:
+        return repr(self)
 
 
 class GremlinScenarioStatusCheckNode(GremlinScenarioSerialNode):
@@ -513,8 +591,8 @@ class GremlinScenarioStatusCheckNode(GremlinScenarioSerialNode):
             "evaluation_response_body_evaluation", ""
         )  # type: ignore
 
-    def repr_model(self) -> dict:
-        model: dict = super().repr_model()
+    def api_model(self) -> dict:
+        model: dict = super().api_model()
         model["endpointConfiguration"] = {
             "url": self.endpoint_url,
             "headers": self.endpoint_headers,
@@ -600,6 +678,22 @@ class GremlinScenarioStatusCheckNode(GremlinScenarioSerialNode):
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         self._evaluation_response_body_evaluation = _evaluation_response_body_evaluation
+
+    def __repr__(self) -> str:
+        kwargs: dict = {}
+        kwargs["name"] = self.name
+        kwargs["description"] = self.description
+        kwargs["endpoint_url"] = self.endpoint_url
+        kwargs["endpoint_headers"] = self.endpoint_headers
+        kwargs["evaluation_ok_status_codes"] = self.evaluation_ok_status_codes
+        kwargs["evaluation_ok_latency_max"] = self.evaluation_ok_latency_max
+        kwargs[
+            "evaluation_response_body_evaluation"
+        ] = self.evaluation_response_body_evaluation
+        return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
+
+    def __str__(self) -> str:
+        return repr(self)
 
 
 class _GremlinNodeGraph(object):
@@ -843,3 +937,14 @@ class _GremlinNodeGraph(object):
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         return True
+
+    def api_model(self) -> dict:
+        model: dict = {}
+        return model
+
+    def __repr__(self) -> str:
+        kwargs: dict = {}
+        return "%s()" % (self.__class__.__name__)
+
+    def __str__(self) -> str:
+        return repr(self)
