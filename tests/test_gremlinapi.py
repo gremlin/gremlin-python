@@ -137,7 +137,7 @@ class TestAPI(unittest.TestCase):
                 "Endpoint not provided a team_id but _required_team_endpoint did not throw GremlinParameterError",
             )
         except g_exceptions.GremlinParameterError as gpe:
-            self.assertEqual("Endpoint requires a team_id, none supplied", str(gpe))
+            self.assertEqual("Endpoint requires a team_id or teamId, none supplied", str(gpe))
 
     def test__error_if_not_json_body(self) -> None:
         try:

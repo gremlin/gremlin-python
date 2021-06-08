@@ -91,7 +91,7 @@ class GremlinAPI(object):
         cls, endpoint: str, params: list, **kwargs: dict
     ) -> str:
         endpoint = cls._build_query_string_endpoint(endpoint, params, **kwargs)
-        if "team_id" not in params:
+        if ("team_id" not in params) and ("teamId" not in params):
             endpoint = cls._optional_team_endpoint(endpoint, **kwargs)
         return endpoint
 
@@ -100,13 +100,17 @@ class GremlinAPI(object):
         cls, endpoint: str, params: list, **kwargs: dict
     ) -> str:
         endpoint = cls._build_query_string_endpoint(endpoint, params, **kwargs)
-        if "team_id" not in params:
+        if ("team_id" not in params) and ("teamId" not in params):
             endpoint = cls._required_team_endpoint(endpoint, **kwargs)
         return endpoint
 
     @classmethod
     def _optional_team_endpoint(cls, endpoint: str, **kwargs: dict) -> str:
-        team_id: str = cls._info_if_not_param("team_id", **kwargs)
+        if "teamId" in kwargs:
+            team_id: str = cls._info_if_not_param("teamId", **kwargs)
+        else:
+            team_id: str = cls._info_if_not_param("team_id", **kwargs)
+
         if not team_id and type(config.team_id) is str:
             team_id = config.team_id  # type: ignore
         if team_id:
@@ -115,11 +119,14 @@ class GremlinAPI(object):
 
     @classmethod
     def _required_team_endpoint(cls, endpoint: str, **kwargs: dict) -> str:
-        team_id: str = cls._warn_if_not_param("team_id", **kwargs)
+        if "teamId" in kwargs:
+            team_id: str = cls._info_if_not_param("teamId", **kwargs)
+        else:
+            team_id: str = cls._info_if_not_param("team_id", **kwargs)
         if not team_id and type(config.team_id) is str:
             team_id = config.team_id  # type: ignore
         else:
-            error_msg: str = f"Endpoint requires a team_id, none supplied"
+            error_msg: str = f"Endpoint requires a team_id or teamId, none supplied"
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         endpoint = cls._add_query_param(endpoint, "teamId", team_id)
