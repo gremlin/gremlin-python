@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 Kyle Bouchard <kyle.bouchard@gremlin.com>, Gremlin Inc <sales@gremlin.com>
+# Copyright (C) 2021 Kyle Bouchard <kyle.bouchard@gremlin.com>, Gremlin Inc <sales@gremlin.com>
 
 import logging
 import json
@@ -26,13 +26,18 @@ from gremlinapi.http_clients import (
 
 from typing import Union, Type, Any, Tuple
 
+from gremlinapi.util import (
+    GREMLIN_OAUTH_LOGIN,
+    GREMLIN_OAUTH_COMPANIES_URI,
+    GREMLIN_SSO_USER_AUTH,
+    GREMLIN_OAUTH_CALLBACK,
+)
 
 log = logging.getLogger("GremlinAPI.client")
 
 
 class GremlinAPIOAUTH(GremlinAPI):
     @classmethod
-    @experimental("`configure` method not fully implemented")
     def configure(
         cls,
         company_id: str = "",
@@ -53,16 +58,16 @@ class GremlinAPIOAUTH(GremlinAPI):
 
             `kwargs` is required in the following format:
             {
-                companyId : Defines the Company ID for OAUTH
-                authorizationUri : Used to authenticate against the OAuth provider.
+                'companyId' : Defines the Company ID for OAUTH
+                'authorizationUri' : Used to authenticate against the OAuth provider.
                     We will redirect the user to this URL when they initate a OAuth login.
-                tokenUri : Used to exchange an OAuth code.
+                'tokenUri' : Used to exchange an OAuth code.
                     This is obtained after logging into the OAuth provider, for an access token.
-                userInfoUri : Used to query for the email of the user.
-                clientId : The public identifier obtained when registering Gremlin with your OAuth
+                'userInfoUri' : Used to query for the email of the user.
+                'clientId' : The public identifier obtained when registering Gremlin with your OAuth
                     provider.
-                clientSecret : The secret obtained when registering Gremlin with your OAuth provider.
-                scope : (OPTIONAL) Define what level of access the access token will have that Gremlin
+                'clientSecret' : The secret obtained when registering Gremlin with your OAuth provider.
+                'scope' : (OPTIONAL) Define what level of access the access token will have that Gremlin
                     obtains during the OAuth login. The default is `email`. If you change it from the
                     default, the scope provided must be able to read the email of the user.
             }
@@ -78,9 +83,7 @@ class GremlinAPIOAUTH(GremlinAPI):
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
 
-        endpoint: str = (
-            f"https://api.gremlin.com/v1/companies/{company_id}/oauth/settings"
-        )
+        endpoint: str = f"{GREMLIN_OAUTH_COMPANIES_URI}/{company_id}/oauth/settings"
         data: dict = {
             "authorizationUri": cls._error_if_not_param("authorizationUri", **kwargs),
             "tokenUri": cls._error_if_not_param("tokenUri", **kwargs),
@@ -94,7 +97,6 @@ class GremlinAPIOAUTH(GremlinAPI):
         return resp.status_code
 
     @classmethod
-    @experimental
     def initiate_oauth(
         cls,
         company_name: str,
@@ -113,12 +115,9 @@ class GremlinAPIOAUTH(GremlinAPI):
         state_cookie, oauth_provider_login_url : Tuple[str, str]
 
         """
-        endpoint: str = (
-            f"https://api.gremlin.com/v1/oauth/login?companyName={company_name}"
-        )
+        endpoint: str = f"{GREMLIN_OAUTH_LOGIN}?companyName={company_name}"
 
         # Initiates OAUTH login with Gremlin
-        # `allow_redirects` = False enables capture of the response to extract the state cookie
         # `status_code` 307 is a redirect to the OAUTH provider
         payload: dict = cls._payload(**{"headers": https_client.header()})
         (resp, body) = https_client.api_call("GET", endpoint, **payload)
@@ -132,7 +131,6 @@ class GremlinAPIOAUTH(GremlinAPI):
         return state_cookie, oauth_provider_login_url
 
     @classmethod
-    @experimental
     def get_callback_url(
         cls,
         oauth_provider_login_url: str,
@@ -151,12 +149,12 @@ class GremlinAPIOAUTH(GremlinAPI):
 
             `data` is in the following format:
             {
-                email: Login email for your user,
-                password: Login password for your user,
-                state: Value of the state cookie obtained in the previous step,
-                redirectUri: URL where your provider should redirect you to after authenticating.
+                'email': Login email for your user,
+                'password': Login password for your user,
+                'state': Value of the state cookie obtained in the previous step,
+                'redirectUri': URL where your provider should redirect you to after authenticating.
                     It should be https://api.gremlin.com/v1/oauth/callback,
-                clientId: Client Id obtained when registering Gremlin with your OAuth provider,
+                'clientId': Client Id obtained when registering Gremlin with your OAuth provider,
             }
 
         Returns
@@ -164,7 +162,7 @@ class GremlinAPIOAUTH(GremlinAPI):
         gremlin_callback_url : str
 
         """
-        payload: dict = cls._payload(**{"headers": https_client.header(), "body": data})
+        payload: dict = cls._payload(**{"headers": https_client.header(), "data": data})
         (resp, body) = https_client.api_call(
             "POST", oauth_provider_login_url, **payload
         )
@@ -172,16 +170,11 @@ class GremlinAPIOAUTH(GremlinAPI):
         # You have now successfully authenticted with your OAuth provider,
         # now continue the flow by following the redirect your OAuth provider
         # created back to Gremlins /oauth/callback endpoint
-        # log.info(str(resp.headers))
         gremlin_callback_url = resp.headers["Location"]
-        # gremlin_callback_url = auth_body["redirectUri"]
         assert gremlin_callback_url != None
-        # NOTE TO SELF: the `location` key is nonexistant on the resp, and the
-        #   redirectUri is `null` in the original state cookie as returned from the mock endpoint
         return gremlin_callback_url
 
     @classmethod
-    @experimental
     def get_access_token(
         cls,
         state_cookie: str,
@@ -209,12 +202,9 @@ class GremlinAPIOAUTH(GremlinAPI):
         # redirect URL you are following and it needs to match the
         # value in the cookie. This helps prevent CSRF attacks.
         cookie = {"oauth_state": state_cookie}
-        payload: dict = cls._payload(
-            **{"headers": https_client.header(), "cookies": cookie}
+        (resp, body) = https_client.api_call(
+            "GET", gremlin_callback_url, **{"cookies": cookie}
         )
-        (resp, body) = https_client.api_call("GET", gremlin_callback_url, **payload)
-
-        # gremlin_callback_response = requests.get(gremlin_callback_url, cookies=cookie)
         # The response from the callback endpoint will contain the `access_token` in JSON
         # This is the end of the OAuth specific flow. This `access_token` can
         # now be exchanged for a Gremlin session.
@@ -225,7 +215,6 @@ class GremlinAPIOAUTH(GremlinAPI):
         return access_token
 
     @classmethod
-    @experimental
     def get_bearer_token(
         cls,
         company_name: str,
@@ -252,8 +241,8 @@ class GremlinAPIOAUTH(GremlinAPI):
             "accessToken": access_token,
             "provider": "oauth",
         }
-        payload: dict = cls._payload(**{"headers": https_client.header(), "body": body})
-        endpoint = f"https://api.gremlin.com/v1/users/auth/sso?getCompanySession=true"
+        payload: dict = cls._payload(**{"data": body})
+        endpoint = f"{GREMLIN_SSO_USER_AUTH}?getCompanySession=true"
         (resp, body) = https_client.api_call("POST", endpoint, **payload)
         assert resp.status_code == 200
 
@@ -267,7 +256,6 @@ class GremlinAPIOAUTH(GremlinAPI):
         return bearer_token
 
     @classmethod
-    @experimental
     def authenticate(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
@@ -284,10 +272,11 @@ class GremlinAPIOAUTH(GremlinAPI):
 
             `kwargs` is required in the following format:
             {
-                companyName : The company for which the oauth authentication should commence,
-                email: Login email for your user,
-                password: Login password for your user,
-                clientId: Client Id obtained when registering Gremlin with your OAuth provider,
+                'company_name' : The company for which the oauth authentication should commence,
+                'email': Login email for your user,
+                'password': Login password for your user,
+                'client_id': Client Id obtained when registering Gremlin with your OAuth provider,
+                'oauth_login_uri': The login Uri from your OAUTH provider,
             }
 
         Returns
@@ -295,7 +284,8 @@ class GremlinAPIOAUTH(GremlinAPI):
         bearer_token : str
 
         """
-        company_name = cls._error_if_not_param("companyName", **kwargs)
+
+        company_name = cls._error_if_not_param("company_name", **kwargs)
         (state_cookie, oauth_provider_login_url) = cls.initiate_oauth(
             company_name, https_client
         )
@@ -303,10 +293,12 @@ class GremlinAPIOAUTH(GremlinAPI):
             "email": cls._error_if_not_param("email", **kwargs),
             "password": cls._error_if_not_param("password", **kwargs),
             "state": state_cookie,  # obtained in earlier step
-            "redirectUri": "https://api.gremlin.com/v1/oauth/callback",
-            "clientId": cls._error_if_not_param("clientId", **kwargs),
+            "redirectUri": GREMLIN_OAUTH_CALLBACK,
+            "clientId": cls._error_if_not_param("client_id", **kwargs),
         }
-        gremlin_callback_url = cls.get_callback_url(oauth_provider_login_url, auth_body)
+        gremlin_callback_url = cls.get_callback_url(
+            cls._error_if_not_param("oauth_login_uri", **kwargs), auth_body
+        )
         access_token = cls.get_access_token(state_cookie, gremlin_callback_url)
         bearer_token = cls.get_bearer_token(company_name, access_token)
         return bearer_token

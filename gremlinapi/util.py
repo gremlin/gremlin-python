@@ -7,8 +7,7 @@ import functools, warnings, inspect
 
 log = logging.getLogger("GremlinAPI.client")
 
-
-_version = "0.14.3"
+_version = "0.15.1"
 
 
 def get_version():
@@ -16,6 +15,11 @@ def get_version():
 
 
 string_types = (type(b""), type(""), type(f""))
+
+GREMLIN_OAUTH_LOGIN = "https://api.gremlin.com/v1/oauth/login"
+GREMLIN_OAUTH_COMPANIES_URI = "https://api.gremlin.com/v1/companies"
+GREMLIN_SSO_USER_AUTH = "https://api.gremlin.com/v1/users/auth/sso"
+GREMLIN_OAUTH_CALLBACK = "https://api.gremlin.com/v1/oauth/callback"
 
 
 def experimental(func):
