@@ -2,8 +2,9 @@ name: Run and Validate Unit Tests
 
 on:
   push:
-    branches: 
-      - '**'
+    branches-ignore:
+      - main
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
