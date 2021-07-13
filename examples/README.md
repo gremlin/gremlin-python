@@ -12,6 +12,8 @@ See individual .md files
 
 [Companies](companies.md)
 
+[Environment Variables](envvars.md)
+
 [Halts](halts.md)
 
 [Kubernetes](kubernetes.md)
