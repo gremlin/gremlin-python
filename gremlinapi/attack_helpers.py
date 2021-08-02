@@ -85,13 +85,13 @@ class GremlinAttackTargetHelper(object):
                 "containers"
             ]["multiSelectLabels"]
         if type(model.get("hosts")) == dict and model.get("hosts", dict()).get(
-            "multiSelectLabels"
+            "multiSelectTags"
         ):
             _target_definition["target_type"] = "Host"
             _target_definition["strategy"]["attrs"] = dict()
-            _target_definition["strategy"]["attrs"]["multiSelectLabels"] = model[
+            _target_definition["strategy"]["attrs"]["multiSelectTags"] = model[
                 "hosts"
-            ]["multiSelectLabels"]
+            ]["multiSelectTags"]
         return _target_definition
 
     @property
@@ -352,8 +352,10 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         self._ids: list = list()
         self._multiSelectTags: dict = dict()
         self._nativeTags: dict = {"os-type": "os_type", "os-version": "os_version"}
-        self._target_all_hosts: bool = False
+        self._target_all_hosts: bool = True
         self.target_all_hosts = kwargs.get("target_all_hosts", True)  # type: ignore
+        self.ids: dict = kwargs.get("ids", list())
+        self.tags: dict = kwargs.get("tags", dict())
 
     # def target_definition(self):
     #     model = json.loads(self.__repr__())
@@ -405,7 +407,7 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         if isinstance(_tags, dict):
             for _tag in _tags:
                 if self._valid_tag_pair(_tag, _tags[_tag]):
-                    self._multiSelectTags[_tag] = _tags[_tag]
+                    self._multiSelectTags[_tag] = [_tags[_tag]]
         self._ids = []
         self.target_all_hosts = False
 
