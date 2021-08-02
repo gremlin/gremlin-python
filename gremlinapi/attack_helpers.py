@@ -395,8 +395,9 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
                 )
                 log.warning(error_msg)
                 raise GremlinIdentifierError(error_msg)
-        self._multiSelectTags = {}
-        self.target_all_hosts = False
+        if _ids:
+            self._multiSelectTags = {}
+            self.target_all_hosts = False
 
     @property
     def tags(self) -> dict:
@@ -408,15 +409,16 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
             for _tag in _tags:
                 if self._valid_tag_pair(_tag, _tags[_tag]):
                     self._multiSelectTags[_tag] = [_tags[_tag]]
-        self._ids = []
-        self.target_all_hosts = False
+        if _tags:
+            self._ids = []
+            self.target_all_hosts = False
 
     @property
     def target_all_hosts(self) -> bool:
         return self._target_all_hosts
 
     @target_all_hosts.setter
-    def target_all_hosts(self, _target_all_hosts: bool = False) -> None:
+    def target_all_hosts(self, _target_all_hosts: bool = True) -> None:
         if _target_all_hosts != False:
             self._target_all_hosts = True
         else:
