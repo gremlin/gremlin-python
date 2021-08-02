@@ -356,10 +356,11 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         self._ids: list = list()
         self._multiSelectTags: dict = dict()
         self._nativeTags: dict = {"os-type": "os_type", "os-version": "os_version"}
-        self._target_all_hosts: bool = False
+        self._target_all_hosts: bool = True
+        self.target_all_hosts = kwargs.get("target_all_hosts", True)  # type: ignore
         self.ids: dict = kwargs.get("ids", list())
         self.tags: dict = kwargs.get("tags", dict())
-        self.target_all_hosts = kwargs.get("target_all_hosts", False)  # type: ignore
+        
 
     # def target_definition(self):
     #     model = json.loads(self.__repr__())
@@ -422,7 +423,7 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         return self._target_all_hosts
 
     @target_all_hosts.setter
-    def target_all_hosts(self, _target_all_hosts: bool = False) -> None:
+    def target_all_hosts(self, _target_all_hosts: bool = True) -> None:
         if _target_all_hosts != False:
             self._target_all_hosts = True
         else:
@@ -506,9 +507,10 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
         self._multiSelectLabels: dict = dict()
         # self._nativeTags = {'os-type': 'os_type', 'os-version': 'os_version'}
         self._target_all_containers: bool = True
+        self.target_all_containers = kwargs.get("target_all_containers", True)  # type: ignore
         self.ids = kwargs.get("ids", list())  # type: ignore
         self.labels = kwargs.get("labels", dict())
-        self.target_all_containers = kwargs.get("target_all_containers", False)  # type: ignore
+        
 
     # def target_definition(self):
     #     model = json.loads(self.__repr__())
@@ -588,7 +590,7 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
         return self._target_all_containers
 
     @target_all_containers.setter
-    def target_all_containers(self, _target_all_containers: bool = False) -> None:
+    def target_all_containers(self, _target_all_containers: bool = True) -> None:
         if _target_all_containers != False:
             self._target_all_containers = True
         else:

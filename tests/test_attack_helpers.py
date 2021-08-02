@@ -196,7 +196,7 @@ class TestAttackHelpers(unittest.TestCase):
 
     def test_target_containers_repr_str(self) -> None:
         # defaults
-        expected_output = 'GremlinTargetContainers({"exact": 0, "percent": 35, "strategy_type": "Random", "target_all_containers": false, "ids": [], "labels": {}})'
+        expected_output = 'GremlinTargetContainers({"exact": 0, "percent": 35, "strategy_type": "Random", "all_containers": false, "ids": [], "labels": {}})'
         kwargs = {
             "exact": 0,
             "percent": 35,
