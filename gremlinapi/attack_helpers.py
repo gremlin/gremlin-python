@@ -84,6 +84,8 @@ class GremlinAttackTargetHelper(object):
             _target_definition["strategy"]["attrs"]["multiSelectLabels"] = model[
                 "containers"
             ]["multiSelectLabels"]
+        elif type(model.get("containers")) == str:
+            _target_definition["strategy"]["all_containers"] = True
         if type(model.get("hosts")) == dict and model.get("hosts", dict()).get(
             "multiSelectTags"
         ):
@@ -353,9 +355,9 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         self._multiSelectTags: dict = dict()
         self._nativeTags: dict = {"os-type": "os_type", "os-version": "os_version"}
         self._target_all_hosts: bool = True
-        self.target_all_hosts = kwargs.get("target_all_hosts", True)  # type: ignore
         self.ids: dict = kwargs.get("ids", list())
         self.tags: dict = kwargs.get("tags", dict())
+        self.target_all_hosts = kwargs.get("target_all_hosts", True)  # type: ignore
 
     # def target_definition(self):
     #     model = json.loads(self.__repr__())
@@ -502,9 +504,9 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
         self._multiSelectLabels: dict = dict()
         # self._nativeTags = {'os-type': 'os_type', 'os-version': 'os_version'}
         self._target_all_containers: bool = True
-        self.target_all_containers = kwargs.get("target_all_containers", True)  # type: ignore
         self.ids = kwargs.get("ids", list())  # type: ignore
         self.labels = kwargs.get("labels", dict())
+        self.target_all_containers = kwargs.get("target_all_containers", False)  # type: ignore
 
     # def target_definition(self):
     #     model = json.loads(self.__repr__())
@@ -648,7 +650,7 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
         kwargs["exact"] = self.exact
         kwargs["percent"] = self.percent
         kwargs["strategy_type"] = self.strategy_type
-        kwargs["target_all_containers"] = self.target_all_containers
+        kwargs["all_containers"] = self.target_all_containers
         kwargs["ids"] = self.ids
         kwargs["labels"] = self.labels
         return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
