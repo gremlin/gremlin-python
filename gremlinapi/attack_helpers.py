@@ -94,6 +94,8 @@ class GremlinAttackTargetHelper(object):
             _target_definition["strategy"]["attrs"]["multiSelectTags"] = model[
                 "hosts"
             ]["multiSelectTags"]
+        elif type(model.get("hosts")) == str:
+            _target_definition["strategy"]["all_hosts"] = True
         return _target_definition
 
     @property
@@ -354,10 +356,10 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         self._ids: list = list()
         self._multiSelectTags: dict = dict()
         self._nativeTags: dict = {"os-type": "os_type", "os-version": "os_version"}
-        self._target_all_hosts: bool = True
+        self._target_all_hosts: bool = False
         self.ids: dict = kwargs.get("ids", list())
         self.tags: dict = kwargs.get("tags", dict())
-        self.target_all_hosts = kwargs.get("target_all_hosts", True)  # type: ignore
+        self.target_all_hosts = kwargs.get("target_all_hosts", False)  # type: ignore
 
     # def target_definition(self):
     #     model = json.loads(self.__repr__())
@@ -420,7 +422,7 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         return self._target_all_hosts
 
     @target_all_hosts.setter
-    def target_all_hosts(self, _target_all_hosts: bool = True) -> None:
+    def target_all_hosts(self, _target_all_hosts: bool = False) -> None:
         if _target_all_hosts != False:
             self._target_all_hosts = True
         else:
