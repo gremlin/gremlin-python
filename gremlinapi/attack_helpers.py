@@ -358,8 +358,10 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         self._nativeTags: dict = {"os-type": "os_type", "os-version": "os_version"}
         self._target_all_hosts: bool = True
         self.target_all_hosts = kwargs.get("target_all_hosts", True)  # type: ignore
-        self.ids: dict = kwargs.get("ids", list())
-        self.tags: dict = kwargs.get("tags", dict())
+        if not self.target_all_hosts:
+            self.ids: dict = kwargs.get("ids", list())
+        if not self.target_all_hosts:
+            self.tags: dict = kwargs.get("tags", dict())
         
 
     # def target_definition(self):
@@ -508,8 +510,10 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
         # self._nativeTags = {'os-type': 'os_type', 'os-version': 'os_version'}
         self._target_all_containers: bool = True
         self.target_all_containers = kwargs.get("target_all_containers", True)  # type: ignore
-        self.ids = kwargs.get("ids", list())  # type: ignore
-        self.labels = kwargs.get("labels", dict())
+        if not self.target_all_containers:
+            self.ids = kwargs.get("ids", list())  # type: ignore
+        if not self.target_all_containers:
+            self.labels = kwargs.get("labels", dict())
         
 
     # def target_definition(self):
