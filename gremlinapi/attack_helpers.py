@@ -84,14 +84,18 @@ class GremlinAttackTargetHelper(object):
             _target_definition["strategy"]["attrs"]["multiSelectLabels"] = model[
                 "containers"
             ]["multiSelectLabels"]
+        elif type(model.get("containers")) == str:
+            _target_definition["strategy"]["all_containers"] = True
         if type(model.get("hosts")) == dict and model.get("hosts", dict()).get(
-            "multiSelectLabels"
+            "multiSelectTags"
         ):
             _target_definition["target_type"] = "Host"
             _target_definition["strategy"]["attrs"] = dict()
-            _target_definition["strategy"]["attrs"]["multiSelectLabels"] = model[
+            _target_definition["strategy"]["attrs"]["multiSelectTags"] = model[
                 "hosts"
-            ]["multiSelectLabels"]
+            ]["multiSelectTags"]
+        elif type(model.get("hosts")) == str:
+            _target_definition["strategy"]["all_hosts"] = True
         return _target_definition
 
     @property
@@ -352,8 +356,13 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         self._ids: list = list()
         self._multiSelectTags: dict = dict()
         self._nativeTags: dict = {"os-type": "os_type", "os-version": "os_version"}
-        self._target_all_hosts: bool = False
+        self._target_all_hosts: bool = True
         self.target_all_hosts = kwargs.get("target_all_hosts", True)  # type: ignore
+        if not self.target_all_hosts:
+            self.ids: dict = kwargs.get("ids", list())
+        if not self.target_all_hosts:
+            self.tags: dict = kwargs.get("tags", dict())
+        
 
     # def target_definition(self):
     #     model = json.loads(self.__repr__())
@@ -393,8 +402,9 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
                 )
                 log.warning(error_msg)
                 raise GremlinIdentifierError(error_msg)
-        self._multiSelectTags = {}
-        self.target_all_hosts = False
+        if _ids:
+            self._multiSelectTags = {}
+            self.target_all_hosts = False
 
     @property
     def tags(self) -> dict:
@@ -405,16 +415,17 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         if isinstance(_tags, dict):
             for _tag in _tags:
                 if self._valid_tag_pair(_tag, _tags[_tag]):
-                    self._multiSelectTags[_tag] = _tags[_tag]
-        self._ids = []
-        self.target_all_hosts = False
+                    self._multiSelectTags[_tag] = [_tags[_tag]]
+        if _tags:
+            self._ids = []
+            self.target_all_hosts = False
 
     @property
     def target_all_hosts(self) -> bool:
         return self._target_all_hosts
 
     @target_all_hosts.setter
-    def target_all_hosts(self, _target_all_hosts: bool = False) -> None:
+    def target_all_hosts(self, _target_all_hosts: bool = True) -> None:
         if _target_all_hosts != False:
             self._target_all_hosts = True
         else:
@@ -499,8 +510,11 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
         # self._nativeTags = {'os-type': 'os_type', 'os-version': 'os_version'}
         self._target_all_containers: bool = True
         self.target_all_containers = kwargs.get("target_all_containers", True)  # type: ignore
-        self.ids = kwargs.get("ids", list())  # type: ignore
-        self.labels = kwargs.get("labels", dict())
+        if not self.target_all_containers:
+            self.ids = kwargs.get("ids", list())  # type: ignore
+        if not self.target_all_containers:
+            self.labels = kwargs.get("labels", dict())
+        
 
     # def target_definition(self):
     #     model = json.loads(self.__repr__())
@@ -580,7 +594,7 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
         return self._target_all_containers
 
     @target_all_containers.setter
-    def target_all_containers(self, _target_all_containers: bool = False) -> None:
+    def target_all_containers(self, _target_all_containers: bool = True) -> None:
         if _target_all_containers != False:
             self._target_all_containers = True
         else:
@@ -644,7 +658,7 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
         kwargs["exact"] = self.exact
         kwargs["percent"] = self.percent
         kwargs["strategy_type"] = self.strategy_type
-        kwargs["target_all_containers"] = self.target_all_containers
+        kwargs["all_containers"] = self.target_all_containers
         kwargs["ids"] = self.ids
         kwargs["labels"] = self.labels
         return "%s(%s)" % (self.__class__.__name__, json.dumps(kwargs))
