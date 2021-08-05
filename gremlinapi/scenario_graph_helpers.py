@@ -413,6 +413,32 @@ class GremlinScenarioParallelNode(GremlinScenarioNode):
     def __str__(self) -> str:
         return repr(self)
 
+class GremlinScenarioContinuousStatusCheckNode(GremlinScenarioParallelNode):
+    def __init__(
+        self,
+        *args: tuple,
+        **kwargs: dict,
+    ):
+        if not kwargs.get("name", None):
+            kwargs["name"] = "status-check"  # type: ignore
+        super().__init__(*args, **kwargs)
+        self.node_type: str = "ContinuousStatusCheck" #TODO: validate
+        self._description: str = str()
+        self._endpoint_url: str = str()
+        self._endpoint_headers: dict = {}
+        self._evaluation_ok_status_codes: list = list()
+        self._evaluation_ok_latency_max: int = int()
+        self._evaluation_response_body_evaluation: str = ""
+        self.description: str = kwargs.get("description", None)  # type: ignore
+        self.endpoint_url: str = kwargs.get("endpoint_url", None)  # type: ignore
+        self.endpoint_headers: dict = kwargs.get("endpoint_headers", None)  # type: ignore
+        self.evaluation_ok_status_codes: list = kwargs.get(
+            "evaluation_ok_status_codes", ["200-203"]
+        )  # type: ignore
+        self.evaluation_ok_latency_max: int = kwargs.get("evaluation_ok_latency_max", 500)  # type: ignore
+        self.evaluation_response_body_evaluation: str = kwargs.get(
+            "evaluation_response_body_evaluation", ""
+        )  # type: ignore
 
 class GremlinScenarioAttackNode(GremlinScenarioSerialNode):
     def __init__(
