@@ -399,7 +399,6 @@ class GremlinScenarioParallelNode(GremlinScenarioNode):
         **kwargs: dict,
     ):
         super().__init__(*args, **kwargs)
-        raise NotImplementedError("Parallel Scenario Nodes NOT IMPLEMENTED")
 
     def api_model(self) -> dict:
         model: dict = super().api_model()
@@ -439,6 +438,20 @@ class GremlinScenarioContinuousStatusCheckNode(GremlinScenarioParallelNode):
         self.evaluation_response_body_evaluation: str = kwargs.get(
             "evaluation_response_body_evaluation", ""
         )  # type: ignore
+
+    def api_model(self) -> dict:
+        model: dict = super().api_model()
+        model["endpointConfiguration"] = {
+            "url": self.endpoint_url,
+            "headers": self.endpoint_headers,
+        }
+        model["evaluationConfiguration"] = {
+            "okStatusCodes": self.evaluation_ok_status_codes,
+            "okLatencyMaxMs": self.evaluation_ok_latency_max,
+            "responseBodyEvaluation": self.evaluation_response_body_evaluation,
+        }
+        model["thirdPartyPresets"] = "PythonSDK"
+        return model
 
 class GremlinScenarioAttackNode(GremlinScenarioSerialNode):
     def __init__(
