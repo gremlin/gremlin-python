@@ -31,17 +31,17 @@ class GremlinAPI(object):
 
     @classmethod
     def param_remap(cls, param):
-        '''
+        """
         Remaps parameters into API format from pythonic format.
 
-        e.g. 
+        e.g.
 
         "pythonic_parameter" -> "pythonicParameter"
         "mixed_pythonicParameter" -> "mixedPythonicParameter"
         "apiParameter" -> "apiParameter"
         "APIParameter" -> "APIParameter"
 
-        '''
+        """
         split_param = param.split("_")
         new_param = ""
         for s in split_param:
@@ -109,7 +109,7 @@ class GremlinAPI(object):
         if "teamId" in kwargs:
             team_id: str = cls._info_if_not_param("teamId", **kwargs)
         else:
-            team_id: str = cls._info_if_not_param("team_id", **kwargs)
+            team_id = cls._info_if_not_param("team_id", **kwargs)
 
         if not team_id and type(config.team_id) is str:
             team_id = config.team_id  # type: ignore
@@ -122,7 +122,7 @@ class GremlinAPI(object):
         if "teamId" in kwargs:
             team_id: str = cls._info_if_not_param("teamId", **kwargs)
         else:
-            team_id: str = cls._info_if_not_param("team_id", **kwargs)
+            team_id = cls._info_if_not_param("team_id", **kwargs)
         if not team_id and type(config.team_id) is str:
             team_id = config.team_id  # type: ignore
         else:

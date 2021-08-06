@@ -18,7 +18,7 @@ from gremlinapi.util import get_version
 
 from typing import Tuple, Union, Optional, Any, Dict, Callable, Type
 
-import requests
+import requests  # type: ignore
 import urllib3  # type: ignore
 
 # try:

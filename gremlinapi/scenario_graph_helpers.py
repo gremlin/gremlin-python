@@ -211,7 +211,7 @@ class GremlinScenarioGraphHelper(object):
             )
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
-        #If the node is a Continuous Status Check, it does not get added to the node chain
+        # If the node is a Continuous Status Check, it does not get added to the node chain
         if type(node) == GremlinScenarioContinuousStatusCheckNode:
             log.debug("Found GremlinContinuousStatusCheckNode")
             self.continuous_nodes.append(node)
@@ -278,8 +278,10 @@ class GremlinScenarioGraphHelper(object):
             error_msg: str = f"add_edge expects GremlinScenarioNode (or None), received {type(dst_node)}"
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
-        if (type(dst_node) == GremlinScenarioContinuousStatusCheckNode) or (type(_src_node) == GremlinScenarioContinuousStatusCheckNode):
-            error_msg: str = f"add_edge cannot be used with {type(node)}"
+        if (type(dst_node) == GremlinScenarioContinuousStatusCheckNode) or (
+            type(_src_node) == GremlinScenarioContinuousStatusCheckNode
+        ):
+            error_msg = f"add_edge cannot be used with {type(dst_node)}"
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         if not _src_node:
@@ -322,22 +324,24 @@ class GremlinScenarioGraphHelper(object):
 
     def get_nodes_parallel(self) -> dict:
         model = {
-            "concurrentNode":{
-                "id":"concurrentNode",
-                "type":"Concurrent",
-                "branches":[]
+            "concurrentNode": {
+                "id": "concurrentNode",
+                "type": "Concurrent",
+                "branches": [],
             }
         }
         continuous_id = 0
         for c_node in self.continuous_nodes:
-            if (type(c_node) != GremlinScenarioContinuousStatusCheckNode):
-                raise GremlinParameterError("Error, non-continuous node found in continuous context")
+            if type(c_node) != GremlinScenarioContinuousStatusCheckNode:
+                raise GremlinParameterError(
+                    "Error, non-continuous node found in continuous context"
+                )
             log.debug("Adding new continuous node to model")
             new_node = c_node.api_model()
             new_node["nodes"]["0"]["branchId"] = "concurrentNode-%d" % continuous_id
             new_node["start_id"] = "0"
             continuous_id += 1
-            model['concurrentNode']['branches'].append(new_node)
+            model["concurrentNode"]["branches"].append(new_node)  # type: ignore
         return model
 
     @property
@@ -383,25 +387,32 @@ class GremlinScenarioGraphHelper(object):
     def api_model(self) -> dict:
         log.debug("in api_model")
         model: dict = {
-                "description": self.description,
-                "hypothesis": self.hypothesis,
-                "name": self.name,
-            }
+            "description": self.description,
+            "hypothesis": self.hypothesis,
+            "name": self.name,
+        }
         if not self.continuous_nodes:
             log.debug("no continuous nodes")
             if self._nodes.head is not None:
                 model["graph"] = {
                     "start_id": "0",
-                    "nodes": self._nodes.get_nodes_linear()
+                    "nodes": self._nodes.get_nodes_linear(),
                 }
         elif self.continuous_nodes:
             log.debug("yes continuous nodes")
             log.debug(str(self._nodes == True))
             model["graph"] = {
                 "start_id": "concurrentNode",
-                "nodes": self.get_nodes_parallel()
+                "nodes": self.get_nodes_parallel(),
             }
-            model["graph"]["nodes"]["concurrentNode"]["branches"].append({"nodes":self._nodes.get_nodes_linear(branch_id=len(self.continuous_nodes)), "start_id":"0"})
+            model["graph"]["nodes"]["concurrentNode"]["branches"].append(
+                {
+                    "nodes": self._nodes.get_nodes_linear(
+                        branch_id=len(self.continuous_nodes)
+                    ),
+                    "start_id": "0",
+                }
+            )
         return model
 
     def __repr__(self) -> str:
@@ -456,6 +467,7 @@ class GremlinScenarioParallelNode(GremlinScenarioNode):
     def __str__(self) -> str:
         return repr(self)
 
+
 class GremlinScenarioContinuousStatusCheckNode(GremlinScenarioParallelNode):
     def __init__(
         self,
@@ -465,7 +477,7 @@ class GremlinScenarioContinuousStatusCheckNode(GremlinScenarioParallelNode):
         if not kwargs.get("name", None):
             kwargs["name"] = "status-check"  # type: ignore
         super().__init__(*args, **kwargs)
-        self.node_type: str = "ContinuousStatusCheck" #TODO: validate
+        self.node_type: str = "ContinuousStatusCheck"  # TODO: validate
         self._description: str = str()
         self._endpoint_url: str = str()
         self._endpoint_headers: dict = {}
@@ -484,11 +496,7 @@ class GremlinScenarioContinuousStatusCheckNode(GremlinScenarioParallelNode):
         )  # type: ignore
 
     def api_model(self) -> dict:
-        model: dict = {
-            "nodes":{
-                "0":super().api_model()
-            }
-        }
+        model: dict = {"nodes": {"0": super().api_model()}}
         model["nodes"]["0"]["endpointConfiguration"] = {
             "url": self.endpoint_url,
             "headers": self.endpoint_headers,
@@ -502,9 +510,12 @@ class GremlinScenarioContinuousStatusCheckNode(GremlinScenarioParallelNode):
         model["nodes"]["0"]["referenceStatusCheckId"] = ""
         model["nodes"]["0"]["description"] = self.description
         model["nodes"]["0"]["thirdPartyPresets"] = "PythonSDK"
-        model["nodes"]["0"]["id"] = "0" #all parallel nodes have an ID of 0
-        model["nodes"]["0"].pop("next") #verify removal of "next" from parappel nodes, need branchId
+        model["nodes"]["0"]["id"] = "0"  # all parallel nodes have an ID of 0
+        model["nodes"]["0"].pop(
+            "next"
+        )  # verify removal of "next" from parappel nodes, need branchId
         return model
+
 
 class GremlinScenarioAttackNode(GremlinScenarioSerialNode):
     def __init__(
@@ -920,7 +931,9 @@ class _GremlinNodeGraph(object):
             nodes.update(
                 self.get_nodes_linear(
                     branch_id=branch_id,
-                    node=node._edges[node_id]["node"], parent_id=node.id, next_index=next_index + 1
+                    node=node._edges[node_id]["node"],
+                    parent_id=node.id,
+                    next_index=next_index + 1,
                 )
             )
         return nodes
