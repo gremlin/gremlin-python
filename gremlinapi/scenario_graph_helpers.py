@@ -317,6 +317,9 @@ class GremlinScenarioGraphHelper(object):
         else:
             self._nodes.remove_edge(src_node, _edge_node)
 
+    def get_nodes_parallel(self) -> dict:
+        return {}
+
     @property
     def description(self) -> str:
         return self._description
@@ -359,17 +362,23 @@ class GremlinScenarioGraphHelper(object):
 
     def api_model(self) -> dict:
         model: dict = {
-            "description": self.description,
-            "hypothesis": self.hypothesis,
-            "name": self.name,
-        }
-        if self._nodes.head is not None:
+                "description": self.description,
+                "hypothesis": self.hypothesis,
+                "name": self.name,
+            }
+        if not self._continuous_nodes:
+            if self._nodes.head is not None:
+                model["graph"] = {
+                    "start_id": "0",
+                    "nodes": self._nodes.get_nodes_linear()
+                    # "nodes": {
+                    #     node.uuid: data for node, data in self._nodes.nodes_data_linear()
+                    # }
+                }
+        elif self._continuous_nodes:
             model["graph"] = {
-                "start_id": "0",
-                "nodes": self._nodes.get_nodes_linear()
-                # "nodes": {
-                #     node.uuid: data for node, data in self._nodes.nodes_data_linear()
-                # }
+                "start_id": "continuousNode",
+                "nodes": self.get_nodes_parallel()
             }
         return model
 
@@ -879,9 +888,6 @@ class _GremlinNodeGraph(object):
                 )
             )
         return nodes
-
-    def get_nodes_parallel(self):
-        raise NotImplementedError("Parallel Scenario Nodes NOT IMPLEMENTED")
 
     def insert_between(
         self,
