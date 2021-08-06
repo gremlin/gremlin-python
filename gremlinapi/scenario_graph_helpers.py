@@ -322,6 +322,13 @@ class GremlinScenarioGraphHelper(object):
         else:
             self._nodes.remove_edge(src_node, _edge_node)
 
+    def set_head_node(self, node: GremlinScenarioNode) -> None:
+        if not issubclass(type(node), GremlinScenarioNode):
+            error_msg: str = f"set_head_node expects GremlinScenarioNode (or None), received {type(node)}"
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+        self._nodes.head = node
+
     def get_nodes_parallel(self) -> dict:
         model = {
             "concurrentNode": {
