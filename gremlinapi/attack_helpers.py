@@ -91,9 +91,9 @@ class GremlinAttackTargetHelper(object):
         ):
             _target_definition["target_type"] = "Host"
             _target_definition["strategy"]["attrs"] = dict()
-            _target_definition["strategy"]["attrs"]["multiSelectTags"] = model[
-                "hosts"
-            ]["multiSelectTags"]
+            _target_definition["strategy"]["attrs"]["multiSelectTags"] = model["hosts"][
+                "multiSelectTags"
+            ]
         elif type(model.get("hosts")) == str:
             _target_definition["strategy"]["all_hosts"] = True
         return _target_definition
@@ -359,10 +359,9 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         self._target_all_hosts: bool = True
         self.target_all_hosts = kwargs.get("target_all_hosts", True)  # type: ignore
         if not self.target_all_hosts:
-            self.ids: dict = kwargs.get("ids", list())
+            self.ids: list = kwargs.get("ids", list())  # type: ignore
         if not self.target_all_hosts:
             self.tags: dict = kwargs.get("tags", dict())
-        
 
     # def target_definition(self):
     #     model = json.loads(self.__repr__())
@@ -514,7 +513,6 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
             self.ids = kwargs.get("ids", list())  # type: ignore
         if not self.target_all_containers:
             self.labels = kwargs.get("labels", dict())
-        
 
     # def target_definition(self):
     #     model = json.loads(self.__repr__())

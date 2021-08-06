@@ -101,7 +101,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                             "okStatusCodes": ["404", "300"],
                             "responseBodyEvaluation": {"op": "AND", "predicates": []},
                         },
-                        "guid": "status-check-%s" % new_node.id,
+                        "guid": "%s" % new_node.id,
+                        "name": "status-check",
                         "id": "0",
                         "next": "1",
                         "thirdPartyPresets": "PythonSDK",
@@ -109,7 +110,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                     },
                     "1": {
                         "delay": 5,
-                        "guid": "Delay-%s" % new_node_3.id,
+                        "guid": "%s" % new_node_3.id,
+                        "name": "Delay",
                         "type": "Delay",
                         "id": "1",
                         "next": "2",
@@ -124,7 +126,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                             "okStatusCodes": ["404", "300"],
                             "responseBodyEvaluation": {"op": "AND", "predicates": []},
                         },
-                        "guid": "status-check-%s" % new_node_2.id,
+                        "guid": "%s" % new_node_2.id,
+                        "name": "status-check",
                         "id": "2",
                         "next": "3",
                         "thirdPartyPresets": "PythonSDK",
@@ -140,7 +143,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                             "okStatusCodes": ["404", "300"],
                             "responseBodyEvaluation": {"op": "AND", "predicates": []},
                         },
-                        "guid": "status-check-%s" % new_node_4.id,
+                        "guid": "%s" % new_node_4.id,
+                        "name": "status-check",
                         "id": "3",
                         "next": "4",
                         "thirdPartyPresets": "PythonSDK",
@@ -229,7 +233,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                             "okStatusCodes": ["404", "300"],
                             "responseBodyEvaluation": {"op": "AND", "predicates": []},
                         },
-                        "guid": "status-check-%s" % new_node.id,
+                        "guid": "%s" % new_node.id,
+                        "name": "status-check",
                         "id": "0",
                         "next": "1",
                         "thirdPartyPresets": "PythonSDK",
@@ -245,7 +250,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                             "okStatusCodes": ["404", "300"],
                             "responseBodyEvaluation": {"op": "AND", "predicates": []},
                         },
-                        "guid": "status-check-%s" % new_node_2.id,
+                        "guid": "%s" % new_node_2.id,
+                        "name": "status-check",
                         "id": "1",
                         "next": "2",
                         "thirdPartyPresets": "PythonSDK",
@@ -253,7 +259,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                     },
                     "2": {
                         "delay": 5,
-                        "guid": "Delay-%s" % new_node_3.id,
+                        "guid": "%s" % new_node_3.id,
+                        "name": "Delay",
                         "id": "2",
                         "next": "3",
                         "type": "Delay",
@@ -268,7 +275,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                             "okStatusCodes": ["404", "300"],
                             "responseBodyEvaluation": {"op": "AND", "predicates": []},
                         },
-                        "guid": "status-check-%s" % new_node_4.id,
+                        "guid": "%s" % new_node_4.id,
+                        "name": "status-check",
                         "id": "3",
                         "next": "4",
                         "thirdPartyPresets": "PythonSDK",
@@ -297,9 +305,10 @@ class TestScenarioGraphHelpers(unittest.TestCase):
     def test_gremlin_scenario_node_api_model(self) -> None:
         helper = GremlinScenarioNode(**mock_scenario)
         expected_output = {
-            "guid": "mock_scenario-%s" % helper.id,
+            "guid": "%s" % helper.id,
             "id": "0",
             "next": "0",
+            "name": helper.name,
             "type": helper.node_type,
         }
 
@@ -354,13 +363,14 @@ class TestScenarioGraphHelpers(unittest.TestCase):
     def test_gremlin_scenario_ilfi_node_repr_node(self) -> None:
         helper = GremlinScenarioILFINode(**mock_ilfi_node)
         expected_output = {
-            "guid": "mock_scenario-%s" % helper.id,
+            "guid": "%s" % helper.id,
             "id": "0",
             "next": "0",
             "impact_definition": {
                 "infra_command_args": {"cli_args": ["", "-l", "60"], "type": ""},
                 "infra_command_type": "",
             },
+            "name": "mock_scenario",
             # "next": None,
             "target_definition": {
                 "strategy": {"percentage": 10, "type": "RandomPercent"},
@@ -432,7 +442,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
         helper = GremlinScenarioDelayNode(**mock_delay_node)
         expected_output = {
             "delay": "42",
-            "guid": "Delay-%s" % helper.id,
+            "guid": "%s" % helper.id,
+            "name": "Delay",
             "id": "0",
             "next": "0",
             "type": "Delay",
@@ -454,7 +465,8 @@ class TestScenarioGraphHelpers(unittest.TestCase):
                     "evaluation_response_body_evaluation"
                 ],
             },
-            "guid": "status-check-%s" % helper.id,
+            "guid": "%s" % helper.id,
+            "name": "status-check",
             "id": "0",
             "next": "0",
             "thirdPartyPresets": "PythonSDK",

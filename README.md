@@ -645,14 +645,17 @@ black_hole_node_2 = GremlinScenarioILFINode(
     ),
 )
 
+#NOTE: The first node added becomes the `HEAD` node 
 #add scenario nodes
 new_scenario.add_node(black_hole_node_1)
 new_scenario.add_node(black_hole_node_2)
 new_scenario.add_node(delay_node_1)
 
+#NOTE: All edges stem from the head node. The source node argument of your first add_edge must be the head node.
+new_scenario.set_head_node(black_hole_node_2)
 #add node edges
-new_scenario.add_edge(black_hole_node_1, delay_node_1)
-new_scenario.add_edge(delay_node_1, black_hole_node_2)
+new_scenario.add_edge(black_hole_node_2, delay_node_1)
+new_scenario.add_edge(delay_node_1, black_hole_node_1)
 
 #submit scenario to api
 scenarios.create_scenario(body=new_scenario)
