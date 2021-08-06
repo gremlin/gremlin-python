@@ -275,7 +275,7 @@ class GremlinScenarioGraphHelper(object):
             error_msg: str = f"add_edge expects GremlinScenarioNode (or None), received {type(dst_node)}"
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
-        if type(node) == GremlinScenarioContinuousStatusCheckNode:
+        if (type(dst_node) == GremlinScenarioContinuousStatusCheckNode) or (type(_src_node) == GremlinScenarioContinuousStatusCheckNode):
             error_msg: str = f"add_edge cannot be used with {type(node)}"
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
