@@ -179,6 +179,7 @@ class GremlinScenarioGraphHelper(object):
         self._hypothesis: str = str()
         self._name: str = str()
         self._nodes: _GremlinNodeGraph = _GremlinNodeGraph()
+        self._continuous_nodes: list = []
         self._start = str()
         self.description: str = kwargs.get("description", None)  # type: ignore
         self.hypothesis: str = kwargs.get("hypothesis", None)  # type: ignore
@@ -207,13 +208,18 @@ class GremlinScenarioGraphHelper(object):
             )
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
-        if not self._nodes.head:
-            _default_edge = False
-        if _default_edge:
-            tail_node = self._nodes._nodes[-1]
-        self._nodes.append(node)
-        if _default_edge:
-            self.add_edge(node, tail_node)
+        #If the node is a Continuous Status Check, it does not get added to the node chain
+        if type(node) == GremlinScenarioContinuousStatusCheckNode:
+            log.debug("Found ContinuousStatusCheckNode")
+            self._continuous_nodes.append(node)
+        else:
+            if not self._nodes.head:
+                _default_edge = False
+            if _default_edge:
+                tail_node = self._nodes._nodes[-1]
+            self._nodes.append(node)
+            if _default_edge:
+                self.add_edge(node, tail_node)
 
     def remove_node(self, node: GremlinScenarioNode) -> None:
         """
@@ -231,7 +237,10 @@ class GremlinScenarioGraphHelper(object):
         GremlinParameterError
             If the _node to remove is the current head node
         """
-        self._nodes.remove(node)
+        if type(node) == GremlinScenarioContinuousStatusCheckNode:
+            self._continuous_nodes.remove(node)
+        else:
+            self._nodes.remove(node)
 
     def get_last_node(self) -> GremlinScenarioNode:
         return self._nodes._nodes[-1]
@@ -260,10 +269,14 @@ class GremlinScenarioGraphHelper(object):
         Raises
         ------
         GremlinParameterError
-            If the _src_node or dst_node are not of the type GremlinScenarioNode
+            If the _src_node or dst_node are not of the type GremlinScenarioNode, or are of the type GremlinContinuousStatusCheckNode
         """
         if not issubclass(type(dst_node), GremlinScenarioNode):
             error_msg: str = f"add_edge expects GremlinScenarioNode (or None), received {type(dst_node)}"
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+        if type(node) == GremlinScenarioContinuousStatusCheckNode:
+            error_msg: str = f"add_edge cannot be used with {type(node)}"
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         if not _src_node:
