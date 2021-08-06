@@ -318,7 +318,20 @@ class GremlinScenarioGraphHelper(object):
             self._nodes.remove_edge(src_node, _edge_node)
 
     def get_nodes_parallel(self) -> dict:
-        return {}
+        model = {
+            "concurrentNode":{
+                "id":"concurrentNode",
+                "type":"Concurrent",
+                "branches":[]
+            }
+        }
+        continuous_id = 0
+        for node in self._continuous_nodes:
+            new_node = node.api_model()
+            new_node["nodes"]["0"]["branchId"] = "concurrentNode-%d" % continuous_id
+            continuous_id += 1
+            model['concurrentNode']['branches'].append(new_node)
+        return model
 
     @property
     def description(self) -> str:
@@ -371,15 +384,13 @@ class GremlinScenarioGraphHelper(object):
                 model["graph"] = {
                     "start_id": "0",
                     "nodes": self._nodes.get_nodes_linear()
-                    # "nodes": {
-                    #     node.uuid: data for node, data in self._nodes.nodes_data_linear()
-                    # }
                 }
         elif self._continuous_nodes:
             model["graph"] = {
-                "start_id": "continuousNode",
+                "start_id": "concurrentNode",
                 "nodes": self.get_nodes_parallel()
             }
+            model["graph"]["nodes"].append(self._nodes.get_nodes_linear())
         return model
 
     def __repr__(self) -> str:
@@ -462,17 +473,23 @@ class GremlinScenarioContinuousStatusCheckNode(GremlinScenarioParallelNode):
         )  # type: ignore
 
     def api_model(self) -> dict:
-        model: dict = super().api_model()
-        model["endpointConfiguration"] = {
+        model: dict = {
+            "nodes":{
+                "0":super().api_model()
+            }
+        }
+        model["nodes"]["0"]["endpointConfiguration"] = {
             "url": self.endpoint_url,
             "headers": self.endpoint_headers,
         }
-        model["evaluationConfiguration"] = {
+        model["nodes"]["0"]["evaluationConfiguration"] = {
             "okStatusCodes": self.evaluation_ok_status_codes,
             "okLatencyMaxMs": self.evaluation_ok_latency_max,
             "responseBodyEvaluation": self.evaluation_response_body_evaluation,
         }
-        model["thirdPartyPresets"] = "PythonSDK"
+        model["nodes"]["0"]["thirdPartyPresets"] = "PythonSDK"
+        model["nodes"]["0"]["id"] = 0 #all parallel nodes have an ID of 0
+        model["nodes"]["0"].pop("next") #verify removal of "next" from parappel nodes, need branchId
         return model
 
 class GremlinScenarioAttackNode(GremlinScenarioSerialNode):
