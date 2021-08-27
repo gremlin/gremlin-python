@@ -30,7 +30,7 @@ setup(
     long_description=readme,
     long_description_content_type="text/markdown",
     install_requires=getRequires(),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     entry_points={"console_scripts": ["pgremlin = gremlinapi.cli:main"]},
     classifiers=[
         "Programming Language :: Python :: 3.7",
