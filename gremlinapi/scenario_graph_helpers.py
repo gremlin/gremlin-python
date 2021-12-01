@@ -12,13 +12,14 @@ from gremlinapi.exceptions import (
     GremlinCommandTargetError,
     GremlinIdentifierError,
     GremlinParameterError,
+    GremlinGraphError,
 )
 
 from gremlinapi.attack_helpers import (
     GremlinAttackCommandHelper,
     GremlinAttackTargetHelper,
 )
-from gremlinapi.util import deprecated
+from gremlinapi.util import deprecated, MAX_NODE_COUNT
 from gremlinapi.clients import GremlinAPIClients as clients
 from gremlinapi.containers import GremlinAPIContainers as containers
 from gremlinapi.providers import GremlinAPIProviders as providers
@@ -205,12 +206,20 @@ class GremlinScenarioGraphHelper(object):
         GremlinParameterError
             If the node is not of the type GremlinScenarioNode
         """
+        # Validates the node is of the right type
         if not issubclass(type(node), GremlinScenarioNode):
             error_msg: str = (
                 f"add_node expects GremlinScenarioNode (or None), received {type(node)}"
             )
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
+        # Fails if the current node count is at or over the limit
+        if self.total_nodes() >= MAX_NODE_COUNT:
+            error_msg: str = (
+                f"Scenario Graph node count at maximum: {MAX_NODE_COUNT}"
+            )
+            log.error(error_msg)
+            raise GremlinGraphError(error_msg)
         # If the node is a Continuous Status Check, it does not get added to the node chain
         if type(node) == GremlinScenarioContinuousStatusCheckNode:
             log.debug("Found GremlinContinuousStatusCheckNode")
