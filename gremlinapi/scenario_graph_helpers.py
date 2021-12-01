@@ -422,6 +422,9 @@ class GremlinScenarioGraphHelper(object):
             )
         return model
 
+    def total_nodes(self) -> int:
+        return self._nodes.total_nodes() + self.continuous_nodes.__len__()
+
     def __repr__(self) -> str:
         kwargs: dict = {}
         kwargs["name"] = self.name
@@ -954,7 +957,7 @@ class _GremlinNodeGraph(object):
         raise NotImplementedError("insert_between NOT IMPLEMENTED")
 
     def total_nodes(self) -> int:
-        raise NotImplementedError("total_nodes NOT IMPLEMENTED")
+        return self._nodes.__len__()
 
     def longest_path(self) -> Tuple[str, str, int]:
         raise NotImplementedError("longest_path NOT IMPLEMENTED")
