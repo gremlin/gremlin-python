@@ -19,7 +19,7 @@ from gremlinapi.attack_helpers import (
     GremlinAttackCommandHelper,
     GremlinAttackTargetHelper,
 )
-from gremlinapi.util import deprecated, MAX_NODE_COUNT
+from gremlinapi.util import deprecated, MAX_NODE_COUNT, MAX_BLAST_RADIUS
 from gremlinapi.clients import GremlinAPIClients as clients
 from gremlinapi.containers import GremlinAPIContainers as containers
 from gremlinapi.providers import GremlinAPIProviders as providers
@@ -214,11 +214,18 @@ class GremlinScenarioGraphHelper(object):
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         # Fails if the current node count is at or over the limit
-        #TODO: Put in a config flag to disable both this and the blast radius limitation
         if not bool(config.override_node_count):
             if self.total_nodes() >= MAX_NODE_COUNT:
                 error_msg: str = (
                     f"Scenario Graph node count at maximum: {MAX_NODE_COUNT}"
+                )
+                log.error(error_msg)
+                raise GremlinGraphError(error_msg)
+        # Fails if the current blast radius is at or over the limit
+        if not bool(config.override_blast_radius):
+            if self.total_targets() >= MAX_BLAST_RADIUS:
+                error_msg: str = (
+                    f"Scenario Blast Radius count at maximum: {MAX_BLAST_RADIUS}"
                 )
                 log.error(error_msg)
                 raise GremlinGraphError(error_msg)
