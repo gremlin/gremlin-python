@@ -23,6 +23,8 @@ class GremlinAPIConfig(object):
         self._http_proxy = False
         self._https_proxy = False
         self._max_bearer_interval = None
+        self._override_blast_radius = None
+        self._override_node_count = None
         self._password = None
         self._team_id = None
         self._user = None
@@ -114,6 +116,28 @@ class GremlinAPIConfig(object):
     def max_bearer_interval(self, max_bearer_interval: int) -> int:
         self._max_bearer_interval = max_bearer_interval
         return self.max_bearer_interval
+
+    @property
+    def override_blast_radius(self) -> bool:
+        if not self._override_blast_radius:
+            return False
+        return self._override_blast_radius
+
+    @override_blast_radius.setter
+    def override_blast_radius(self, override_blast_radius: bool) -> bool:
+        self._override_blast_radius = override_blast_radius
+        return self.override_blast_radius
+
+    @property
+    def override_node_count(self) -> bool:
+        if not self._override_node_count:
+            return False
+        return self._override_node_count
+    
+    @override_node_count.setter
+    def override_node_count(self, override_node_count: bool) -> bool:
+        self._override_node_count = override_node_count
+        return self.override_node_count     
 
     @property
     def password(self) -> str:

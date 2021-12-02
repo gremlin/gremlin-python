@@ -14,7 +14,7 @@ from gremlinapi.exceptions import (
     GremlinParameterError,
     GremlinGraphError,
 )
-
+from gremlinapi.config import GremlinAPIConfig as config
 from gremlinapi.attack_helpers import (
     GremlinAttackCommandHelper,
     GremlinAttackTargetHelper,
@@ -214,12 +214,14 @@ class GremlinScenarioGraphHelper(object):
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
         # Fails if the current node count is at or over the limit
-        if self.total_nodes() >= MAX_NODE_COUNT:
-            error_msg: str = (
-                f"Scenario Graph node count at maximum: {MAX_NODE_COUNT}"
-            )
-            log.error(error_msg)
-            raise GremlinGraphError(error_msg)
+        #TODO: Put in a config flag to disable both this and the blast radius limitation
+        if not bool(config.override_node_count):
+            if self.total_nodes() >= MAX_NODE_COUNT:
+                error_msg: str = (
+                    f"Scenario Graph node count at maximum: {MAX_NODE_COUNT}"
+                )
+                log.error(error_msg)
+                raise GremlinGraphError(error_msg)
         # If the node is a Continuous Status Check, it does not get added to the node chain
         if type(node) == GremlinScenarioContinuousStatusCheckNode:
             log.debug("Found GremlinContinuousStatusCheckNode")
@@ -433,6 +435,9 @@ class GremlinScenarioGraphHelper(object):
 
     def total_nodes(self) -> int:
         return self._nodes.total_nodes() + self.continuous_nodes.__len__()
+
+    def total_targets(self) -> int:
+        return self._nodes.total_targets()
 
     def __repr__(self) -> str:
         kwargs: dict = {}
@@ -967,6 +972,17 @@ class _GremlinNodeGraph(object):
 
     def total_nodes(self) -> int:
         return self._nodes.__len__()
+
+    def total_targets(self) -> int:
+        #TODO:
+        # 1. Grab total list of clients from the API, store in config cache
+        # 2. Collect all target labels deduped from current scenario
+        # 3. Expand labels to targets from cache and compare and count
+        for node in self._nodes:
+            #skips status check and delays nodes
+            if issubclass(type(node), GremlinScenarioStatusCheckNode) or issubclass(type(node), GremlinScenarioDelayNode):
+                continue
+            print(node.target)
 
     def longest_path(self) -> Tuple[str, str, int]:
         raise NotImplementedError("longest_path NOT IMPLEMENTED")
