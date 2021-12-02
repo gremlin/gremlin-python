@@ -990,6 +990,7 @@ class _GremlinNodeGraph(object):
             if issubclass(type(node), GremlinScenarioStatusCheckNode) or issubclass(type(node), GremlinScenarioDelayNode):
                 continue
             print(node.target)
+        return 0
 
     def longest_path(self) -> Tuple[str, str, int]:
         raise NotImplementedError("longest_path NOT IMPLEMENTED")
