@@ -985,12 +985,64 @@ class _GremlinNodeGraph(object):
         # 1. Grab total list of clients from the API, store in config cache
         # 2. Collect all target labels deduped from current scenario
         # 3. Expand labels to targets from cache and compare and count
+        # for node in self._nodes:
+        #     #skips status check and delays nodes
+        #     if issubclass(type(node), GremlinScenarioStatusCheckNode) or issubclass(type(node), GremlinScenarioDelayNode):
+        #         continue
+        # return 0
+        all_clients = clients.list_clients()
+        active_clients = all_clients['active']
+        # total_targets = []
+        total_containers = []
+        for ac in active_clients:
+            for container in ac['containers']:
+                total_containers.append(container)
+            #     for key in container['labels']:
+            #         total_targets.append({key:container['labels'][key]})
+            # print(len(ac['containers']))
+        inactive_clients = all_clients['inactive']
+        for iac in inactive_clients:
+            for container in iac['containers']:
+                total_containers.append(container)
+            #     for key in container['labels']:
+            #         total_targets.append({key:container['labels'][key]})
+            # print(len(iac['containers']))
+        idle_clients = all_clients['idle']
+        for ic in idle_clients:
+            for container in ic['containers']:
+                total_containers.append(container)
+
+        matching_container_ids = []
+
         for node in self._nodes:
-            #skips status check and delays nodes
             if issubclass(type(node), GremlinScenarioStatusCheckNode) or issubclass(type(node), GremlinScenarioDelayNode):
                 continue
-            print(node.target)
-        return 0
+            targets = node.target.target_definition_graph().get('strategy',[]).get('attrs',[])
+            # Can only select Hosts *or* Containers, not both
+            labeltags = targets.get('multiSelectLabels', targets.get('multiSelectTags', {}))
+            # print(labeltags)
+            for container in total_containers:
+                c_label = container.get('labels', {})
+                # print(c_label)
+                for s_lt in labeltags:
+                    # print(s_lt)
+                    if c_label.get(s_lt, "") in labeltags.get(s_lt, ""):
+                        # print("c_label")
+                        # print(c_label.get(s_lt, ""))
+                        # print("labeltags")
+                        # print(labeltags.get(s_lt, ""))
+                        # print("matched container:")
+                        # print(container)
+                        if container.get('id', '') not in matching_container_ids:
+                            # print("adding id:")
+                            # print(container.get('id', ''))
+                            matching_container_ids.append(container.get('id', ''))
+                        # else:
+                        #     print("id already added:")
+                        #     print(container.get('id', ''))
+        #     print("-------")
+        # print(matching_container_ids)
+        return len(matching_container_ids)
 
     def longest_path(self) -> Tuple[str, str, int]:
         raise NotImplementedError("longest_path NOT IMPLEMENTED")
