@@ -19,6 +19,7 @@ class GremlinAPIConfig(object):
         self._bearer_expires = None
         self._bearer_timestamp = None
         self._bearer_token = None
+        self._client_cache = {}
         self._company_name = None
         self._http_proxy = False
         self._https_proxy = False
@@ -79,6 +80,17 @@ class GremlinAPIConfig(object):
     def bearer_token(self, bearer_token: str) -> str:
         self._bearer_token = bearer_token
         return self.bearer_token
+
+    @property
+    def client_cache(self) -> dict:
+        if not self._client_cache:
+            return {}
+        return self._client_cache
+
+    @client_cache.setter
+    def client_cache(self, client_cache: dict) -> dict:
+        self._client_cache = client_cache
+        return self.client_cache
 
     @property
     def company_name(self) -> str:
