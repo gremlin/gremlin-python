@@ -18,6 +18,9 @@ class APIError(GremlinAPIException):
     def __init__(self, message: str):
         super(APIError, self).__init__(message)
 
+class GremlinGraphError(GremlinAPIException):
+    def __init__(self, message: str):
+        super(GremlinGraphError, self).__init__(message)
 
 class GremlinAuthError(GremlinAPIException):
     def __init__(self, message: str):

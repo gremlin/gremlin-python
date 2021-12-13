@@ -7,7 +7,7 @@ import functools, warnings, inspect
 
 log = logging.getLogger("GremlinAPI.client")
 
-_version = "0.16.3"
+_version = "0.16.10"
 
 
 def get_version():
@@ -21,6 +21,8 @@ GREMLIN_OAUTH_COMPANIES_URI = "https://api.gremlin.com/v1/companies"
 GREMLIN_SSO_USER_AUTH = "https://api.gremlin.com/v1/users/auth/sso"
 GREMLIN_OAUTH_CALLBACK = "https://api.gremlin.com/v1/oauth/callback"
 
+MAX_BLAST_RADIUS = 1000
+MAX_NODE_COUNT = 50
 
 def experimental(func):
     """

@@ -12,18 +12,17 @@ from gremlinapi.exceptions import (
     GremlinCommandTargetError,
     GremlinIdentifierError,
     GremlinParameterError,
+    GremlinGraphError,
 )
-
+from gremlinapi.config import GremlinAPIConfig as config
 from gremlinapi.attack_helpers import (
     GremlinAttackCommandHelper,
     GremlinAttackTargetHelper,
 )
-from gremlinapi.util import deprecated
+from gremlinapi.util import deprecated, MAX_NODE_COUNT, MAX_BLAST_RADIUS
 from gremlinapi.clients import GremlinAPIClients as clients
 from gremlinapi.containers import GremlinAPIContainers as containers
 from gremlinapi.providers import GremlinAPIProviders as providers
-
-# from gremlinapi.scenario_graph_helpers import GremlinScenarioNode
 
 log = logging.getLogger("GremlinAPI.client")
 
@@ -205,12 +204,29 @@ class GremlinScenarioGraphHelper(object):
         GremlinParameterError
             If the node is not of the type GremlinScenarioNode
         """
+        # Validates the node is of the right type
         if not issubclass(type(node), GremlinScenarioNode):
             error_msg: str = (
                 f"add_node expects GremlinScenarioNode (or None), received {type(node)}"
             )
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
+        # Fails if the current node count is at or over the limit
+        if not bool(config.override_node_count):
+            if self.total_nodes() >= MAX_NODE_COUNT:
+                error_msg: str = (
+                    f"Scenario Graph node count at maximum: {MAX_NODE_COUNT}"
+                )
+                log.error(error_msg)
+                raise GremlinGraphError(error_msg)
+        # Fails if the current blast radius is at or over the limit
+        if not bool(config.override_blast_radius):
+            if self.total_targets() >= MAX_BLAST_RADIUS:
+                error_msg: str = (
+                    f"Scenario Blast Radius count at maximum: {MAX_BLAST_RADIUS}"
+                )
+                log.error(error_msg)
+                raise GremlinGraphError(error_msg)
         # If the node is a Continuous Status Check, it does not get added to the node chain
         if type(node) == GremlinScenarioContinuousStatusCheckNode:
             log.debug("Found GremlinContinuousStatusCheckNode")
@@ -421,6 +437,12 @@ class GremlinScenarioGraphHelper(object):
                 }
             )
         return model
+
+    def total_nodes(self) -> int:
+        return self._nodes.total_nodes() + self.continuous_nodes.__len__()
+
+    def total_targets(self) -> int:
+        return self._nodes.total_targets()
 
     def __repr__(self) -> str:
         kwargs: dict = {}
@@ -954,7 +976,31 @@ class _GremlinNodeGraph(object):
         raise NotImplementedError("insert_between NOT IMPLEMENTED")
 
     def total_nodes(self) -> int:
-        raise NotImplementedError("total_nodes NOT IMPLEMENTED")
+        return self._nodes.__len__()
+
+    def total_targets(self) -> int:
+        # Fetches all client containers from the cache
+        total_containers = clients.get_update_client_target_cache()
+
+        # Iterates over all nodes, collecting matching container ids
+        matching_container_ids = []
+        for node in self._nodes:
+            # Skips status check and delay nodes as they have no container target(s)
+            if issubclass(type(node), GremlinScenarioStatusCheckNode) or issubclass(type(node), GremlinScenarioDelayNode):
+                continue
+            targets = node.target.target_definition_graph().get('strategy',[]).get('attrs',[])
+            # Can only select Hosts *or* Containers, not both
+            labeltags = targets.get('multiSelectLabels', targets.get('multiSelectTags', {}))
+            for container in total_containers:
+                c_label = container.get('labels', {})
+                for s_lt in labeltags:
+                    if c_label.get(s_lt, "") in labeltags.get(s_lt, ""):
+                        if container.get('id', '') not in matching_container_ids:
+                            log.debug("Adding container id: %s" % container.get('id', ''))
+                            matching_container_ids.append(container.get('id', ''))
+                        # else:
+                        #     log.debug("Container id already added: %s" % container.get('id', ''))
+        return len(matching_container_ids)
 
     def longest_path(self) -> Tuple[str, str, int]:
         raise NotImplementedError("longest_path NOT IMPLEMENTED")

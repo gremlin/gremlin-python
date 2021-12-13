@@ -4,6 +4,8 @@
 
 import logging
 
+from typing import Union, Type, Any
+
 from gremlinapi.cli import register_cli_action
 from gremlinapi.exceptions import (
     GremlinParameterError,
@@ -12,11 +14,8 @@ from gremlinapi.exceptions import (
     HTTPTimeout,
     HTTPError,
 )
-
 from gremlinapi.http_clients import GremlinAPIHttpClient
-
-from typing import Union, Type, Any
-
+from gremlinapi.config import GremlinAPIConfig
 from gremlinapi.gremlinapi import GremlinAPI
 from gremlinapi.http_clients import get_gremlin_httpclient
 
@@ -79,3 +78,23 @@ class GremlinAPIClients(GremlinAPI):
         payload: dict = cls._payload(**{"headers": https_client.header()})
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
+
+    @classmethod
+    def get_update_client_target_cache(cls) -> [dict]:
+        if not GremlinAPIConfig.client_cache:
+            GremlinAPIConfig.client_cache = GremlinAPIClients.list_clients()
+        # Collects all containers
+        total_containers = []
+        active_clients = GremlinAPIConfig.client_cache['active']
+        for ac in active_clients:
+            for container in ac['containers']:
+                total_containers.append(container)
+        inactive_clients = GremlinAPIConfig.client_cache['inactive']
+        for iac in inactive_clients:
+            for container in iac['containers']:
+                total_containers.append(container)
+        idle_clients = GremlinAPIConfig.client_cache['idle']
+        for ic in idle_clients:
+            for container in ic['containers']:
+                total_containers.append(container)
+        return total_containers

@@ -619,6 +619,12 @@ from gremlinapi.scenario_graph_helpers import (
 # config.bearer_token = 'Bearer MU3...ZiTk...Lo...4zO..c='
 config.api_key = "" #TODO: populate
 config.team_id = "" #TODO: populate
+# Nodes in a scenario limited to 50. Attempting to add more past this will result in an exception.
+# To override, set this config variable to `True`
+config.override_node_count = True
+# Blast Radius in a scenario limited to 1000. Attempting to add more past this will result in an exception.
+# To override, set this config variable to `True`
+config.override_blast_radius = True
 
 blast_radius = 100
 delay_time = 5
