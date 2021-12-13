@@ -80,7 +80,21 @@ class GremlinAPIClients(GremlinAPI):
         return body
 
     @classmethod
-    def get_update_client_target_cache(cls) -> dict:
+    def get_update_client_target_cache(cls) -> [dict]:
         if not GremlinAPIConfig.client_cache:
             GremlinAPIConfig.client_cache = GremlinAPIClients.list_clients()
-        return GremlinAPIConfig.client_cache
+        # Collects all containers
+        total_containers = []
+        active_clients = GremlinAPIConfig.client_cache['active']
+        for ac in active_clients:
+            for container in ac['containers']:
+                total_containers.append(container)
+        inactive_clients = GremlinAPIConfig.client_cache['inactive']
+        for iac in inactive_clients:
+            for container in iac['containers']:
+                total_containers.append(container)
+        idle_clients = GremlinAPIConfig.client_cache['idle']
+        for ic in idle_clients:
+            for container in ic['containers']:
+                total_containers.append(container)
+        return total_containers

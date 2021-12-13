@@ -979,23 +979,8 @@ class _GremlinNodeGraph(object):
         return self._nodes.__len__()
 
     def total_targets(self) -> int:
-        # Fetches all clients from the cache
-        all_clients = clients.get_update_client_target_cache()
-        total_containers = []
-
-        # Collects all containers
-        active_clients = all_clients['active']
-        for ac in active_clients:
-            for container in ac['containers']:
-                total_containers.append(container)
-        inactive_clients = all_clients['inactive']
-        for iac in inactive_clients:
-            for container in iac['containers']:
-                total_containers.append(container)
-        idle_clients = all_clients['idle']
-        for ic in idle_clients:
-            for container in ic['containers']:
-                total_containers.append(container)
+        # Fetches all client containers from the cache
+        total_containers = clients.get_update_client_target_cache()
 
         # Iterates over all nodes, collecting matching container ids
         matching_container_ids = []
