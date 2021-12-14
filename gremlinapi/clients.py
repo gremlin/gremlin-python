@@ -81,7 +81,7 @@ class GremlinAPIClients(GremlinAPI):
 
     @classmethod
     def get_update_client_target_cache(cls) -> [dict]:
-        if not GremlinAPIConfig.client_cache:
+        if (not GremlinAPIConfig.client_cache) or (type(GremlinAPIConfig.client_cache) == type(property())):
             GremlinAPIConfig.client_cache = GremlinAPIClients.list_clients()
         # Collects all containers
         total_containers = []
