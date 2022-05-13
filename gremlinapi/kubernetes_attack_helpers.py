@@ -15,7 +15,7 @@ from gremlinapi.clients import GremlinAPIClients as clients
 from gremlinapi.containers import GremlinAPIContainers as containers
 from gremlinapi.providers import GremlinAPIProviders as providers
 from gremlinapi.kubernetes import GremlinAPIKubernetesTargets as kubernetes_targets
-from gremlinapi.attack_helpers import GremlinAttackCommandHelper, GremlinTargetContainers, GremlinTimeTravelAttack
+from gremlinapi.attack_helpers import GremlinAttackCommandHelper, GremlinTargetContainers, GremlinTimeTravelAttack, GremlinAttackTargetHelper, GremlinAttackHelper
 
 
 log = logging.getLogger("GremlinAPI.client")
@@ -178,7 +178,7 @@ class GremlinKubernetesAttackTarget(object):
         return repr(self)
 
 
-class GremlinKubernetesAttackTargetHelper(object):
+class GremlinKubernetesAttackTargetHelper(GremlinAttackTargetHelper):
     '''
     '''
 
@@ -303,57 +303,14 @@ class GremlinKubernetesAttackTargetHelper(object):
     def __str__(self) -> str:
         return repr(self)
 
-class GremlinKubernetesAttackHelper(object):
-    def __init__(self, *args: tuple, **kwargs: dict):
-        self._command: GremlinAttackCommandHelper = None
-        self._target: GremlinKubernetesAttackTargetHelper = None
-        self.command = GremlinCPUAttack = kwargs.get("command", None)
-        self.target = kwargs.get("target", None)
-
-    @property
-    def command(self) -> GremlinAttackCommandHelper:
-        return self._command
-
-    @command.setter
-    def command(self, _command: GremlinAttackCommandHelper) -> None:
-        if not issubclass(type(_command), GremlinAttackCommandHelper):
-            error_msg: str = f"Command needs to be a child class of {type(GremlinAttackCommandHelper)}"
-            log.error(error_msg)
-            raise GremlinParameterError(error_msg)
-        if issubclass(type(_command), GremlinTimeTravelAttack):
-            error_msg = f"TimeTravel cannot target kubernetes containers"
-            log.error(error_msg)
-            raise GremlinCommandTargetError(error_msg)
-        self._command = _command
-
-    @property
-    def target(self) -> GremlinKubernetesAttackTargetHelper:
-        return self._target
-
-    @target.setter
-    def target(self, _target: GremlinKubernetesAttackTargetHelper) -> None:
-        if not issubclass(type(_target), GremlinKubernetesAttackTargetHelper):
-            error_msg: str = f"Target needs to be a child class of {type(GremlinKubernetesAttackTargetHelper)}"
-            log.error(error_msg)
-            raise GremlinCommandTargetError(error_msg)
-        if issubclass(type(self._command), GremlinTimeTravelAttack):
-            error_msg = f"TimeTravel cannot target kubernetes containers"
-            log.error(error_msg)
-            raise GremlinCommandTargetError(error_msg)
-        self._target = _target
-
+class GremlinKubernetesAttackHelper(GremlinAttackHelper):
+    '''
+    k8s attacks require a completely different syntax on the API. All other logic is the same,
+    so we just have to modify api_model.
+    '''
     def api_model(self) -> dict:
         model: dict = {
             "targetDefinition": self._target.target_definition(),
             "impactDefinition": self._command.impact_definition()['commandArgs']
         }
         return model
-
-    def __repr__(self) -> str:
-        kwargs: dict = {}
-        kwargs["target"] = repr(self.target)
-        kwargs["command"] = repr(self.command)
-        return "%s(%s)" % (self.__class__.__name__, kwargs)
-
-    def __str__(self) -> str:
-        return repr(self)
