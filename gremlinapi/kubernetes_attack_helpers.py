@@ -227,6 +227,23 @@ class GremlinKubernetesAttackTargetHelper(GremlinAttackTargetHelper):
 
         return _target_definition
 
+    def target_definition_graph(self) -> dict:
+        model: dict = self.api_model()
+        _target_definition: dict = {
+            'strategy': {},
+            "strategy_type": "Random",
+            "target_type": "Kubernetes",
+            "k8s_objects": model['targets']
+        }
+        if 'count' in model and model['count']:
+            _target_definition['strategy']['type'] = 'RandomCount'
+            _target_definition['strategy']['count'] = model['count']
+        elif 'percentage' in model and model['percentage']:
+            _target_definition['strategy']['type'] = 'RandomPercent'
+            _target_definition['strategy']['percentage'] = model['percentage']
+
+        return _target_definition
+
     @property
     def targets(self) -> list:
         return self._targets
