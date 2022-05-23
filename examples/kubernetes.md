@@ -33,3 +33,57 @@ team_id = 'TEAM_ID/UUID'
 
 confirmation = k8attacks.halt_all_kubernetes_attacks(teamId=team_id)
 ```
+
+### Attack 50% of a Kubernetes Deployment
+```python
+from gremlinapi.kubernetes import GremlinAPIKubernetesAttacks as k8s_attacks
+from kubernetes_attack_helpers import GremlinKubernetesAttackTarget, GremlinKubernetesAttackTargetHelper, GremlinKubernetesAttackHelper
+from gremlinapi.attack_helpers import GremlinBlackholeAttack
+
+config.api_key = <API_KEY>
+config.team_id = <TEAM_ID>
+
+k8s_attacks.new_kubernetes_attack(
+    body = GremlinKubernetesAttackHelper(
+        command = GremlinBlackholeAttack(),
+        target = GremlinKubernetesAttackTargetHelper(
+            targets = [
+                GremlinKubernetesAttackTarget(
+                    cluster_id = "<CLUSTER_ID>",
+                    namespace = "<NAMESPACE>",
+                    kind = "DEPLOYMENT",
+                    name = "<deployment_name>
+                )
+            ],
+            percentage = 50
+        )
+    )
+)
+```
+
+### Attack 3 pods of a Kubernetes ReplicaSet
+```python
+from gremlinapi.kubernetes import GremlinAPIKubernetesAttacks as k8s_attacks
+from kubernetes_attack_helpers import GremlinKubernetesAttackTarget, GremlinKubernetesAttackTargetHelper, GremlinKubernetesAttackHelper
+from gremlinapi.attack_helpers import GremlinBlackholeAttack
+
+config.api_key = <API_KEY>
+config.team_id = <TEAM_ID>
+
+k8s_attacks.new_kubernetes_attack(
+    body = GremlinKubernetesAttackHelper(
+        command = GremlinBlackholeAttack(),
+        target = GremlinKubernetesAttackTargetHelper(
+            targets = [
+                GremlinKubernetesAttackTarget(
+                    cluster_id = "<CLUSTER_ID>",
+                    namespace = "<NAMESPACE>",
+                    kind = "REPLICASET",
+                    name = "<deployment_name>
+                )
+            ],
+            count = 3
+        )
+    )
+)
+```
