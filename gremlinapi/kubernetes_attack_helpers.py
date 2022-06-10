@@ -24,18 +24,20 @@ log = logging.getLogger("GremlinAPI.client")
 class GremlinKubernetesAttackTarget(object):
     '''
     A single k8s attack target in Gremlin.
-    This can be a pod, replicaset, deployment or daemonset.
+    This can be a pod, replicaset, statefulset, deployment or daemonset.
     User must provide all attributes except for uid.
         uid will be retrieved automagically
     '''
+
     def __init__(self, *args: tuple, **kwargs: dict):
         self._cluster_id: str = ""
         self._namespace: str = ""
         self._allowed_kinds: list = [
+            "DAEMONSET",
+            "DEPLOYMENT",
             "POD",
             "REPLICASET",
-            "DAEMONSET",
-            "DEPLOYMENT"
+            "STATEFULSET"
         ]
         self._kind: str = ""
         self._name: str = ""
@@ -46,7 +48,7 @@ class GremlinKubernetesAttackTarget(object):
         self.cluster_id = (kwargs.get("cluster_id", self._cluster_id))
         self.namespace = (kwargs.get("namespace", self._namespace))
         self.kind = (kwargs.get("kind", self._kind))
-        self.name = (kwargs.get("name",self._name))
+        self.name = (kwargs.get("name", self._name))
 
         # Setting uid will perform all validation required.
         self.__set_uid()
@@ -111,7 +113,7 @@ class GremlinKubernetesAttackTarget(object):
             )
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
-        
+
     def __set_uid(self) -> None:
         '''
         Pull all targets and refine to exactly a single target.
@@ -143,7 +145,7 @@ class GremlinKubernetesAttackTarget(object):
         if len(target_objects) != 1:
             target_object_len = len(target_objects)
             error_msg: str = (
-                f"""Exactly target should be identified by target filter.
+                f"""Exactly one target should be identified by target filter.
                 {target_object_len} were idenfied by these filters:
                  kind: {self._kind}
                  clusterId: {self._cluster_id}
@@ -185,7 +187,7 @@ class GremlinKubernetesAttackTargetHelper(GremlinAttackTargetHelper):
     def __init__(self, *args: tuple, **kwargs: dict):
         '''
         Provide a list of target objects
-        percentate or count. Not both.
+        Specify either percentage or count. Not both.
         '''
         self._targets = []
         self._percentage = None
@@ -193,24 +195,22 @@ class GremlinKubernetesAttackTargetHelper(GremlinAttackTargetHelper):
 
         self.targets = kwargs.get("targets", [])
 
-        # count and percentage should not be 
-        if kwargs.get("count", None) and kwargs.get("percentage",None):
+        # count and percentage should not be
+        if kwargs.get("count", None) and kwargs.get("percentage", None):
             error_msg: str = (
                 f"Exactly one of `count` or `percentage` should be specified. Values were given for both settings."
             )
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
-        elif not (kwargs.get("count", None) or kwargs.get("percentage",None)):
+        elif not (kwargs.get("count", None) or kwargs.get("percentage", None)):
             error_msg: str = (
                 f"Exactly one of `count` or `percentage` should be specified."
             )
             log.error(error_msg)
             raise GremlinParameterError(error_msg)
 
-
         self.count = kwargs.get("count", None)
         self.percentage = kwargs.get("percentage", None)
-
 
     def target_definition(self) -> dict:
         model: dict = self.api_model()
@@ -247,7 +247,7 @@ class GremlinKubernetesAttackTargetHelper(GremlinAttackTargetHelper):
     @property
     def targets(self) -> list:
         return self._targets
-    
+
     @targets.setter
     def targets(self, _targets: list = []) -> None:
         if len(_targets) > 0:
@@ -278,7 +278,7 @@ class GremlinKubernetesAttackTargetHelper(GremlinAttackTargetHelper):
         else:
             self._percentage = _percentage
             self._count = None
-        
+
     @property
     def count(self) -> int:
         return self._count
@@ -287,7 +287,7 @@ class GremlinKubernetesAttackTargetHelper(GremlinAttackTargetHelper):
     def count(self, _count) -> None:
         if not _count:
             self._count = None
-        elif _count <=0:
+        elif _count <= 0:
             error_msg: str = (
                 f"Count should be a non-zero integer. Given value ({_count})"
             )
@@ -299,7 +299,7 @@ class GremlinKubernetesAttackTargetHelper(GremlinAttackTargetHelper):
 
     def api_model(self) -> dict:
         model: dict = {
-            "targets": [ target.api_model() for target in self._targets ],
+            "targets": [target.api_model() for target in self._targets],
         }
         if self._count:
             model['count'] = self._count
@@ -320,11 +320,13 @@ class GremlinKubernetesAttackTargetHelper(GremlinAttackTargetHelper):
     def __str__(self) -> str:
         return repr(self)
 
+
 class GremlinKubernetesAttackHelper(GremlinAttackHelper):
     '''
     k8s attacks require a completely different syntax on the API. All other logic is the same,
     so we just have to modify api_model.
     '''
+
     def api_model(self) -> dict:
         model: dict = {
             "targetDefinition": self._target.target_definition(),
