@@ -898,7 +898,7 @@ class GremlinNetworkAttackHelper(GremlinAttackCommandHelper):
                     error_msg = f"valid hostnames required"
                     log.error(error_msg)
                     raise GremlinParameterError(error_msg)
-                self._hostnames = _hostname
+            self._hostnames = _hostnames
         else:
             error_msg = f"hostnames requires a {type(str)} or {type(list)}"
             log.error(error_msg)
