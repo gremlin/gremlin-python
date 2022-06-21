@@ -267,6 +267,8 @@ class GremlinAPIScenarios(GremlinAPI):
             f"/scenarios/{guid}/runs/{run_number}/resultNotes", **kwargs
         )
         payload: dict = cls._payload(**{"headers": https_client.header(), "body": data})
+        # Content-Type must be text/plain for this endpoint
+        payload['headers']['Content-Type'] = 'text/plain'
         (resp, body) = https_client.api_call(method, endpoint, **payload)
         return body
 
