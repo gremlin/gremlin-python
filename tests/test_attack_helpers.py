@@ -525,7 +525,7 @@ class TestAttackHelpers(unittest.TestCase):
         self.assertEqual(helper_output, expected_output)
 
     def test_black_hole_attack_repr_str(self) -> None:
-        expected_output = 'GremlinBlackholeAttack({"length": 65, "device": "", "ips": [], "protocol": "", "providers": [], "tags": [], "egress_ports": ["^533"], "hostnames": "^api2.gremlin.com", "ingress_ports": []})'
+        expected_output = 'GremlinBlackholeAttack({"length": 65, "device": "", "ips": [], "protocol": "", "providers": [], "tags": [], "egress_ports": ["^533"], "hostnames": "^api2.gremlin.com,example.com", "ingress_ports": []})'
         kwargs = {
             "length": 65,
             "device": "",
@@ -534,7 +534,7 @@ class TestAttackHelpers(unittest.TestCase):
             "providers": [],
             "tags": [],
             "egress_ports": ["^533"],
-            "hostnames": ["^api2.gremlin.com"],
+            "hostnames": ["^api2.gremlin.com", 'example.com'],
             "ingress_ports": [],
         }
         helper = GremlinBlackholeAttack(**kwargs)
