@@ -170,6 +170,41 @@ class GremlinAPIScenarios(GremlinAPI):
 
     @classmethod
     @register_cli_action(
+        "list_scenarios_runs",
+        (),
+        (
+            "startDate",
+            "endDate",
+            "teamId",
+        ),
+    )
+    def list_scenarios_runs(
+        cls,
+        https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
+        *args: tuple,
+        **kwargs: dict,
+    ) -> dict:
+        method: str = "GET"
+        timeset: str = ""
+        state_query: str = ""
+        state: str = cls._info_if_not_param("state", **kwargs)
+        start: str = cls._info_if_not_param("startDate", **kwargs)
+        end: str = cls._info_if_not_param("endDate", **kwargs)
+        if start:
+            timeset += f"startDate={start}&"
+        if end:
+            timeset += f"endDate={end}"
+        if state:
+            state_query += f"&state={state}"
+        endpoint: str = cls._optional_team_endpoint(
+            f"/scenarios/runs/?{timeset}{state_query}", **kwargs
+        )
+        payload: dict = cls._payload(**{"headers": https_client.header()})
+        (resp, body) = https_client.api_call(method, endpoint, **payload)
+        return body
+
+    @classmethod
+    @register_cli_action(
         "run_scenario",
         ("guid",),
         (

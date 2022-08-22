@@ -71,6 +71,15 @@ class TestScenarios(unittest.TestCase):
             GremlinAPIScenarios.list_scenario_runs(**mock_scenario_guid), mock_data
         )
 
+    @patch("requests.get")
+    def test_list_scenarios_runs_with_decorator(self, mock_get) -> None:
+        mock_get.return_value = requests.Response()
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json = mock_json
+        self.assertEqual(
+            GremlinAPIScenarios.list_scenarios_runs(**mock_scenario_guid), mock_data
+        )
+
     @patch("requests.post")
     def test_run_scenario_with_decorator(self, mock_get) -> None:
         mock_get.return_value = requests.Response()
