@@ -38,8 +38,7 @@ Gremlin API Key protected.  Ctrl + Shift + V works to paste in Linux and Windows
 to paste in macOS.  Your Gremlin API Key can be copied from the webpage by clicking the double
 document copy button next to the API Key name then clicking the popup.
 """)
-    key = getpass.getpass('Enter your Gremlin API Key: ')
-    config.api_key = 'Key 8b4500db2d49008c5a89336b0cef41ca0e08ae5b0f8034497fd2cc61b1f20a5e'
+    config.api_key = getpass.getpass('Enter your Gremlin API Key: ')
     all_orgs = orgs.list_orgs()
     name_and_id = [(x['name'].casefold(), x['name'], x['identifier']) for x in all_orgs]
     name_and_id.sort()
