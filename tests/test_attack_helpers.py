@@ -525,7 +525,7 @@ class TestAttackHelpers(unittest.TestCase):
         self.assertEqual(helper_output, expected_output)
 
     def test_black_hole_attack_repr_str(self) -> None:
-        expected_output = 'GremlinBlackholeAttack({"length": 65, "device": "", "ips": [], "protocol": "", "providers": [], "tags": [], "egress_ports": ["^533"], "hostnames": "^api2.gremlin.com,example.com", "ingress_ports": []})'
+        expected_output = 'GremlinBlackholeAttack({"length": 65, "device": "", "ips": [], "protocol": "", "providers": [], "tags": [], "egress_ports": ["^533"], "hostnames": ["^api2.gremlin.com", "example.com"], "ingress_ports": []})'
         kwargs = {
             "length": 65,
             "device": "",
@@ -578,7 +578,7 @@ class TestAttackHelpers(unittest.TestCase):
         self.assertEqual(helper_output, expected_output)
 
     def test_latency_attack_repr_str(self) -> None:
-        expected_output = 'GremlinLatencyAttack({"length": 75, "device": "", "ips": [], "protocol": "", "providers": [], "tags": [], "delay": 100, "egress_ports": ["^533"], "hostnames": "^api2.gremlin.com", "source_ports": []})'
+        expected_output = 'GremlinLatencyAttack({"length": 75, "device": "", "ips": [], "protocol": "", "providers": [], "tags": [], "delay": 100, "egress_ports": ["^533"], "hostnames": ["^api2.gremlin.com"], "source_ports": []})'
         kwargs = {
             "length": 75,
             "device": "",
@@ -612,7 +612,7 @@ class TestAttackHelpers(unittest.TestCase):
         self.assertEqual(helper_output, expected_output)
 
     def test_packet_loss_attack_repr_str(self) -> None:
-        expected_output = 'GremlinPacketLossAttack({"length": 85, "device": "", "ips": [], "protocol": "", "providers": [], "tags": [], "corrupt": false, "egress_ports": ["^543"], "hostnames": "^api3.gremlin.com", "percent": 1, "source_ports": []})'
+        expected_output = 'GremlinPacketLossAttack({"length": 85, "device": "", "ips": [], "protocol": "", "providers": [], "tags": [], "corrupt": false, "egress_ports": ["^543"], "hostnames": ["^api3.gremlin.com"], "percent": 1, "source_ports": []})'
         kwargs = {
             "length": 85,
             "device": "",
