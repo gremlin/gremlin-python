@@ -24,6 +24,8 @@ See individual .md files
 
 [Schedules](schedules.md)
 
+[Enable / disable all Agents for a Team](team-enable.md)
+
 [Users](users.md)
 
 
