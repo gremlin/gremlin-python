@@ -413,8 +413,15 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
     def tags(self, _tags: dict = None) -> None:
         if isinstance(_tags, dict):
             for _tag in _tags:
-                if self._valid_tag_pair(_tag, _tags[_tag]):
-                    self._multiSelectTags[_tag] = [_tags[_tag]]
+                self._filter_active_tags()
+                if isinstance(_tags[_tag], list):
+                    self._multiSelectTags[_tag] = []
+                    for tagValue in _tags[_tag]:
+                        if self._valid_tag_pair(_tag, tagValue):
+                            self._multiSelectTags[_tag].append(tagValue)
+                else:
+                    if self._valid_tag_pair(_tag, _tags[_tag]):
+                        self._multiSelectTags[_tag] = [_tags[_tag]]
         if _tags:
             self._ids = []
             self.target_all_hosts = False
@@ -455,7 +462,8 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
                     elif isinstance(_tag_value, list):
                         for _inner_tag_value in _client["tags"].get(_tag):
                             if _inner_tag_value not in self._active_tags[_tag]:
-                                self._active_tags[_tag].append(_inner_tag_value)
+                                self._active_tags[_tag].append(
+                                    _inner_tag_value)
 
     def _load_active_clients(self) -> None:
         if not len(self._active_clients) > 0:
@@ -469,11 +477,7 @@ class GremlinTargetHosts(GremlinAttackTargetHelper):
         return False
 
     def _valid_tag_pair(self, tagKey: str = None, tagValue: str = None) -> bool:
-        if not self._active_tags:
-            self._filter_active_tags()
-        if tagValue in self._active_tags.get(tagKey, []):
-            return True
-        return False
+        return tagValue in self._active_tags.get(tagKey, [])
 
     def api_model(self) -> dict:
         model: dict = super().api_model()
@@ -616,11 +620,10 @@ class GremlinTargetContainers(GremlinAttackTargetHelper):
                         if _label_value not in self._active_labels[_label]:
                             self._active_labels[_label].append(_label_value)
                     elif isinstance(_label_value, list):
-                        for _inner_label_value in _container["container_labels"].get(
-                            _label
-                        ):
+                        for _inner_label_value in _container["container_labels"].get(_label):
                             if _inner_label_value not in self._active_labels[_label]:
-                                self._active_labels[_label].append(_inner_label_value)
+                                self._active_labels[_label].append(
+                                    _inner_label_value)
 
     def _load_active_containers(self) -> None:
         if not len(self._active_containers) > 0:
@@ -1298,7 +1301,8 @@ class GremlinProcessKillerAttack(GremlinStateAttackHelper):
         self.full_match: bool = kwargs.get("full_match", False)  # type: ignore
         self.group: str = kwargs.get("group", str())  # type: ignore
         self.interval: int = kwargs.get("interval", 1)  # type: ignore
-        self.kill_children: bool = kwargs.get("kill_children", False)  # type: ignore
+        self.kill_children: bool = kwargs.get(
+            "kill_children", False)  # type: ignore
         self.process: str = kwargs.get("process", str())  # type: ignore
         self.target_newest: bool = kwargs.get("target_newest", False)  # type: ignore
         self.target_oldest: bool = kwargs.get("target_oldest", False)  # type: ignore
