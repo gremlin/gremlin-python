@@ -135,7 +135,8 @@ class GremlinAPIRequestsClient(GremlinAPIHttpClient):
             resp = client(uri, allow_redirects=False, **kwargs)
 
         if resp.status_code >= 400:
-            error_msg: str = f"error {resp.status_code} : {resp.reason}"
+            if resp.reason:
+                error_msg: str = f"error {resp.status_code} : {resp.reason} - {resp.text}"
             log.warning(error_msg)
             if log.getEffectiveLevel() == logging.DEBUG:
                 log.debug(f"{uri}\n{data}\n{kwargs}")
