@@ -104,3 +104,8 @@ mock_status_check_node = {
     "evaluation_ok_status_codes": ["24-42"],
     "evaluation_ok_latency_max": 999,
 }
+
+# Reliability Tests Mocks
+mock_service_id = '83B2D777-ECBA-4A76-9227-95F4E6814FE7'
+mock_dependency_id = 'C117C596-03E4-43BA-8300-AF4E9B629DC8'
+mock_reliability_test_id = 'scaling-latency-test'
