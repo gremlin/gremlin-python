@@ -164,7 +164,7 @@ class GremlinAPIReliabilityTests(GremlinAPI):
         else:
             if 'dependency_id' in kwargs or 'dependencyId' in kwargs:
                 raise GremlinParameterError(
-                    'The reliability test you are trying to run does not require a dependency ID.'
+                    'The reliability test you are trying to run does not require a dependency_id'
                 )
 
         endpoint = cls._required_team_endpoint(f"/reliability-tests/{reliability_test_id}/runs", **kwargs)

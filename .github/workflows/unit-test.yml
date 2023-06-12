@@ -30,5 +30,12 @@ jobs:
       - name: Install modules
         run: |
           python -m pip install --upgrade requests
+      - name: Install pytest module
+        run: |
+          python -m pip install pytest pytest-mock responses
       - name: Executes Unit Tests
         run: python -m tests.test_all
+      - name: Execute pytests
+        run: python -m pytest tests/pytest_*.py
+
+

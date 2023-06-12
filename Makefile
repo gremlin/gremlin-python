@@ -15,6 +15,7 @@ package:
 
 test:
 	python3 -m tests.test_all
+	pytest tests/pytest_*
 
 lint: typecheck
 	python3 -m black $(PWD)/gremlinapi
