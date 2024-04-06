@@ -239,7 +239,7 @@ def saml_login(email=GremlinAPIConfig.user, saml_assertion=None, relay_state=Non
             )
         GremlinAPIConfig.user = email
     if not saml_assertion or not relay_state:
-        error_msg = f"Expecting a SAML assertion and relay state, received none"
+        error_msg = "Expecting a SAML assertion and relay state, received none"
         log.fatal(error_msg)
         raise GremlinParameterError(error_msg)
     acs_response = GremlinAPISaml.acs(
