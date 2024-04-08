@@ -238,8 +238,8 @@ def saml_login(email=GremlinAPIConfig.user, saml_assertion=None, relay_state=Non
                 "Received user without value being present in config, updating config to match."
             )
         GremlinAPIConfig.user = email
-    if not saml_assertion and relay_state:
-        error_msg = f"Expecting a SAML assertion and relay state, received none"
+    if not saml_assertion or not relay_state:
+        error_msg = "Both saml_assertion and relay_state arguments must be specified"
         log.fatal(error_msg)
         raise GremlinParameterError(error_msg)
     acs_response = GremlinAPISaml.acs(
