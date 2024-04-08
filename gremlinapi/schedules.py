@@ -225,7 +225,7 @@ class GremlinAPISchedules(GremlinAPI):
         *args: tuple,
         **kwargs: dict,
     ) -> dict:
-        method: str = "POST"
+        method: str = "PUT"
         guid: str = cls._error_if_not_param("guid", **kwargs)
         data: dict = cls._error_if_not_json_body(**kwargs)
         endpoint: str = cls._optional_team_endpoint(

@@ -95,7 +95,7 @@ class TestSchedules(unittest.TestCase):
             GremlinAPISchedules.get_scenario_schedule(**mock_guid), mock_data
         )
 
-    @patch("requests.post")
+    @patch("requests.put")
     def test_update_scenario_schedule_with_decorator(self, mock_get) -> None:
         mock_get.return_value = requests.Response()
         mock_get.return_value.status_code = 200
