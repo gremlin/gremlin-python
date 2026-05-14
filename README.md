@@ -18,21 +18,10 @@ pip3 install gremlinapi
 ```bash
 git clone git@github.com:gremlin/gremlin-python.git
 cd gremlin-python
-python3 setup.py install
-```
-
-### Use Packaged Docker runtime
-
-Build and run this project's self contained docker image with all the necessary dependencies
-```shell script
-  make docker-build && make docker-run-interactive
+pip3 install .
 ```
 
 ## Usage
-
-### CLI
-
-Coming soon
 
 ## Authenticate to the API
 
