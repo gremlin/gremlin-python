@@ -96,19 +96,19 @@ class SecretsFilter(logging.Filter):
         password = GremlinAPIConfig.password or ""
         if len(api_key) >= secret_length:
             record.msg = re.sub(
-                rf"{api_key}[\'\s]?",
+                rf"{re.escape(api_key)}[\'\s]?",
                 "..." + api_key[-4:],
                 record.msg,
             )
         if len(bearer_token) >= secret_length:
             record.msg = re.sub(
-                rf"{bearer_token}[\'\s]?",
+                rf"{re.escape(bearer_token)}[\'\s]?",
                 "..." + bearer_token[-4:],
                 record.msg,
             )
         if len(password) >= secret_length:
             record.msg = re.sub(
-                rf"{password}[\'\s]?",
+                rf"{re.escape(password)}[\'\s]?",
                 "[PASSWORD REDACTED]",
                 record.msg,
             )

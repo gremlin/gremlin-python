@@ -114,6 +114,7 @@ class GremlinAPIReports(GremlinAPI):
         while True:
             endpoint = cls._add_query_param("/reports/teams/paged", "startDate", start_date)
             endpoint = cls._add_query_param(endpoint, "endDate", end_date)
+            endpoint = cls._optional_team_endpoint(endpoint, **kwargs)
             if page_size:
                 endpoint = cls._add_query_param(endpoint, "pageSize", str(page_size))
             if page_token:

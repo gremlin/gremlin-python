@@ -4,21 +4,11 @@
 
 Package version control conforms to semantic versioning.
 
-This package uses [bumpversion](https://github.com/peritus/bumpversion) to manage the version
+The version is defined statically in `pyproject.toml`:
 
-Quick usage:
-
-Major version update:
-```bash
-bumpversion --new-version 1.0.0 major
+```toml
+[project]
+version = "0.19.0"
 ```
 
-Minor version update:
-```bash
-bumpversion --new-version 0.4.0 minor
-```
-
-Patch version update:
-```bash
-bumpversion --new-version 0.3.13 patch
-```
+To cut a release, update the `version` field manually and open a PR against `main`.
