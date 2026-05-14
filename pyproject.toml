@@ -1,6 +1,6 @@
 [project]
 name = "gremlinapi"
-version = "0.19.1"
+version = "0.19.2"
 description = "Gremlin library for Python"
 readme = "README.md"
 license = { text = "Apache 2.0" }
@@ -9,7 +9,6 @@ requires-python = ">=3.8"
 dependencies = [
     "requests>=2.22.0",
     "urllib3>=1.25.8",
-    "pytest>=7.3.1"
 ]
 classifiers = [
     "Programming Language :: Python :: 3.8",
@@ -39,5 +38,6 @@ build-backend = "setuptools.build_meta"
 
 [dependency-groups]
 dev = [
+    "pytest>=7.3.1",
     "tox>=4.8.0",
 ]

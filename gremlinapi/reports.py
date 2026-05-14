@@ -98,7 +98,7 @@ class GremlinAPIReports(GremlinAPI):
         return body
 
     @classmethod
-    @register_cli_action("report_teams", ("",), ("start", "end", "period", "teamId"))
+    @register_cli_action("report_teams", ("",), ("start", "end", "period", "teamId", "pageSize"))
     def report_teams(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),

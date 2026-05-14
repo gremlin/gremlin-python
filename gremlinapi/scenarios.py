@@ -144,6 +144,7 @@ class GremlinAPIScenarios(GremlinAPI):
             "startDate",
             "endDate",
             "teamId",
+            "pageSize",
         ),
     )
     def list_scenario_runs(
@@ -337,7 +338,7 @@ class GremlinAPIScenarios(GremlinAPI):
         return body
 
     @classmethod
-    @register_cli_action("list_active_scenarios", ("",), ("teamId",))
+    @register_cli_action("list_active_scenarios", ("",), ("teamId", "pageSize"))
     def list_active_scenarios(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),

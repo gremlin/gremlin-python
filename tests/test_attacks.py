@@ -13,7 +13,7 @@ from gremlinapi.attack_helpers import (
     GremlinLatencyAttack,
 )
 
-from .util import mock_json, mock_data, mock_paged_json, mock_paged_data
+from .util import mock_json, mock_data, mock_paged_json, mock_paged_data, mock_paged_json_page1, mock_paged_json_page2
 
 
 class TestAttacks(unittest.TestCase):
@@ -47,6 +47,21 @@ class TestAttacks(unittest.TestCase):
         self.assertEqual(GremlinAPIAttacks.list_active_attacks(), [mock_data])
 
     @patch("requests.get")
+    def test_list_active_attacks_pagination(self, mock_get) -> None:
+        page1 = requests.Response()
+        page1.status_code = 200
+        page1.json = mock_paged_json_page1
+        page2 = requests.Response()
+        page2.status_code = 200
+        page2.json = mock_paged_json_page2
+        mock_get.side_effect = [page1, page2]
+        result = GremlinAPIAttacks.list_active_attacks()
+        self.assertEqual(len(result), 2)
+        self.assertEqual(mock_get.call_count, 2)
+        second_call_url = mock_get.call_args_list[1][0][0]
+        self.assertIn("pageToken=next-page-token", second_call_url)
+
+    @patch("requests.get")
     def test_list_attacks_with_decorator(self, mock_get) -> None:
         mock_get.return_value = requests.Response()
         mock_get.return_value.status_code = 200
@@ -59,6 +74,21 @@ class TestAttacks(unittest.TestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.json = mock_paged_json
         self.assertEqual(GremlinAPIAttacks.list_completed_attacks(), [mock_data])
+
+    @patch("requests.get")
+    def test_list_completed_attacks_pagination(self, mock_get) -> None:
+        page1 = requests.Response()
+        page1.status_code = 200
+        page1.json = mock_paged_json_page1
+        page2 = requests.Response()
+        page2.status_code = 200
+        page2.json = mock_paged_json_page2
+        mock_get.side_effect = [page1, page2]
+        result = GremlinAPIAttacks.list_completed_attacks()
+        self.assertEqual(len(result), 2)
+        self.assertEqual(mock_get.call_count, 2)
+        second_call_url = mock_get.call_args_list[1][0][0]
+        self.assertIn("pageToken=next-page-token", second_call_url)
 
     @patch("requests.get")
     def test_get_attack_with_decorator(self, mock_get) -> None:
