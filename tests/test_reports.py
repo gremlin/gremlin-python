@@ -4,7 +4,7 @@ import logging
 import requests
 from gremlinapi.reports import GremlinAPIReports, GremlinAPIReportsSecurity
 
-from .util import mock_json, mock_data, mock_report
+from .util import mock_json, mock_data, mock_paged_json, mock_paged_data, mock_report
 
 
 class TestReports(unittest.TestCase):
@@ -40,8 +40,8 @@ class TestReports(unittest.TestCase):
     def test_report_teams_with_decorator(self, mock_get) -> None:
         mock_get.return_value = requests.Response()
         mock_get.return_value.status_code = 200
-        mock_get.return_value.json = mock_json
-        self.assertEqual(GremlinAPIReports.report_teams(**mock_report), mock_data)
+        mock_get.return_value.json = mock_paged_json
+        self.assertEqual(GremlinAPIReports.report_teams(**mock_report), [mock_data])
 
     @patch("requests.get")
     def test_report_users_with_decorator(self, mock_get) -> None:

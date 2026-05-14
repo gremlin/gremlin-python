@@ -22,6 +22,13 @@ def bearer_token_json():
 def mock_json():
     return mock_data
 
+
+mock_paged_data = {"items": [mock_data]}
+
+
+def mock_paged_json():
+    return mock_paged_data
+
 mock_base_url = "https://api.gremlin.com/v1"
 
 mock_org_id = "1234567890a"

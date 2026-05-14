@@ -17,6 +17,10 @@ if parentPath not in sys.path:
 
 
 class TestHttpClient(unittest.TestCase):
+    def setUp(self) -> None:
+        config.api_key = None
+        config.bearer_token = None
+
     def test_api_key(self) -> None:
         config.api_key = api_key
         https_client: GremlinAPIHttpClient = get_gremlin_httpclient()

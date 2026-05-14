@@ -7,7 +7,18 @@ import functools, warnings, inspect
 
 log = logging.getLogger("GremlinAPI.client")
 
-_version = "0.18.3"
+try:
+    from importlib.metadata import version as _pkg_version
+    _version = _pkg_version("gremlinapi")
+except Exception:
+    try:
+        import re
+        from pathlib import Path
+        _pyproject = Path(__file__).resolve().parent.parent / "pyproject.toml"
+        _match = re.search(r'^version\s*=\s*"([^"]+)"', _pyproject.read_text(), re.MULTILINE)
+        _version = _match.group(1) if _match else "unknown"
+    except Exception:
+        _version = "unknown"
 
 
 def get_version():

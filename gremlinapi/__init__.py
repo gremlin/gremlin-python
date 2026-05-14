@@ -91,21 +91,24 @@ __version__ = get_version()
 class SecretsFilter(logging.Filter):
     def filter(self, record):
         secret_length = 5
-        if len(GremlinAPIConfig.api_key) >= secret_length:
+        api_key = GremlinAPIConfig.api_key or ""
+        bearer_token = GremlinAPIConfig.bearer_token or ""
+        password = GremlinAPIConfig.password or ""
+        if len(api_key) >= secret_length:
             record.msg = re.sub(
-                rf"{GremlinAPIConfig.api_key}[\'\s]?",
-                "..." + GremlinAPIConfig.api_key[-4:],
+                rf"{api_key}[\'\s]?",
+                "..." + api_key[-4:],
                 record.msg,
             )
-        if len(GremlinAPIConfig.bearer_token) >= secret_length:
+        if len(bearer_token) >= secret_length:
             record.msg = re.sub(
-                rf"{GremlinAPIConfig.bearer_token}[\'\s]?",
-                "..." + GremlinAPIConfig.bearer_token[-4:],
+                rf"{bearer_token}[\'\s]?",
+                "..." + bearer_token[-4:],
                 record.msg,
             )
-        if len(GremlinAPIConfig.password) >= secret_length:
+        if len(password) >= secret_length:
             record.msg = re.sub(
-                rf"{GremlinAPIConfig.password}[\'\s]?",
+                rf"{password}[\'\s]?",
                 "[PASSWORD REDACTED]",
                 record.msg,
             )

@@ -4,7 +4,7 @@ import logging
 import requests
 from gremlinapi.scenarios import GremlinAPIScenarios, GremlinAPIScenariosRecommended
 
-from .util import mock_json, mock_data, mock_scenario, mock_payload, mock_scenario_guid
+from .util import mock_json, mock_data, mock_paged_json, mock_paged_data, mock_scenario, mock_payload, mock_scenario_guid
 
 
 class TestScenarios(unittest.TestCase):
@@ -66,9 +66,9 @@ class TestScenarios(unittest.TestCase):
     def test_list_scenario_runs_with_decorator(self, mock_get) -> None:
         mock_get.return_value = requests.Response()
         mock_get.return_value.status_code = 200
-        mock_get.return_value.json = mock_json
+        mock_get.return_value.json = mock_paged_json
         self.assertEqual(
-            GremlinAPIScenarios.list_scenario_runs(**mock_scenario_guid), mock_data
+            GremlinAPIScenarios.list_scenario_runs(**mock_scenario_guid), [mock_data]
         )
 
     @patch("requests.get")
@@ -132,9 +132,9 @@ class TestScenarios(unittest.TestCase):
     def test_list_active_scenarios_with_decorator(self, mock_get) -> None:
         mock_get.return_value = requests.Response()
         mock_get.return_value.status_code = 200
-        mock_get.return_value.json = mock_json
+        mock_get.return_value.json = mock_paged_json
         self.assertEqual(
-            GremlinAPIScenarios.list_active_scenarios(**mock_scenario_guid), mock_data
+            GremlinAPIScenarios.list_active_scenarios(**mock_scenario_guid), [mock_data]
         )
 
     @patch("requests.get")

@@ -13,7 +13,7 @@ from gremlinapi.attack_helpers import (
     GremlinLatencyAttack,
 )
 
-from .util import mock_json, mock_data
+from .util import mock_json, mock_data, mock_paged_json, mock_paged_data
 
 
 class TestAttacks(unittest.TestCase):
@@ -43,8 +43,8 @@ class TestAttacks(unittest.TestCase):
     def test_list_active_attacks_with_decorator(self, mock_get) -> None:
         mock_get.return_value = requests.Response()
         mock_get.return_value.status_code = 200
-        mock_get.return_value.json = mock_json
-        self.assertEqual(GremlinAPIAttacks.list_active_attacks(), mock_data)
+        mock_get.return_value.json = mock_paged_json
+        self.assertEqual(GremlinAPIAttacks.list_active_attacks(), [mock_data])
 
     @patch("requests.get")
     def test_list_attacks_with_decorator(self, mock_get) -> None:
@@ -57,8 +57,8 @@ class TestAttacks(unittest.TestCase):
     def test_list_completed_attacks_with_decorator(self, mock_get) -> None:
         mock_get.return_value = requests.Response()
         mock_get.return_value.status_code = 200
-        mock_get.return_value.json = mock_json
-        self.assertEqual(GremlinAPIAttacks.list_completed_attacks(), mock_data)
+        mock_get.return_value.json = mock_paged_json
+        self.assertEqual(GremlinAPIAttacks.list_completed_attacks(), [mock_data])
 
     @patch("requests.get")
     def test_get_attack_with_decorator(self, mock_get) -> None:

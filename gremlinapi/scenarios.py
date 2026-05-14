@@ -151,22 +151,34 @@ class GremlinAPIScenarios(GremlinAPI):
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
-    ) -> dict:
+    ) -> list:
         method: str = "GET"
         guid: str = cls._error_if_not_param("guid", **kwargs)
-        timeset: str = ""
         start: str = cls._info_if_not_param("startDate", **kwargs)
         end: str = cls._info_if_not_param("endDate", **kwargs)
-        if start:
-            timeset += f"startDate={start}&"
-        if end:
-            timeset += f"endDate={end}"
-        endpoint: str = cls._optional_team_endpoint(
-            f"/scenarios/{guid}/runs/?{timeset}", **kwargs
-        )
-        payload: dict = cls._payload(**{"headers": https_client.header()})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        limit = kwargs.get("pageSize", 50)
+        run_number: str = None
+        all_items: list = []
+        while True:
+            endpoint = cls._optional_team_endpoint(f"/scenarios/{guid}/runs/paged", **kwargs)
+            if start:
+                endpoint = cls._add_query_param(endpoint, "startDate", start)
+            if end:
+                endpoint = cls._add_query_param(endpoint, "endDate", end)
+            endpoint = cls._add_query_param(endpoint, "limit", str(limit))
+            if run_number:
+                endpoint = cls._add_query_param(endpoint, "runNumber", run_number)
+            payload: dict = cls._payload(**{"headers": https_client.header()})
+            log.debug(f"list_scenario_runs: fetching page runNumber={run_number or 1} endpoint={endpoint}")
+            (resp, body) = https_client.api_call(method, endpoint, **payload)
+            page_items = body.get("items", [])
+            all_items.extend(page_items)
+            next_run_number = body.get("pageToken") or None
+            log.debug(f"list_scenario_runs: got {len(page_items)} items, total={len(all_items)}, next pageToken={next_run_number}")
+            if not next_run_number or not page_items or next_run_number == run_number:
+                break
+            run_number = next_run_number
+        return all_items
 
     @classmethod
     @register_cli_action(
@@ -331,12 +343,24 @@ class GremlinAPIScenarios(GremlinAPI):
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
-    ) -> dict:
+    ) -> list:
         method: str = "GET"
-        endpoint: str = cls._optional_team_endpoint(f"/scenarios/active", **kwargs)
-        payload: dict = cls._payload(**{"headers": https_client.header()})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        page_size = kwargs.get("pageSize", None)
+        page_token: str = None
+        all_items: list = []
+        while True:
+            endpoint = cls._optional_team_endpoint("/scenarios/active/paged", **kwargs)
+            if page_size:
+                endpoint = cls._add_query_param(endpoint, "pageSize", str(page_size))
+            if page_token:
+                endpoint = cls._add_query_param(endpoint, "pageToken", page_token)
+            payload: dict = cls._payload(**{"headers": https_client.header()})
+            (resp, body) = https_client.api_call(method, endpoint, **payload)
+            all_items.extend(body.get("items", []))
+            page_token = body.get("pageToken") or None
+            if not page_token:
+                break
+        return all_items
 
     @classmethod
     @register_cli_action("list_archived_scenarios", ("",), ("teamId",))

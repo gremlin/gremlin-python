@@ -104,15 +104,27 @@ class GremlinAPIReports(GremlinAPI):
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
-    ) -> dict:
+    ) -> list:
         method: str = "GET"
-        params: list = ["startDate", "endDate"]
-        endpoint: str = cls._build_query_string_option_team_endpoint(
-            "/reports/teams", params, **kwargs
-        )
-        payload: dict = cls._payload(**{"headers": https_client.header()})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        start_date: str = cls._error_if_not_param("startDate", **kwargs)
+        end_date: str = cls._error_if_not_param("endDate", **kwargs)
+        page_size = kwargs.get("pageSize", None)
+        page_token: str = None
+        all_items: list = []
+        while True:
+            endpoint = cls._add_query_param("/reports/teams/paged", "startDate", start_date)
+            endpoint = cls._add_query_param(endpoint, "endDate", end_date)
+            if page_size:
+                endpoint = cls._add_query_param(endpoint, "pageSize", str(page_size))
+            if page_token:
+                endpoint = cls._add_query_param(endpoint, "pageToken", page_token)
+            payload: dict = cls._payload(**{"headers": https_client.header()})
+            (resp, body) = https_client.api_call(method, endpoint, **payload)
+            all_items.extend(body.get("items", []))
+            page_token = body.get("pageToken") or None
+            if not page_token:
+                break
+        return all_items
 
     @classmethod
     @register_cli_action("report_users", ("",), ("start", "end", "period", "teamId"))

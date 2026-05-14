@@ -8,10 +8,10 @@ ENV_VARS=.env
 all: docker-build
 
 install:
-	python3 setup.py install
+	pip install .
 
 package:
-	python3 setup.py sdist bdist_wheel
+	python3 -m build
 
 test:
 	python3 -m tests.test_all
