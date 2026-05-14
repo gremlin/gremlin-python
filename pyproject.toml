@@ -5,14 +5,19 @@ description = "Gremlin library for Python"
 readme = "README.md"
 license = { text = "Apache 2.0" }
 authors = [{ name = "Kyle Hultman", email = "kyle@gremlin.com" }]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies = [
     "requests>=2.22.0",
     "urllib3>=1.25.8",
 ]
 classifiers = [
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 
 [project.urls]
@@ -28,7 +33,7 @@ include-package-data = true
 exclude = ["temp*.py", "test"]
 
 [build-system]
-requires = ["setuptools>=40.9.0", "wheel"]
+requires = ["setuptools>=61.0.0"]
 build-backend = "setuptools.build_meta"
 
 [dependency-groups]
