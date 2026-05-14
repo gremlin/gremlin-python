@@ -1,6 +1,6 @@
 [project]
 name = "gremlinapi"
-version = "0.19.0"
+version = "0.19.1"
 description = "Gremlin library for Python"
 readme = "README.md"
 license = { text = "Apache 2.0" }
