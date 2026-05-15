@@ -75,12 +75,27 @@ class GremlinAPIAttacks(GremlinAPI):
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
-    ) -> dict:
+    ) -> list:
         method: str = "GET"
-        endpoint: str = cls._list_endpoint("/attacks/active", **kwargs)
-        payload: dict = cls._payload(**{"headers": https_client.header()})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        source: str = kwargs.get("source", None)
+        page_size = kwargs.get("pageSize", None)
+        page_token: str = None
+        all_items: list = []
+        while True:
+            endpoint = cls._optional_team_endpoint("/attacks/active/paged", **kwargs)
+            if source and source.lower() in ("adhoc", "scenario"):
+                endpoint = cls._add_query_param(endpoint, "source", source)
+            if page_size:
+                endpoint = cls._add_query_param(endpoint, "pageSize", str(page_size))
+            if page_token:
+                endpoint = cls._add_query_param(endpoint, "pageToken", page_token)
+            payload: dict = cls._payload(**{"headers": https_client.header()})
+            (resp, body) = https_client.api_call(method, endpoint, **payload)
+            all_items.extend(body.get("items", []))
+            page_token = body.get("pageToken") or None
+            if not page_token:
+                break
+        return all_items
 
     @classmethod
     @register_cli_action("list_attacks", ("",), ("source", "pageSize", "teamId"))
@@ -110,17 +125,27 @@ class GremlinAPIAttacks(GremlinAPI):
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
-    ) -> dict:
-        """
-        :param https_client:
-        :param kwargs: { source(adhoc or scenario, query), pageSize(int32, query), teamId(string, query) }
-        :return:
-        """
+    ) -> list:
         method: str = "GET"
-        endpoint: str = cls._list_endpoint("/attacks/completed", **kwargs)
-        payload: dict = cls._payload(**{"headers": https_client.header()})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        source: str = kwargs.get("source", None)
+        page_size = kwargs.get("pageSize", None)
+        page_token: str = None
+        all_items: list = []
+        while True:
+            endpoint = cls._optional_team_endpoint("/attacks/completed/paged", **kwargs)
+            if source and source.lower() in ("adhoc", "scenario"):
+                endpoint = cls._add_query_param(endpoint, "source", source)
+            if page_size:
+                endpoint = cls._add_query_param(endpoint, "pageSize", str(page_size))
+            if page_token:
+                endpoint = cls._add_query_param(endpoint, "pageToken", page_token)
+            payload: dict = cls._payload(**{"headers": https_client.header()})
+            (resp, body) = https_client.api_call(method, endpoint, **payload)
+            all_items.extend(body.get("items", []))
+            page_token = body.get("pageToken") or None
+            if not page_token:
+                break
+        return all_items
 
     @classmethod
     @register_cli_action("get_attack", ("guid",), ("teamId",))

@@ -1,9 +1,43 @@
-[build-system]
-  requires = [
-  "setuptools >= 40.9.0",
-  "setuptools_scm >= 1.15.0",
-  "setuptools_scm_git_archive >= 1.0",
-  "wheel",
-  "gremlinapi",
+[project]
+name = "gremlinapi"
+version = "0.19.3"
+description = "Gremlin library for Python"
+readme = "README.md"
+license = { text = "Apache 2.0" }
+authors = [{ name = "Kyle Hultman", email = "kyle@gremlin.com" }]
+requires-python = ">=3.8"
+dependencies = [
+    "requests>=2.22.0",
+    "urllib3>=1.25.8",
 ]
+classifiers = [
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+
+[project.urls]
+Homepage = "https://github.com/gremlin/gremlin-python/"
+
+[project.scripts]
+pgremlin = "gremlinapi.cli:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+exclude = ["temp*.py", "test"]
+
+[build-system]
+requires = ["setuptools>=61.0.0"]
 build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "pytest>=7.3.1",
+    "tox>=4.8.0",
+]

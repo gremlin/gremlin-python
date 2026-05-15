@@ -8,7 +8,7 @@ from gremlinapi.users import (
     GremlinAPIUsersAuthMFA,
 )
 
-from .util import mock_json, mock_data, mock_users, mock_body
+from .util import mock_json, mock_data, mock_users, mock_body, mock_paged_json, mock_paged_data
 
 
 class TestUsers(unittest.TestCase):
@@ -21,8 +21,9 @@ class TestUsers(unittest.TestCase):
     def test_list_users_with_decorator(self, mock_get) -> None:
         mock_get.return_value = requests.Response()
         mock_get.return_value.status_code = 200
-        mock_get.return_value.json = mock_json
-        self.assertEqual(GremlinAPIUsers.list_users(), mock_data)
+        mock_get.return_value.json = mock_paged_json
+        expected = {"active": mock_paged_data["items"], "invited": [], "revoked": []}
+        self.assertEqual(GremlinAPIUsers.list_users(), expected)
 
     @patch("requests.post")
     def test_add_user_to_team_with_decorator(self, mock_get) -> None:
@@ -49,8 +50,8 @@ class TestUsers(unittest.TestCase):
     def test_list_active_users_with_decorator(self, mock_get) -> None:
         mock_get.return_value = requests.Response()
         mock_get.return_value.status_code = 200
-        mock_get.return_value.json = mock_json
-        self.assertEqual(GremlinAPIUsers.list_active_users(), mock_data)
+        mock_get.return_value.json = mock_paged_json
+        self.assertEqual(GremlinAPIUsers.list_active_users(), [mock_data])
 
     @patch("requests.post")
     def test_invite_user_with_decorator(self, mock_get) -> None:

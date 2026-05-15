@@ -157,18 +157,30 @@ class GremlinAPICompanies(GremlinAPI):
         return body
 
     @classmethod
-    @register_cli_action("list_company_users", ("identifier",), ("",))
+    @register_cli_action("list_company_users", ("identifier",), ("pageSize",))
     def list_company_users(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         **kwargs: dict,
-    ) -> dict:
+    ) -> list:
         method: str = "GET"
         identifier: str = cls._error_if_not_param("identifier", **kwargs)
-        endpoint: str = f"/companies/{identifier}/users"
-        payload: dict = cls._payload(**{"headers": https_client.header()})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        page_size = kwargs.get("pageSize", None)
+        page_token: str = None
+        all_items: list = []
+        while True:
+            endpoint: str = f"/companies/{identifier}/users/paged"
+            if page_size:
+                endpoint = cls._add_query_param(endpoint, "pageSize", str(page_size))
+            if page_token:
+                endpoint = cls._add_query_param(endpoint, "pageToken", page_token)
+            payload: dict = cls._payload(**{"headers": https_client.header()})
+            (resp, body) = https_client.api_call(method, endpoint, **payload)
+            all_items.extend(body.get("items", []))
+            page_token = body.get("page_token") or None
+            if not page_token:
+                break
+        return all_items
 
     @classmethod
     @register_cli_action(

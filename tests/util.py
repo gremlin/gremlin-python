@@ -22,6 +22,23 @@ def bearer_token_json():
 def mock_json():
     return mock_data
 
+
+mock_paged_data = {"items": [mock_data]}
+mock_paged_data_page1 = {"items": [mock_data], "pageToken": "next-page-token"}
+mock_paged_data_page2 = {"items": [{"testkey": "testval2"}]}
+
+
+def mock_paged_json():
+    return mock_paged_data
+
+
+def mock_paged_json_page1():
+    return mock_paged_data_page1
+
+
+def mock_paged_json_page2():
+    return mock_paged_data_page2
+
 mock_base_url = "https://api.gremlin.com/v1"
 
 mock_org_id = "1234567890a"

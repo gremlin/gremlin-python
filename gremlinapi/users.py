@@ -38,7 +38,7 @@ class GremlinAPIUsers(GremlinAPI):
         return role
 
     @classmethod
-    @register_cli_action("list_user", ("",), ("teamId",))
+    @register_cli_action("list_user", ("",), ("teamId", "pageSize"))
     def list_users(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
@@ -46,10 +46,25 @@ class GremlinAPIUsers(GremlinAPI):
         **kwargs: dict,
     ) -> dict:
         method: str = "GET"
-        endpoint: str = cls._optional_team_endpoint(f"/users", **kwargs)
-        payload: dict = cls._payload(**{"headers": https_client.header()})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        page_size = kwargs.get("pageSize", None)
+        page_token: str = None
+        result: dict = {"active": [], "invited": [], "revoked": []}
+        state_map: dict = {"ACTIVE": "active", "INVITED": "invited", "REVOKED": "revoked"}
+        while True:
+            endpoint: str = cls._optional_team_endpoint("/users/paged", **kwargs)
+            if page_size:
+                endpoint = cls._add_query_param(endpoint, "pageSize", str(page_size))
+            if page_token:
+                endpoint = cls._add_query_param(endpoint, "pageToken", page_token)
+            payload: dict = cls._payload(**{"headers": https_client.header()})
+            (resp, body) = https_client.api_call(method, endpoint, **payload)
+            for item in body.get("items", []):
+                bucket = state_map.get(item.get("state", "").upper(), "active")
+                result[bucket].append(item)
+            page_token = body.get("page_token")
+            if not page_token:
+                break
+        return result
 
     @classmethod
     @register_cli_action("add_user_to_team", ("body",), ("teamId",))
@@ -100,18 +115,30 @@ class GremlinAPIUsers(GremlinAPI):
         return body
 
     @classmethod
-    @register_cli_action("list_active_user", ("",), ("teamId",))
+    @register_cli_action("list_active_user", ("",), ("teamId", "pageSize"))
     def list_active_users(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
         *args: tuple,
         **kwargs: dict,
-    ) -> dict:
+    ) -> list:
         method: str = "GET"
-        endpoint: str = cls._optional_team_endpoint(f"/users/active", **kwargs)
-        payload: dict = cls._payload(**{"headers": https_client.header()})
-        (resp, body) = https_client.api_call(method, endpoint, **payload)
-        return body
+        page_size = kwargs.get("pageSize", None)
+        page_token: str = None
+        all_items: list = []
+        while True:
+            endpoint: str = cls._optional_team_endpoint("/users/active/paged", **kwargs)
+            if page_size:
+                endpoint = cls._add_query_param(endpoint, "pageSize", str(page_size))
+            if page_token:
+                endpoint = cls._add_query_param(endpoint, "pageToken", page_token)
+            payload: dict = cls._payload(**{"headers": https_client.header()})
+            (resp, body) = https_client.api_call(method, endpoint, **payload)
+            all_items.extend(body.get("items", []))
+            page_token = body.get("page_token") or None
+            if not page_token:
+                break
+        return all_items
 
     @classmethod
     @register_cli_action("invite_user", ("email",), ("teamId",))

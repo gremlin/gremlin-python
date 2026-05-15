@@ -4,7 +4,17 @@ import logging
 import requests
 from gremlinapi.scenarios import GremlinAPIScenarios, GremlinAPIScenariosRecommended
 
-from .util import mock_json, mock_data, mock_scenario, mock_payload, mock_scenario_guid
+from .util import (
+    mock_json,
+    mock_data,
+    mock_paged_json,
+    mock_paged_data,
+    mock_paged_json_page1,
+    mock_paged_json_page2,
+    mock_scenario,
+    mock_payload,
+    mock_scenario_guid,
+)
 
 
 class TestScenarios(unittest.TestCase):
@@ -66,10 +76,25 @@ class TestScenarios(unittest.TestCase):
     def test_list_scenario_runs_with_decorator(self, mock_get) -> None:
         mock_get.return_value = requests.Response()
         mock_get.return_value.status_code = 200
-        mock_get.return_value.json = mock_json
+        mock_get.return_value.json = mock_paged_json
         self.assertEqual(
-            GremlinAPIScenarios.list_scenario_runs(**mock_scenario_guid), mock_data
+            GremlinAPIScenarios.list_scenario_runs(**mock_scenario_guid), [mock_data]
         )
+
+    @patch("requests.get")
+    def test_list_scenario_runs_pagination(self, mock_get) -> None:
+        page1 = requests.Response()
+        page1.status_code = 200
+        page1.json = mock_paged_json_page1
+        page2 = requests.Response()
+        page2.status_code = 200
+        page2.json = mock_paged_json_page2
+        mock_get.side_effect = [page1, page2]
+        result = GremlinAPIScenarios.list_scenario_runs(**mock_scenario_guid)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(mock_get.call_count, 2)
+        second_call_url = mock_get.call_args_list[1][0][0]
+        self.assertIn("runNumber=next-page-token", second_call_url)
 
     @patch("requests.get")
     def test_list_scenarios_runs_with_decorator(self, mock_get) -> None:
@@ -132,10 +157,25 @@ class TestScenarios(unittest.TestCase):
     def test_list_active_scenarios_with_decorator(self, mock_get) -> None:
         mock_get.return_value = requests.Response()
         mock_get.return_value.status_code = 200
-        mock_get.return_value.json = mock_json
+        mock_get.return_value.json = mock_paged_json
         self.assertEqual(
-            GremlinAPIScenarios.list_active_scenarios(**mock_scenario_guid), mock_data
+            GremlinAPIScenarios.list_active_scenarios(**mock_scenario_guid), [mock_data]
         )
+
+    @patch("requests.get")
+    def test_list_active_scenarios_pagination(self, mock_get) -> None:
+        page1 = requests.Response()
+        page1.status_code = 200
+        page1.json = mock_paged_json_page1
+        page2 = requests.Response()
+        page2.status_code = 200
+        page2.json = mock_paged_json_page2
+        mock_get.side_effect = [page1, page2]
+        result = GremlinAPIScenarios.list_active_scenarios(**mock_scenario_guid)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(mock_get.call_count, 2)
+        second_call_url = mock_get.call_args_list[1][0][0]
+        self.assertIn("pageToken=next-page-token", second_call_url)
 
     @patch("requests.get")
     def test_list_archived_scenarios_with_decorator(self, mock_get) -> None:

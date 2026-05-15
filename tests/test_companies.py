@@ -4,7 +4,7 @@ import logging
 import requests
 from gremlinapi.companies import GremlinAPICompanies
 
-from .util import mock_json, mock_data, mock_identifier, hooli_id
+from .util import mock_json, mock_data, mock_paged_json, mock_paged_data, mock_identifier, hooli_id
 
 
 class TestCompanies(unittest.TestCase):
@@ -73,9 +73,9 @@ class TestCompanies(unittest.TestCase):
     def test_list_company_users_with_decorator(self, mock_get) -> None:
         mock_get.return_value = requests.Response()
         mock_get.return_value.status_code = 200
-        mock_get.return_value.json = mock_json
+        mock_get.return_value.json = mock_paged_json
         self.assertEqual(
-            GremlinAPICompanies.list_company_users(**mock_identifier), mock_data
+            GremlinAPICompanies.list_company_users(**mock_identifier), [mock_data]
         )
 
     @patch("requests.put")
