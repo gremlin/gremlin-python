@@ -46,6 +46,15 @@ class TestUsers(unittest.TestCase):
         mock_get.return_value.json = mock_json
         self.assertEqual(GremlinAPIUsers.deactivate_user(**mock_users), mock_data)
 
+    @patch("requests.post")
+    def test_remove_user_from_team_with_decorator(self, mock_post) -> None:
+        mock_post.return_value = requests.Response()
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json = mock_json
+        self.assertEqual(
+            GremlinAPIUsers.remove_user_from_team(**{**mock_users, **mock_body}), mock_data
+        )
+
     @patch("requests.get")
     def test_list_active_users_with_decorator(self, mock_get) -> None:
         mock_get.return_value = requests.Response()
