@@ -8,7 +8,7 @@ from gremlinapi.users import (
     GremlinAPIUsersAuthMFA,
 )
 
-from .util import mock_json, mock_data, mock_users, mock_body, mock_paged_json, mock_paged_data
+from .util import mock_json, mock_data, mock_users, mock_body, mock_team_ids, mock_paged_json, mock_paged_data
 
 
 class TestUsers(unittest.TestCase):
@@ -47,12 +47,12 @@ class TestUsers(unittest.TestCase):
         self.assertEqual(GremlinAPIUsers.deactivate_user(**mock_users), mock_data)
 
     @patch("requests.post")
-    def test_remove_user_from_team_with_decorator(self, mock_post) -> None:
-        mock_post.return_value = requests.Response()
-        mock_post.return_value.status_code = 200
-        mock_post.return_value.json = mock_json
+    def test_remove_user_from_team_with_decorator(self, mock_get) -> None:
+        mock_get.return_value = requests.Response()
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json = mock_json
         self.assertEqual(
-            GremlinAPIUsers.remove_user_from_team(**{**mock_users, **mock_body}), mock_data
+            GremlinAPIUsers.remove_user_from_team(**{**mock_users, **mock_team_ids}), mock_data
         )
 
     @patch("requests.get")

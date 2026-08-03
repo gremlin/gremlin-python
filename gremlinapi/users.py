@@ -115,7 +115,7 @@ class GremlinAPIUsers(GremlinAPI):
         return body
 
     @classmethod
-    @register_cli_action("remove_user_from_team", ("email", "body"), ("",))
+    @register_cli_action("remove_user_from_team", ("email", "team_ids"), ("",))
     def remove_user_from_team(
         cls,
         https_client: Type[GremlinAPIHttpClient] = get_gremlin_httpclient(),
@@ -124,9 +124,7 @@ class GremlinAPIUsers(GremlinAPI):
     ) -> dict:
         method: str = "POST"
         email: str = cls._error_if_not_email(**kwargs)
-        team_ids: Union[list, str] = cls._error_if_not_json_body(**kwargs)
-        if isinstance(team_ids, str):
-            team_ids = [team_ids]
+        team_ids: Union[list, str] = cls._error_if_not_team_ids(**kwargs)
         endpoint: str = f"/users/{email}/teams/remove"
         payload: dict = cls._payload(**{"headers": https_client.header(), "data": {"teamIds": team_ids}})  # type: ignore
         (resp, body) = https_client.api_call(method, endpoint, **payload)

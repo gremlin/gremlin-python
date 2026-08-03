@@ -43,6 +43,7 @@ mock_base_url = "https://api.gremlin.com/v1"
 
 mock_org_id = "1234567890a"
 mock_team_id = "1234567890a"
+mock_team_ids = {"team_ids": [mock_team_id]}
 mock_body = {"body": mock_data}
 mock_guid = {"guid": mock_data}
 mock_scenario_guid = {
