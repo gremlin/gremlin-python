@@ -35,7 +35,7 @@ jobs:
         run: |
           python -m tox -e build-dists --parallel 0
       - name: Publish 📦 to Test PyPI
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           username: __token__
           password: ${{ secrets.Test_PyPI_token }}
