@@ -124,7 +124,7 @@ class GremlinAPIUsers(GremlinAPI):
     ) -> dict:
         method: str = "POST"
         email: str = cls._error_if_not_email(**kwargs)
-        team_ids: Union[list, dict] = cls._error_if_not_json_body(**kwargs)
+        team_ids: Union[list, str] = cls._error_if_not_json_body(**kwargs)
         if isinstance(team_ids, str):
             team_ids = [team_ids]
         endpoint: str = f"/users/{email}/teams/remove"
