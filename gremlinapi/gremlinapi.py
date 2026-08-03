@@ -142,6 +142,17 @@ class GremlinAPI(object):
         return body
 
     @classmethod
+    def _error_if_not_team_ids(cls, **kwargs: dict) -> list:
+        team_ids: Union[list, str] = cls._info_if_not_param("team_ids", **kwargs)
+        if not team_ids:
+            error_msg: str = f"team_ids not passed to users endpoint: {kwargs}"
+            log.error(error_msg)
+            raise GremlinParameterError(error_msg)
+        if isinstance(team_ids, str):
+            team_ids = [team_ids]
+        return team_ids
+
+    @classmethod
     def _error_if_not_email(cls, **kwargs: dict) -> str:
         email: str = cls._info_if_not_param("email", **kwargs)
         if not email:
